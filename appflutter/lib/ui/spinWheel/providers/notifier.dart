@@ -6,6 +6,8 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:confetti/confetti.dart';
 
+import '../../../widgets/shared/dialog_custom.dart';
+
 part 'state.dart';
 
 final spinWheelNotifierProvider = NotifierProvider<SpinWheelNotifier, SpinWheelState>(
@@ -22,7 +24,7 @@ class SpinWheelNotifier extends Notifier<SpinWheelState> {
 
   @override
   SpinWheelState build() {
-    selectedController = StreamController<int>();
+    selectedController = StreamController<int>.broadcast();
     confettiController = ConfettiController(duration: const Duration(seconds: 3));
     return SpinWheelState(
       isSpinning: false,
@@ -44,27 +46,30 @@ class SpinWheelNotifier extends Notifier<SpinWheelState> {
     state = state.copyWith(isSpinning: true, showResult: false);
   }
 
-  void onSpinEnd(BuildContext context) {
+  Future<void> onSpinEnd(BuildContext context) async {
     final result = items[state.selectedIndex];
     confettiController.play();
     state = state.copyWith(isSpinning: false, showResult: true);
-    _showPopup(context, result);
+    await showCustomSuccessDialog(context, result);
+    //_showPopup(context, result);
   }
 
   void _showPopup(BuildContext context, String result) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.green,
-        content: Text(result, style: const TextStyle(fontSize: 30, color: Colors.yellow)),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+
+
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => AlertDialog(
+    //     backgroundColor: Colors.green,
+    //     content: Text(result, style: const TextStyle(fontSize: 30, color: Colors.yellow)),
+    //     actions: [
+    //       ElevatedButton(
+    //         onPressed: () => Navigator.of(context).pop(),
+    //         child: const Text('OK'),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   @override
@@ -72,5 +77,4 @@ class SpinWheelNotifier extends Notifier<SpinWheelState> {
     selectedController.close();
     confettiController.dispose();
   }
-
 }

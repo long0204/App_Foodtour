@@ -12,7 +12,8 @@ class SpinButton extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        if (!isSpinning) notifier.spin();
+        if (!isSpinning)
+          notifier.spin();
       },
       child: Container(
         width: 100,

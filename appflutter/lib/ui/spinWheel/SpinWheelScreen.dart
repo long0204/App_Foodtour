@@ -16,9 +16,11 @@ class SpinWheelScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vòng quay lú lẫn', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.redAccent[100],
+        backgroundColor: Colors.red.shade300,
       ),
-      body: Center(
+      backgroundColor: Colors.red.shade300,
+      body:
+      Center(
         child: Stack(
           alignment: Alignment.center,
           children: [

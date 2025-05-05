@@ -22,8 +22,9 @@ class DetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thông tin quán', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.redAccent[100],
+        backgroundColor: Colors.red.shade300,
       ),
+      backgroundColor: Colors.red.shade300,
       body: Stack(
         children: [
           Positioned.fill(
@@ -69,11 +70,17 @@ class _InfoCard extends StatelessWidget {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
-          _buildRow('STT:', item['STT'].toString()),
-          _buildRow('Loại:', item['Loại'], color: Colors.green, isBold: true, fontSize: 20),
-          _buildCopyRow(context, 'Tên quán:', item['Tên quán'] ?? ''),
-          _buildCopyRow(context, 'Địa chỉ:', item['Địa chỉ'], copyValue: item['Tên quán'] + item['Địa chỉ'], color: Colors.red),
-          _buildRow('Giá:', item['Giá'], color: Colors.blue),
+          _buildRow('STT:', item['STT']?.toString() ?? 'Không xác định'), // Cung cấp giá trị mặc định
+          _buildRow('Loại:', item['Loại'] ?? 'Không có', color: Colors.green, isBold: true, fontSize: 20),
+          _buildCopyRow(context, 'Tên quán:', item['Tên quán'] ?? 'Chưa có tên'),
+          _buildCopyRow(
+            context,
+            'Địa chỉ:',
+            item['Địa chỉ'] ?? 'Chưa có địa chỉ',
+            copyValue: (item['Tên quán'] ?? '') + (item['Địa chỉ'] ?? ''),
+            color: Colors.red,
+          ),
+          _buildRow('Giá:', item['Giá']?.toString() ?? '0.0', color: Colors.blue),
         ],
       ),
     );
@@ -90,12 +97,12 @@ class _InfoCard extends StatelessWidget {
             child: Text(
               label,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.visible,  // Ensure no truncation
-              softWrap: true,  // Allow text to wrap
+              overflow: TextOverflow.visible,
+              softWrap: true,
             ),
           ),
           Expanded(
-            flex: 3,  // Adjust the flex factor if needed
+            flex: 3,
             child: Text(
               value,
               style: TextStyle(
@@ -126,7 +133,6 @@ class _InfoCard extends StatelessWidget {
     }
   }
 
-
   Widget _buildCopyRow(BuildContext context, String label, String value, {String? copyValue, Color? color}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -150,9 +156,9 @@ class _InfoCard extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.copy),
           onPressed: () => _openGoogleMaps(context, value),
-              //_copyToClipboard(context, copyValue ?? value),
         ),
       ]),
     );
   }
 }
+

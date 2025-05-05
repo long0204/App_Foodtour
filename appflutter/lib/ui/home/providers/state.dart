@@ -15,13 +15,7 @@ class RandomItemState extends Equatable {
 
   factory RandomItemState.initial() => RandomItemState(
     items: [],
-    selectedItem: {
-      "STT": 0,
-      "Loại": "Chọn loại quán",
-      "Tên quán": "Tên cửa hàng",
-      "Địa chỉ": "Địa chỉ",
-      "Giá": "",
-    },
+    selectedItem: {},
     selectedLoai: "Chọn loại quán",
     isLoading: true,
   );

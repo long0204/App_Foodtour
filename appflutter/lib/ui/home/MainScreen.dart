@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Foodtour/ui/home/providers/notifier.dart';  // Nhập provider
 import 'package:Foodtour/ui/home/widget/action_button.dart';
 import 'package:Foodtour/ui/home/widget/item_detail_card.dart';
@@ -6,14 +8,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:gap/gap.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RandomItemScreen extends ConsumerWidget {
   const RandomItemScreen({super.key});
 
+  Future<DateTime?> getStartDate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final dateStr = prefs.getString('start_date');
+    return dateStr != null ? DateTime.parse(dateStr) : null;
+  }
+
   int calculateDaysFromDate(DateTime targetDate) {
-    final currentDate = DateTime.now().add(const Duration(days: 1));
-    final difference = currentDate.difference(targetDate).inDays;
-    return difference.abs();
+    final now = DateTime.now();
+    return now.difference(targetDate).inDays + 1;
+  }
+
+  Future<String?> getAvatarPath(bool isLeft) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(isLeft ? 'avatar_left' : 'avatar_right');
   }
 
   @override
@@ -26,6 +39,7 @@ class RandomItemScreen extends ConsumerWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.red.shade300,
       body: Stack(
         children: [
           Positioned.fill(
@@ -48,14 +62,34 @@ class RandomItemScreen extends ConsumerWidget {
                   color: Colors.transparent,
                   child: Stack(
                     children: [
-                      Positioned(
-                        left: 0,
-                        top: 50,
-                        child: Image.asset(
-                          'asset/avtllac.gif',
-                          width: 100,
-                          height: 100,
-                        ),
+                      // Kiểm tra và hiển thị ảnh avatar bên trái
+                      FutureBuilder<String?>(
+                        future: getAvatarPath(true),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasData && snapshot.data != null) {
+                            return Positioned(
+                              left: 0,
+                              top: 50,
+                              child: Image.file(
+                                File(snapshot.data!),
+                                width: 100,
+                                height: 100,
+                              ),
+                            );
+                          } else {
+                            return Positioned(
+                              left: 0,
+                              top: 50,
+                              child: Image.asset(
+                                'asset/avtllac.gif',
+                                width: 100,
+                                height: 100,
+                              ),
+                            );
+                          }
+                        },
                       ),
                       Center(
                         child: Lottie.asset(
@@ -68,30 +102,65 @@ class RandomItemScreen extends ConsumerWidget {
                         ),
                       ),
                       Center(
-                        child: Text(
-                          '${calculateDaysFromDate(DateTime(2023, 6, 4))}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 8,
-                                color: Colors.black54,
-                                offset: Offset(2, 2),
-                              )
-                            ],
-                          ),
+                        child: FutureBuilder<DateTime?>(
+                          future: getStartDate(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator(); // loading
+                            } else if (snapshot.hasData && snapshot.data != null) {
+                              final days = calculateDaysFromDate(snapshot.data!);
+                              return Text(
+                                '$days',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 8,
+                                      color: Colors.black54,
+                                      offset: Offset(2, 2),
+                                    )
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return const Text(
+                                'Chưa chọn ngày',
+                                style: TextStyle(fontSize: 20, color: Colors.white),
+                              );
+                            }
+                          },
                         ),
                       ),
-                      Positioned(
-                        right: 0,
-                        top: 50,
-                        child: Image.asset(
-                          'asset/avthla.gif',
-                          width: 100,
-                          height: 100,
-                        ),
+                      // Kiểm tra và hiển thị ảnh avatar bên phải
+                      FutureBuilder<String?>(
+                        future: getAvatarPath(false),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasData && snapshot.data != null) {
+                            return Positioned(
+                              right: 0,
+                              top: 50,
+                              child: Image.file(
+                                File(snapshot.data!),
+                                width: 100,
+                                height: 100,
+                              ),
+                            );
+                          } else {
+                            return Positioned(
+                              right: 0,
+                              top: 50,
+                              child: Image.asset(
+                                'asset/avthla.gif',
+                                width: 100,
+                                height: 100,
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -101,7 +170,8 @@ class RandomItemScreen extends ConsumerWidget {
                 const Gap(20),
                 const ActionButtons(),
                 const Gap(20),
-                const ItemDetailCard(),
+                if (state.selectedItem != null && state.selectedItem.isNotEmpty)
+                  const ItemDetailCard(),
               ],
             ),
           ),
@@ -110,3 +180,4 @@ class RandomItemScreen extends ConsumerWidget {
     );
   }
 }
+
