@@ -57,5 +57,8 @@
 	<!-- Quyền truy cập thư viện ảnh -->
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Foodtour cần kết nối với thư viện ảnh để bạn có thể đăng hình đại diện và các chức năng cần đính kèm hình ảnh</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Foodtour cần truy cập micro để hỗ trợ tính năng liên quan đến âm thanh.</string>
+
 </dict>
 </plist>
