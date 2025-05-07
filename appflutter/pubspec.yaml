@@ -143,12 +143,25 @@ dev_dependencies:
   build_runner: ^2.3.3
 
 flutter:
-
-  uses-material-design: true
+  generate: true
 
   assets:
-     - asset/
+    - asset/
+    - asset/fonts/
+    - asset/images/
+    - asset/images/auth/
+    - asset/images/home/
+    - asset/images/pay/
+    - asset/images/shared/
+    - asset/images/job/
+    - asset/images/user/
+    - asset/images/rank/
+    - asset/lottie/
+    - asset/rive/
+    - asset/icons/
 
+
+  uses-material-design: true
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

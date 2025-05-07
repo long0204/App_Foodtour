@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "190281708002",
+    "project_id": "foodtour-9112d",
+    "storage_bucket": "foodtour-9112d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190281708002:android:125930e3d5349f46d5c9bb",
+        "android_client_info": {
+          "package_name": "com.dinos.foodtour"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpFjmYQ_fcyAwlHTWUI13BN-RBix6O1a4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
