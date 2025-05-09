@@ -11,8 +11,8 @@ class FavoritePlacesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh Sách Quán Yêu Thích'),
-        backgroundColor: Colors.red.shade300,
+        title: const Text('Danh Sách Quán Yêu Thích',style: TextStyle(color: Colors.white),),
+        backgroundColor: Colors.redAccent[200],
       ),
       body: favoritePlaces.isEmpty
           ? Center(
@@ -25,7 +25,7 @@ class FavoritePlacesScreen extends ConsumerWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontStyle: FontStyle.normal,
-                color: Colors.grey.shade500,
+                color: Colors.grey,
                 fontSize: 14,
                 letterSpacing: -0.05,
               ),

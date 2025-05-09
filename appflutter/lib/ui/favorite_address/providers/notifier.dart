@@ -14,7 +14,6 @@ class FavoritePlacesNotifier extends StateNotifier<List<FavoritePlace>> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Load danh sách yêu thích từ Hive và Firebase
   Future<void> loadFavoritePlaces() async {
     var box = await Hive.openBox<FavoritePlace>('favorites');
     // Load dữ liệu từ Firebase
@@ -39,19 +38,30 @@ class FavoritePlacesNotifier extends StateNotifier<List<FavoritePlace>> {
   Future<void> removeFavoritePlace(int index) async {
     var box = await Hive.openBox<FavoritePlace>('favorites');
 
+    if (index < 0 || index >= box.length) {
+      debugPrint('⚠️ Index không hợp lệ: $index');
+      return;
+    }
+
     final place = box.getAt(index);
 
     await box.deleteAt(index);
 
-    await _firestore.collection('favorite_places').where('address', isEqualTo: place?.address).get().then((snapshot) {
-      for (var doc in snapshot.docs) {
-        doc.reference.delete();
-      }
-    });
+    if (place != null) {
+      final snapshot = await _firestore
+          .collection('favorite_places')
+          .where('name', isEqualTo: place.name)
+          .get();
 
-    // Cập nhật lại danh sách sau khi xóa
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+    }
+
+    // Cập nhật danh sách
     loadFavoritePlaces();
   }
+
 
   Future<void> openGoogleMaps(BuildContext context, String address) async {
     final Uri googleMapsUri = Uri.parse("https://www.google.com/maps/search/?q=$address");

@@ -57,10 +57,21 @@
 	</array>
 
 	<!-- Quyền truy cập thư viện ảnh -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Foodtour cần kết nối với thư viện ảnh để bạn có thể đăng hình đại diện và các chức năng cần đính kèm hình ảnh</string>
-	<key>NSMicrophoneUsageDescription</key>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Foodtour cần kết nối với thư viện ảnh để bạn có thể đăng hình đại diện và các chức năng cần đính kèm hình ảnh.</string>
+
+    <!-- Quyền ghi ảnh vào thư viện -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Foodtour cần quyền để lưu ảnh bạn vừa chụp hoặc chọn từ thư viện vào thiết bị.</string>
+
+    <!-- Quyền truy cập camera -->
+    <key>NSCameraUsageDescription</key>
+    <string>Foodtour cần truy cập camera để bạn có thể chụp ảnh và sử dụng trong các tính năng liên quan đến hình ảnh.</string>
+
+    <!-- Quyền truy cập microphone (nếu cần dùng ghi âm/video call) -->
+    <key>NSMicrophoneUsageDescription</key>
     <string>Foodtour cần truy cập micro để hỗ trợ tính năng liên quan đến âm thanh.</string>
+
 
 </dict>
 </plist>

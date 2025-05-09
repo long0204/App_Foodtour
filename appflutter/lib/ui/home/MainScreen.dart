@@ -8,26 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:gap/gap.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class RandomItemScreen extends ConsumerWidget {
-  const RandomItemScreen({super.key});
-
-  Future<DateTime?> getStartDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final dateStr = prefs.getString('start_date');
-    return dateStr != null ? DateTime.parse(dateStr) : null;
-  }
-
-  int calculateDaysFromDate(DateTime targetDate) {
-    final now = DateTime.now();
-    return now.difference(targetDate).inDays + 1;
-  }
-
-  Future<String?> getAvatarPath(bool isLeft) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(isLeft ? 'avatar_left' : 'avatar_right');
-  }
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +22,7 @@ class RandomItemScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: const LoveAppBar(),
+      //appBar: const LoveAppBar(),
       backgroundColor: Colors.red.shade300,
       body: Stack(
         children: [
@@ -56,14 +39,14 @@ class RandomItemScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                Gap(screenHeight * 0.05),
+                //Gap(screenHeight * 0.05),
                 LoveHeader(height: screenHeight * 0.3),
-                const Gap(24),
+                const Gap(20),
                 const ItemDropdown(),
                 const Gap(20),
                 const ActionButtons(),
                 const Gap(20),
-                if (state.selectedItem != null && state.selectedItem.isNotEmpty)
+                if (state.selectedItem.isNotEmpty)
                   const ItemDetailCard(),
               ],
             ),

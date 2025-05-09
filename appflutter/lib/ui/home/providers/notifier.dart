@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/sources/remote/google_service.dart';
 
@@ -26,6 +27,7 @@ class RandomItemNotifier extends StateNotifier<RandomItemState> {
 
 
   void getRandomItem() {
+    debugPrint("❌ Loại ${state.selectedLoai}");
     if (state.selectedLoai == "Chọn loại quán") return;
 
     final filteredList =

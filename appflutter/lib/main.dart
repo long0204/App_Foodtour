@@ -1,5 +1,9 @@
 import 'package:Foodtour/root_screen.dart';
+import 'package:Foodtour/services/crashlytics.dart';
+import 'package:Foodtour/services/firebase_core.dart';
 import 'package:Foodtour/ui/home/MainScreen.dart';
+import 'package:Foodtour/ui/main/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,10 +15,12 @@ import 'data/model/favorite_address_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Khởi tạo Firebase
   try {
     await Firebase.initializeApp();
     debugPrint("✅ Firebase initialized");
+
+    // Đăng nhập ẩn danh
+    await signInAnonymouslyIfNeeded();
   } catch (e) {
     debugPrint("❌ Firebase initialization failed: $e");
   }
@@ -34,6 +40,16 @@ void main() async {
   );
 }
 
+Future<void> signInAnonymouslyIfNeeded() async {
+  final auth = FirebaseAuth.instance;
+  if (auth.currentUser == null) {
+    await auth.signInAnonymously();
+    debugPrint("✅ Đã đăng nhập ẩn danh");
+  } else {
+    debugPrint("ℹ️ Đã có user: ${auth.currentUser!.uid}");
+  }
+}
+
 class MyApp extends StatelessWidget {
   final bool hasData;
 
@@ -45,9 +61,9 @@ class MyApp extends StatelessWidget {
       title: 'Foodtour',
       theme: ThemeData(
         primaryColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.redAccent[100],
+        scaffoldBackgroundColor: Colors.red[50],
       ),
-      home: hasData ? const RandomItemScreen() : const OnboardingScreen(),
+      home: hasData ? const MainScreen() : const OnboardingScreen(),
     );
   }
 }

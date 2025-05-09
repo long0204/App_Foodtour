@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Foodtour/ui/home/MainScreen.dart';
+import 'package:Foodtour/ui/main/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -63,7 +64,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
 
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const RandomItemScreen()),
+      MaterialPageRoute(builder: (_) => const MainScreen()),
     );
   }
 
