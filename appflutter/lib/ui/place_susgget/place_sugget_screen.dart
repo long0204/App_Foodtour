@@ -29,7 +29,7 @@ class _PlaceSuggestionScreenState extends State<PlaceSuggestionScreen> {
         itemBuilder: (context, index) {
           final place = _places[index];
           return ListTile(
-            title: Text(place.name),
+            title: Text(place.name??''),
             subtitle: Text('${place.address}\n${place.price ?? ''}'),
             isThreeLine: true,
             leading: const Icon(Icons.place),

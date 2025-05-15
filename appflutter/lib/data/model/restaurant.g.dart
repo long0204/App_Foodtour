@@ -17,11 +17,11 @@ class RestaurantAdapter extends TypeAdapter<Restaurant> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Restaurant(
-      id: fields[0] as String,
-      name: fields[1] as String,
-      address: fields[2] as String,
-      type: fields[3] as String,
-      price: fields[4] as String,
+      id: fields[0] as String?,
+      name: fields[1] as String?,
+      address: fields[2] as String?,
+      type: fields[3] as String?,
+      price: fields[4] as String?,
     );
   }
 

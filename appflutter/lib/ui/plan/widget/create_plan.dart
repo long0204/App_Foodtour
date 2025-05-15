@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
+import '../../../widgets/helpers/showmanager.dart';
 import '../providers/create_plan_notifier.dart';
-import 'location_item_card.dart'; // Import widget mới
+import 'location_item_card.dart';
 
 class CreatePlanScreen extends ConsumerWidget {
   const CreatePlanScreen({super.key});
@@ -23,17 +24,20 @@ class CreatePlanScreen extends ConsumerWidget {
           IconButton(
             onPressed: () async {
               final success = await createPlanNotifier.savePlan();
+              showManager.showToast('Đã sao chép', isSuccess: true);
+              Navigator.of(context).pop();
+
               ScaffoldMessenger.of(context).showSnackBar(
+
                 SnackBar(content: Text(success ? 'Lưu kế hoạch thành công!' : 'Lưu kế hoạch thất bại.')),
               );
             },
-            // Disable button khi đang loading
             icon: const Icon(Icons.save, color: Colors.white),
           )
         ],
       ),
-      body: createPlanState.isLoading  // Hiển thị loading nếu đang lưu
-          ? Center(child: CircularProgressIndicator())  // CircularProgressIndicator khi loading
+      body: createPlanState.isLoading
+          ? Center(child: CircularProgressIndicator())
           : Padding(
         padding: const EdgeInsets.all(16),
         child: Form(

@@ -5,19 +5,19 @@ part 'restaurant.g.dart';
 @HiveType(typeId: 0)
 class Restaurant extends HiveObject {
   @HiveField(0)
-  String id;
+  String? id;
 
   @HiveField(1)
-  String name;
+  String? name;
 
   @HiveField(2)
-  String address;
+  String? address;
 
   @HiveField(3)
-  String type;
+  String? type;
 
   @HiveField(4)
-  String price;
+  String? price;
 
   Restaurant({required this.id, required this.name, required this.address, required this.type, required this.price});
 

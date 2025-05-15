@@ -43,37 +43,43 @@ class PlansTab extends StatelessWidget {
             return ListView.builder(
               padding: const EdgeInsets.only(bottom: 80, left: 12, right: 12, top: 12),
               itemCount: plans.length,
-              itemBuilder: (context, index) {
-                final plan = plans[index];
+                itemBuilder: (context, index) {
+                  final plan = plans[index];
+                  final planData = plan.data() as Map<String, dynamic>;
+                  final name = planData['name'] ?? 'Không có tên';
+                  final description = 'Kinh phí: ${planData['name']} ,số người :${planData['people']}, trong :${planData['people']} ngày';
+                  // planData.containsKey('description')
+                  //     ? planData['description']
+                  //     : 'Không có mô tả';
 
-                return Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  color: Colors.white,
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    title: Text(
-                      plan['name'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                  return Card(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    color: Colors.white,
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      title: Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      subtitle: Text(
+                        description,
+                        style: const TextStyle(color: Colors.black87),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.redAccent),
+                        onPressed: () {
+
+                        },
                       ),
                     ),
-                    subtitle: Text(
-                      plan['description'] ?? 'Không có mô tả',
-                      style: const TextStyle(color: Colors.black87),
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.redAccent),
-                      onPressed: () {
-                        // Chỉnh sửa kế hoạch nếu cần
-                      },
-                    ),
-                  ),
-                );
-              },
+                  );
+                }
             );
           },
         ),

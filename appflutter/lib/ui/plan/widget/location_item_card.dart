@@ -1,3 +1,4 @@
+import 'package:Foodtour/ui/plan/widget/select_location_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import '../providers/create_plan_notifier.dart';
@@ -25,12 +26,25 @@ class LocationItemCard extends StatelessWidget {
           children: [
             TextFormField(
               controller: locationItem.placeController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Địa điểm',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () async {
+                    final selected = await showDialog<String>(
+                      context: context,
+                      builder: (_) => const SelectLocationDialog(),
+                    );
+                    if (selected != null) {
+                      locationItem.placeController.text = selected;
+                    }
+                  },
+                ),
               ),
             ),
+
             const Gap(8),
             TextFormField(
               controller: locationItem.durationController,
