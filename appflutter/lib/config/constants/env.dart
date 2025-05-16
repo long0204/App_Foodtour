@@ -9,4 +9,6 @@ class ENV {
   static const spreadsheetId = '14Y_Y8-UFLkVKo3HYmsBPylz28SZy2fPj2z5DzORxFac';
   static const apiKey = 'AIzaSyCVGKpHpigRX3b15mHDbXU2w40GBMXTC9g';
   static const url = 'https://sheets.googleapis.com/v4/spreadsheets';
+  static const urlscripts = 'https://script.google.com/macros/s/AKfycby8gyhy65kZjAvMUhEDSwrbgi1oVO4UxWdg5rRgNZbT-YBvXRDtT4-1KuJ6gt--Q-LYqQ/exec';
+
 }

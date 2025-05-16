@@ -14,7 +14,6 @@ void main() async {
 
   try {
     await Firebase.initializeApp();
-    debugPrint("✅ Firebase initialized");
     await signInAnonymouslyIfNeeded();
   } catch (e) {
     debugPrint("❌ Firebase initialization failed: $e");

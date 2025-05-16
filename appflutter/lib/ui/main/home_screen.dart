@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../home/MainScreen.dart';
 import '../home/widget/appbar_love.dart';
+import '../list_address/list_address_screen.dart';
 import '../plan/plan_sc.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
@@ -18,6 +19,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   List<Widget> _screens = [
     const HomeScreen(),
     const PlansTab(),
+    const RestaurantListScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -41,8 +43,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             label: 'Trang Chủ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.event_note),
             label: 'Kế Hoạch',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.store),
+            label: 'Danh sách quán',
           ),
         ],
       ),

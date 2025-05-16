@@ -2,6 +2,8 @@ import 'package:Foodtour/ui/plan/widget/create_plan.dart';
 import 'package:Foodtour/widgets/base/base.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 
 class PlansTab extends StatelessWidget {
   const PlansTab({super.key});
@@ -22,8 +24,9 @@ class PlansTab extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('asset/images/shared/empty.png', height: 120, width: 160),
-                    const SizedBox(height: 12),
+                    Image.asset('asset/images/shared/empty.png',
+                        height: 120.h, width: 160.w),
+                    const Gap(12),
                     const Text(
                       'Không có kế hoạch nào',
                       style: TextStyle(
@@ -41,19 +44,22 @@ class PlansTab extends StatelessWidget {
             final plans = snapshot.data!.docs;
 
             return ListView.builder(
-              padding: const EdgeInsets.only(bottom: 80, left: 12, right: 12, top: 12),
-              itemCount: plans.length,
+                padding: const EdgeInsets.only(
+                    bottom: 80, left: 12, right: 12, top: 12),
+                itemCount: plans.length,
                 itemBuilder: (context, index) {
                   final plan = plans[index];
                   final planData = plan.data() as Map<String, dynamic>;
                   final name = planData['name'] ?? 'Không có tên';
-                  final description = 'Kinh phí: ${planData['name']} ,số người :${planData['people']}, trong :${planData['people']} ngày';
+                  final description =
+                      'Kinh phí: ${planData['name']} ,số người :${planData['people']}, trong :${planData['people']} ngày';
                   // planData.containsKey('description')
                   //     ? planData['description']
                   //     : 'Không có mô tả';
 
                   return Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                     color: Colors.white,
                     elevation: 4,
                     margin: const EdgeInsets.symmetric(vertical: 8),
@@ -73,14 +79,11 @@ class PlansTab extends StatelessWidget {
                       ),
                       trailing: IconButton(
                         icon: const Icon(Icons.edit, color: Colors.redAccent),
-                        onPressed: () {
-
-                        },
+                        onPressed: () {},
                       ),
                     ),
                   );
-                }
-            );
+                });
           },
         ),
         Positioned(
@@ -105,13 +108,13 @@ class PlansTab extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CreatePlanScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const CreatePlanScreen()),
                 );
               },
             ),
           ),
         ),
-
       ],
     );
   }

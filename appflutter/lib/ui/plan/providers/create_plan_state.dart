@@ -6,7 +6,7 @@ class CreatePlanState {
   final String peopleCount;
   final List<DateTime?> selectedDates;
   final List<LocationItem> locations;
-  final bool isLoading;  // Thêm trạng thái loading
+  final bool isLoading;
 
   CreatePlanState({
     required this.planName,
@@ -14,7 +14,7 @@ class CreatePlanState {
     required this.peopleCount,
     required this.selectedDates,
     required this.locations,
-    required this.isLoading,  // Khởi tạo trạng thái loading
+    required this.isLoading,
   });
 
   factory CreatePlanState.initial() {
@@ -34,7 +34,7 @@ class CreatePlanState {
     String? peopleCount,
     List<DateTime?>? selectedDates,
     List<LocationItem>? locations,
-    bool? isLoading,  // Thêm trạng thái loading vào copyWith
+    bool? isLoading,
   }) {
     return CreatePlanState(
       planName: planName ?? this.planName,
@@ -42,7 +42,7 @@ class CreatePlanState {
       peopleCount: peopleCount ?? this.peopleCount,
       selectedDates: selectedDates ?? this.selectedDates,
       locations: locations ?? this.locations,
-      isLoading: isLoading ?? this.isLoading,  // Cập nhật trạng thái loading
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

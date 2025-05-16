@@ -4,7 +4,7 @@ import 'package:Foodtour/config/constants/env.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Map<String, dynamic>>> fetchGoogleSheetItems() async {
-  const String range = 'Sheet1!A2:E1000';
+  const String range = 'Sheet1!A3:E1000';
   final url = Uri.parse(
       '${ENV.url}/${ENV.spreadsheetId}/values/$range?key=${ENV.apiKey}');
 
