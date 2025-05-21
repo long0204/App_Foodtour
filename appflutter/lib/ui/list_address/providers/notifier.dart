@@ -156,7 +156,7 @@ class RestaurantNotifier extends _$RestaurantNotifier {
     } else {
       print("❌ Response code: ${response.statusCode}");
       print("❌ Response body: ${response.body}");
-      throw Exception('Lỗi khi upload dữ liệu');
+      //throw Exception('Lỗi khi upload dữ liệu');
     }
   }
 

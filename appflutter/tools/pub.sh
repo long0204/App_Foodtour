@@ -6,4 +6,4 @@ flutter pub get
 # cd ios
 # rm -rf Pods Podfile.lock
 # pod install
-# cd ..
+# cd ..cd ..

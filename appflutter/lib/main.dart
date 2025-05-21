@@ -1,11 +1,13 @@
-import 'package:Foodtour/root_screen.dart';
-import 'package:Foodtour/ui/main/home_screen.dart';
+import 'package:Foodtour/services/auth_service.dart';
+import 'package:Foodtour/services/onboarding_loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'core/route.dart';
 import 'data/model/favorite_address_model.dart';
 import 'data/model/restaurant.dart';
 
@@ -24,16 +26,16 @@ void main() async {
   Hive.registerAdapter(RestaurantAdapter());
   await Hive.openBox<FavoritePlace>('favorites');
   await Hive.openBox<Restaurant>('restaurants');
+  await Hive.openBox('userBox');
 
+  await authService.init();
 
-  final prefs = await SharedPreferences.getInstance();
-  final hasData = prefs.containsKey('start_date');
-
-  runApp(
-    ProviderScope(
-      child: MyApp(hasData: hasData),
-    ),
-  );
+  await AppRouter.initRouterLoginStatus();
+  final username = authService.getUsername();
+  if (username != null) {
+    await fetchAndSaveOnboardingData(username);
+  }
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 Future<void> signInAnonymouslyIfNeeded() async {
@@ -47,19 +49,17 @@ Future<void> signInAnonymouslyIfNeeded() async {
 }
 
 class MyApp extends StatelessWidget {
-  final bool hasData;
-
-  const MyApp({super.key, required this.hasData});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: AppRouter.router,
       title: 'Foodtour',
       theme: ThemeData(
         primaryColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.red[50],
+        scaffoldBackgroundColor: Colors.red[100],
       ),
-      home: hasData ? const MainScreen() : const OnboardingScreen(),
     );
   }
 }

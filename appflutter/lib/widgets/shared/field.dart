@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../config/themes/theme.dart';
 
@@ -61,7 +60,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 44.w,
+      height: 44,
       width: width,
       child: TextField(
         textAlign: textAlign,
@@ -165,10 +164,10 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height.w,
+      height: height,
       width: width,
       child: TextFormField(
-        cursorHeight: 16.w,
+        cursorHeight: 16,
         obscureText: obscureText,
         controller: controller,
         enabled: enabled,
@@ -192,7 +191,7 @@ class CustomTextFormField extends StatelessWidget {
           hintText: ' $hintText',
           filled: true,
           fillColor: fillColor,
-          contentPadding: EdgeInsets.all(12.w),
+          contentPadding: EdgeInsets.all(12),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(0),
             borderSide: const BorderSide(color: grey300),

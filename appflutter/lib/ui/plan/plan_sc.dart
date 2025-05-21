@@ -5,27 +5,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
+import '../../services/auth_service.dart';
+
 class PlansTab extends StatelessWidget {
   const PlansTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = authService.getUsername();
     return Stack(
       children: [
         StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('plans').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('plans')
+              .where('userId', isEqualTo: user)
+              //.orderBy('createdAt', descending: true)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              print(user);
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset('asset/images/shared/empty.png',
-                        height: 120.h, width: 160.w),
+                        height: 120, width: 160),
                     const Gap(12),
                     const Text(
                       'Không có kế hoạch nào',
@@ -40,12 +47,10 @@ class PlansTab extends StatelessWidget {
                 ),
               );
             }
-
             final plans = snapshot.data!.docs;
-
             return ListView.builder(
-                padding: const EdgeInsets.only(
-                    bottom: 80, left: 12, right: 12, top: 12),
+                padding:  EdgeInsets.only(
+                    bottom: 80, left: 12, right: 12, top: 48),
                 itemCount: plans.length,
                 itemBuilder: (context, index) {
                   final plan = plans[index];
@@ -56,7 +61,6 @@ class PlansTab extends StatelessWidget {
                   // planData.containsKey('description')
                   //     ? planData['description']
                   //     : 'Không có mô tả';
-
                   return Card(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),

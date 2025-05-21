@@ -3,6 +3,7 @@ import 'package:Foodtour/ui/list_address/widget/add_new_address.dart';
 import 'package:Foodtour/ui/list_address/widget/empty.dart';
 import 'package:Foodtour/ui/list_address/widget/item_tile.dart';
 import 'package:Foodtour/ui/list_address/widget/search_bar.dart';
+import 'package:Foodtour/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,13 +24,14 @@ class RestaurantListScreen extends ConsumerWidget {
         children: [
           Column(
             children: [
+              const Gap(48),
               RestaurantSearchBar(onChanged: notifier.search),
               RestaurantTypeDropdown(
                 selectedType: state.selectedType,
                 restaurants: state.allRestaurants,
                 onChanged: notifier.filterByType,
               ),
-              const Gap(8),
+              //const Gap(8),
               Expanded(
                 child: RefreshIndicator(
                     onRefresh: () => notifier.refreshFromRemote(),

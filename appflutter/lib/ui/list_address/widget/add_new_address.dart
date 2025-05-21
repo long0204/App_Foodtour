@@ -12,14 +12,17 @@ class AddRestaurantDialog extends StatefulWidget {
 
 class _AddRestaurantDialogState extends State<AddRestaurantDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _typeController = TextEditingController();
+
+  // Danh sách loại quán
+  final List<String> _types = ['Bún', 'Phở', 'Lẩu', 'Nướng', 'Gà Rán/Đồ Hàn', 'Coffee', 'Cơm', 'Chè','Ăn Vặt','Vịt'];
+
+  String? _selectedType;
   final _nameController = TextEditingController();
   final _addressController = TextEditingController();
   final _priceController = TextEditingController();
 
   @override
   void dispose() {
-    _typeController.dispose();
     _nameController.dispose();
     _addressController.dispose();
     _priceController.dispose();
@@ -31,7 +34,7 @@ class _AddRestaurantDialogState extends State<AddRestaurantDialog> {
     if (!isValid) return;
 
     widget.onSubmit(
-      _typeController.text.trim(),
+      _selectedType!.trim(),
       _nameController.text.trim(),
       _addressController.text.trim(),
       _priceController.text.trim(),
@@ -75,10 +78,21 @@ class _AddRestaurantDialogState extends State<AddRestaurantDialog> {
               key: _formKey,
               child: Column(
                 children: [
-                  TextFormField(
-                    controller: _typeController,
+                  DropdownButtonFormField<String>(
+                    value: _selectedType,
                     decoration: _inputDecoration('Loại quán', Icons.category),
-                    validator: (value) => value!.isEmpty ? 'Nhập loại quán' : null,
+                    items: _types.map((type) {
+                      return DropdownMenuItem(
+                        value: type,
+                        child: Text(type),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedType = value;
+                      });
+                    },
+                    validator: (value) => value == null || value.isEmpty ? 'Chọn loại quán' : null,
                   ),
                   SizedBox(height: 12.h),
                   TextFormField(
@@ -110,8 +124,8 @@ class _AddRestaurantDialogState extends State<AddRestaurantDialog> {
                 ),
                 ElevatedButton.icon(
                   onPressed: _handleSubmit,
-                  icon: const Icon(Icons.check_circle,color: Colors.white,),
-                  label: const Text('Thêm',style: TextStyle(color: Colors.white),),
+                  icon: const Icon(Icons.check_circle, color: Colors.white),
+                  label: const Text('Thêm', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade300,
                     shape: RoundedRectangleBorder(

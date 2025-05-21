@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
-import '../../../widgets/helpers/showmanager.dart';
 import '../providers/create_plan_notifier.dart';
 import 'location_item_card.dart';
 
@@ -25,12 +24,20 @@ class CreatePlanScreen extends ConsumerWidget {
           IconButton(
             onPressed: () async {
               final success = await createPlanNotifier.savePlan();
-              success
-                  ? showManager.showToast('Lưu kế hoạch thành công!',
-                      isSuccess: true)
-                  : showManager.showToast('Lưu kế hoạch thất bại!',
-                      isSuccess: false);
-              Navigator.of(context).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    success ? 'Lưu kế hoạch thành công!' : 'Lưu kế hoạch thất bại!',
+                  ),
+                  backgroundColor: success ? Colors.green : Colors.red,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+
+              if (success) {
+                Navigator.of(context).pop();
+              }
             },
             icon: const Icon(Icons.save, color: Colors.white),
           )

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../services/auth_service.dart';
 import 'create_plan_state.dart';
 
 final createPlanNotifierProvider = StateNotifierProvider<CreatePlanNotifier, CreatePlanState>((ref) {
@@ -43,6 +44,10 @@ class CreatePlanNotifier extends StateNotifier<CreatePlanState> {
   }
 
   Future<bool> savePlan() async {
+    final userId  = authService.getUsername();
+    print("CHECK USER ${userId}");
+    if (userId == null) return false;
+
     if (state.planName.isNotEmpty &&
         state.selectedDates[0] != null &&
         state.selectedDates[1] != null) {
@@ -54,6 +59,7 @@ class CreatePlanNotifier extends StateNotifier<CreatePlanState> {
         }).toList();
 
         await FirebaseFirestore.instance.collection('plans').add({
+          'userId': userId,
           'name': state.planName,
           'startDate': state.selectedDates[0],
           'endDate': state.selectedDates[1],
@@ -65,11 +71,13 @@ class CreatePlanNotifier extends StateNotifier<CreatePlanState> {
 
         return true;
       } catch (e) {
+        debugPrint("CHECK LÔI ${e.toString()}");
         return false;
       }
     }
     return false;
   }
+
 }
 
 

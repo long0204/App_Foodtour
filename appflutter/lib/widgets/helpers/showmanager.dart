@@ -35,178 +35,25 @@ class ShowManager {
     );
   }
 
-  // void showSnackBar(String content,
-  //     {BuildContext? context, void Function()? onPressed, String? label}) {
-  //   final snackBar = SnackBar(
-  //     backgroundColor: primary,
-  //     behavior: SnackBarBehavior.floating,
-  //     content: Text(content, style: k2d400.white),
-  //     duration: const Duration(seconds: 4),
-  //     action: onPressed == null
-  //         ? null
-  //         : SnackBarAction(
-  //       label: label ?? '',
-  //       onPressed: onPressed,
-  //       textColor: Colors.white,
-  //     ),
-  //   );
-  //   ScaffoldMessenger.of(context ?? AppRouter.context!).showSnackBar(snackBar);
-  // }
-  //
-  // Future<void> showImageActionSheet({
-  //   required Function(File file) onPicked,
-  //   String title = '',
-  //   BuildContext? context,
-  // })
-  // async {
-  //   final l10n = AppLocalizations.of(context ?? AppRouter.context!)!;
-  //
-  //   showCupertinoModalPopup<void>(
-  //     context: context ?? AppRouter.context!,
-  //     builder: (BuildContext context) => CupertinoTheme(
-  //       data: const CupertinoThemeData(
-  //           brightness: Brightness.light,
-  //           scaffoldBackgroundColor: Colors.white),
-  //       child: CupertinoActionSheet(
-  //         // message: title.isEmpty ? null : Text(title, style: k2d500.grey600),
-  //         actions: <CupertinoActionSheetAction>[
-  //           CupertinoActionSheetAction(
-  //             onPressed: () async {
-  //               final access =
-  //               await imgPicker.permissionCamera(ImageSource.camera);
-  //               if (!access) {
-  //                 showAlertDialog(
-  //                   title: l10n.noti,
-  //                   content: l10n.plsGrantPermission,
-  //                   rTxt: l10n.setting,
-  //                   onPressedR: () {
-  //                     AppSettings.openAppSettings(
-  //                         type: AppSettingsType.settings);
-  //                   },
-  //                 );
-  //                 return;
-  //               }
-  //               final file = await imgPicker.getImage(ImageSource.camera);
-  //               if (file != null) {
-  //                 onPicked(file);
-  //               }
-  //               pop();
-  //             },
-  //             child: const Text('Camera'),
-  //           ),
-  //           CupertinoActionSheetAction(
-  //             onPressed: () async {
-  //               final access =
-  //               await imgPicker.permissionCamera(ImageSource.gallery);
-  //               if (!access) {
-  //                 showAlertDialog(
-  //                   title: l10n.noti,
-  //                   content: l10n.plsGrantPermission,
-  //                   rTxt: l10n.setting,
-  //                   onPressedR: () {
-  //                     AppSettings.openAppSettings(
-  //                         type: AppSettingsType.settings);
-  //                   },
-  //                 );
-  //                 return;
-  //               }
-  //
-  //               final file = await imgPicker.getImage(ImageSource.gallery);
-  //               if (file != null) {
-  //                 onPicked(file);
-  //               }
-  //               pop();
-  //             },
-  //             child: Text(l10n.lib),
-  //           ),
-  //         ],
-  //         cancelButton: CupertinoActionSheetAction(
-  //           onPressed: pop,
-  //           child: Text(l10n.cancel),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-  // Future<void> showPickImageDialog({
-  //   required Function(File file) onPicked,
-  //   String? titleInput,
-  //   BuildContext? context,
-  // })
-  // async {
-  //   final l10n = AppLocalizations.of(context ?? AppRouter.context!)!;
-  //   final title = titleInput ?? l10n.pickImgFrom;
-  //   showCupertinoDialog<void>(
-  //     context: context ?? AppRouter.context!,
-  //     useRootNavigator: false,
-  //     barrierDismissible: true,
-  //     builder: (BuildContext context) => CupertinoAlertDialog(
-  //       // message: title.isEmpty ? null : Text(title, style: k2d500.grey600),
-  //       title: Text(title, style: k2d500),
-  //       actions: <CupertinoDialogAction>[
-  //         CupertinoDialogAction(
-  //           onPressed: () async {
-  //             final access =
-  //             await imgPicker.permissionCamera(ImageSource.camera);
-  //             if (!access) {
-  //               showAlertDialog(
-  //                 title: l10n.noti,
-  //                 content: l10n.plsGrantPermission,
-  //                 rTxt: l10n.setting,
-  //                 onPressedR: () {
-  //                   AppSettings.openAppSettings(type: AppSettingsType.settings);
-  //                 },
-  //               );
-  //               return;
-  //             }
-  //
-  //             final file = await imgPicker.getImage(ImageSource.camera);
-  //             if (file != null) {
-  //               onPicked(file);
-  //             }
-  //             pop();
-  //           },
-  //           child: Text(
-  //             'Camera',
-  //             style: k2d400.primaryFFts,
-  //           ),
-  //         ),
-  //         CupertinoDialogAction(
-  //           onPressed: () async {
-  //             final access =
-  //             await imgPicker.permissionCamera(ImageSource.gallery);
-  //             if (!access) {
-  //               showAlertDialog(
-  //                 title: l10n.noti,
-  //                 content: l10n.plsGrantPermission,
-  //                 rTxt: l10n.setting,
-  //                 onPressedR: () {
-  //                   AppSettings.openAppSettings(type: AppSettingsType.settings);
-  //                 },
-  //               );
-  //               return;
-  //             }
-  //             final file = await imgPicker.getImage(ImageSource.gallery);
-  //             if (file != null) {
-  //               onPicked(file);
-  //             }
-  //             pop();
-  //           },
-  //           child: Text(
-  //             l10n.lib,
-  //             style: k2d400.primaryFFts,
-  //           ),
-  //         ),
-  //         // CupertinoDialogAction(
-  //         //   onPressed: pop,
-  //         //   child: Text('Huỷ', style: k2d400.redText),
-  //         // ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
+  void showSnackBar(String content,
+      {BuildContext? context, void Function()? onPressed, String? label}) {
+    final snackBar = SnackBar(
+      backgroundColor: primary,
+      behavior: SnackBarBehavior.floating,
+      content: Text(content,),
+      duration: const Duration(seconds: 4),
+      action: onPressed == null
+          ? null
+          : SnackBarAction(
+        label: label ?? '',
+        onPressed: onPressed,
+        textColor: Colors.white,
+      ),
+    );
+    ScaffoldMessenger.of(context ?? AppRouter.context!).showSnackBar(snackBar);
+  }
+
+
   // Future showSingleAlertDialog({
   //   required String title,
   //   required String content,
@@ -236,7 +83,7 @@ class ShowManager {
   //     ),
   //   );
   // }
-  //
+
   // Future showAlertDialog({
   //   required String title,
   //   required String content,
