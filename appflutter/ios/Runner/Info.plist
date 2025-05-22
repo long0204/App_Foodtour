@@ -71,6 +71,12 @@
     <!-- Quyền truy cập microphone (nếu cần dùng ghi âm/video call) -->
     <key>NSMicrophoneUsageDescription</key>
     <string>Foodtour cần truy cập micro để hỗ trợ tính năng liên quan đến âm thanh.</string>
+    <!-- Quyền truy cập vị trí -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Foodtour cần quyền truy cập vị trí để gợi ý địa điểm ăn uống gần bạn.</string>
+
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Foodtour cần truy cập vị trí ngay cả khi bạn không sử dụng app để cập nhật trải nghiệm gợi ý địa điểm.</string>
 
 
 </dict>
