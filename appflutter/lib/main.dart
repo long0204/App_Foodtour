@@ -1,5 +1,6 @@
 import 'package:Foodtour/services/auth_service.dart';
 import 'package:Foodtour/services/onboarding_loader.dart';
+import 'package:Foodtour/services/versionupdate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,9 @@ void main() async {
   if (username != null) {
     await fetchAndSaveOnboardingData(username);
   }
+  appVersion
+    ..checkForceUpdate()
+    ..checkStoreVersion();
   runApp(const ProviderScope(child: MyApp()));
 }
 

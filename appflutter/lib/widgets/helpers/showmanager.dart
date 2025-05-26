@@ -145,6 +145,95 @@ class ShowManager {
     );
   }
 
+  Future showForceUpdateDialog({
+    BuildContext? context,
+    Function()? onPressed,
+  }) {
+    return showCupertinoDialog<void>(
+      context: context ?? AppRouter.context!,
+      barrierDismissible: false,
+      builder: (BuildContext context) => Theme(
+        data: ThemeData.light(),
+        child: CupertinoAlertDialog(
+          title: const Text('Thông báo'),
+          content: const Text('Vui lòng cập nhật ứng dụng để tiếp tục sử dụng.'),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: onPressed,
+              child: Text(
+                'Cập nhật',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontStyle: FontStyle.normal,
+                    color: grey900,
+                    fontSize: 16,
+                    letterSpacing: -0.05),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future showAlertDialog({
+    required String title,
+    required String content,
+    required String rTxt,
+    String? leftTxt,
+    TextStyle? lStyle,
+    TextStyle? rStyle,
+    void Function() onPressedR = pop,
+    void Function() onPressedL = pop,
+    BuildContext? context,
+    bool barrierDismissible = true,
+  }) {
+    return showCupertinoDialog<void>(
+      // useRootNavigator: true,
+      barrierDismissible: barrierDismissible,
+      context: context ?? AppRouter.context!,
+      // barrierColor: Colors.black.withOpacity(0.2),
+      builder: (BuildContext _) => Theme(
+        data: ThemeData.light(),
+        child: CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <CupertinoDialogAction>[
+            leftTxt == null
+                ? CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: pop,
+              child: Text(
+                  'Huỷ'
+              ),
+            )
+                : CupertinoDialogAction(
+              isDestructiveAction: false,
+              onPressed: onPressedL,
+              child: Text(leftTxt, style: lStyle ?? TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.normal,
+                  color: grey900,
+                  fontSize: 16,
+                  letterSpacing: -0.05)),
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: false,
+              onPressed: onPressedR,
+              child: Text(rTxt, style: rStyle ?? TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.normal,
+                  color: grey900,
+                  fontSize: 16,
+                  letterSpacing: -0.05)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 }
 
 final showManager = ShowManager.instance;

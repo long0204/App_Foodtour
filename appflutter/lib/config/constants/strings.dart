@@ -17,9 +17,9 @@ class Strings {
   static const kPendingLink = 'pending';
   static const kRejectLink = 'rejected';
 
-  static const kAppStoreId = '6741680572';
-  static const kAndroidBundleId = 'com.dinos.tingx';
-  static const kIOSBundleId = 'com.dinos.tingx';
+  static const kAppStoreId = '6745496332';
+  static const kAndroidBundleId = 'com.dinos.foodtour';
+  static const kIOSBundleId = 'com.dinos.foodtour';
   static const kImgUrl =
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn6g5_xk3ofg7T_GyC7bLzb3r8-KcpHP-rktdCKw97UUZguJmp';
 

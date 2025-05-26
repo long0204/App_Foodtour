@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:gap/gap.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:lottie/lottie.dart';
+import '../../config/constants/strings.dart';
 import '../../core/route.dart';
 import '../../services/auth_service.dart';
 import 'package:Foodtour/ui/account/providers/notifier.dart';
@@ -132,7 +134,14 @@ class AccountScreen extends ConsumerWidget {
                   _buildOptionCard(
                     icon: Icons.star_rate,
                     label: "Đánh giá ứng dụng",
-                    onTap: () {},
+                    onTap: () async {final InAppReview inAppReview = InAppReview.instance;
+                    if (await inAppReview.isAvailable()) {
+                    // Platform.isAndroid
+                    // if (await inAppReview.isAvailable()) {
+                    //   inAppReview.requestReview();
+                    // } else
+                    inAppReview.openStoreListing(appStoreId: Strings.kAppStoreId);
+                    }},
                   ),
                   const Spacer(),
                   _buildOptionCard(
