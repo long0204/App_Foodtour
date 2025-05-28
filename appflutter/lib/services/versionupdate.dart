@@ -8,6 +8,7 @@ import 'package:upgrader/upgrader.dart';
 
 import '../config/constants/strings.dart';
 import '../config/l10n/l10n.dart';
+import '../core/route.dart';
 import '../utils/util.dart';
 import '../widgets/helpers/showmanager.dart';
 import 'fire_store.dart';
@@ -67,11 +68,12 @@ class MyAppVersion {
       final PackageInfo packageInfo = await _getPackageInfo();
 
       final url = await _getUrl();
+      final l10n = AppLocalizations.of(AppRouter.context!)!;
       if (storeVersion != packageInfo.version) {
         showManager.showSnackBar(
-          'Đã có phiên bản mới',
+          l10n.titleNewVersion,
           onPressed: () => launcher.launch(url),
-          label: 'Cập nhật',
+          label: l10n.update,
         );
       }
     } catch (e) {
@@ -84,6 +86,7 @@ class MyAppVersion {
       final PackageInfo packageInfo = await _getPackageInfo();
       final String packageVersion = packageInfo.version;
       final url = await _getUrl();
+      final l10n = AppLocalizations.of(AppRouter.context!)!;
 
       final softIds = await firestore.getIds(_softDocId);
       final forceIds = await firestore.getIds(_forceDocId);
@@ -94,9 +97,9 @@ class MyAppVersion {
         );
       } else if (softIds.contains(packageVersion)) {
         showManager.showAlertDialog(
-          title: 'Đã có phiên bản mới',
-          content: 'Cập nhật ngay để có trải nghiệm tốt hơn',
-          rTxt: 'Cập nhật',
+          title: l10n.titleNewVersion,
+          content: l10n.contentNerVersion,
+          rTxt: l10n.update,
           onPressedR: () => launcher.launch(url),
           barrierDismissible: false,
         );

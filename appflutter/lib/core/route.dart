@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../ui/create_group/create_group_screen.dart';
 import '../ui/first_screen/root_screen.dart';
 import '../services/crashlytics.dart';
 import '../ui/auth/login/login_screen.dart';
@@ -10,8 +11,10 @@ import '../ui/auth/register/register_screen.dart';
 import '../ui/detail/DetailScreen.dart';
 import '../ui/detail/widget/ratingscreen.dart';
 import '../ui/favorite_address/favorite_address.dart';
+import '../ui/group_home/group_home_sc.dart';
 import '../ui/home/HomeScreen.dart';
 import '../ui/list_address/list_address_screen.dart';
+import '../ui/mode_selection/mode_selection_sc.dart';
 import '../ui/plan/plan_sc.dart';
 import '../ui/plan/widget/create_plan.dart';
 import '../ui/root/root_screen.dart';
@@ -61,25 +64,49 @@ class AppRouter {
     refreshListenable: authNotifier,
     navigatorKey: _rootNavigatorKey,
     redirect: (_, state) {
-      final goingToLogin = state.uri.toString() == loginRoute;
-      final goingToRegister = state.uri.toString() == registerRoute;
+      // final goingToLogin = state.uri.toString() == loginRoute;
+      // final goingToRegister = state.uri.toString() == registerRoute;
+      //
+      // if (!_isLoggedIn && !(goingToLogin || goingToRegister)) {
+      //   return loginRoute;
+      // }
+      //
+      // if (_isLoggedIn && (goingToLogin || goingToRegister)) {
+      //   return rootRoute;
+      // }
+      //
+      // return null;
+        final goingToLogin = state.uri.toString() == loginRoute;
+        final goingToRegister = state.uri.toString() == registerRoute;
+        final goingToModeSelect = state.uri.toString() == modeSelectRoute;
 
-      if (!_isLoggedIn && !(goingToLogin || goingToRegister)) {
-        return loginRoute;
-      }
+        if (!_isLoggedIn && !(goingToLogin || goingToRegister)) {
+          return loginRoute;
+        }
 
-      if (_isLoggedIn && (goingToLogin || goingToRegister)) {
-        return rootRoute;
-      }
+        if (_isLoggedIn && (goingToLogin || goingToRegister)) {
+          return rootRoute;
+        }
 
-      return null;
+        final box = Hive.box('userBox');
+        final selectedMode = box.get('selectedMode');
+
+        if (selectedMode == null && !goingToModeSelect) {
+          return modeSelectRoute;
+        }
+        return null;
     },
 
     routes: [
       GoRoute(
         path: rootRoute,
         builder: (_, __) => const RootScreen(),
-      ),GoRoute(
+      ),
+      GoRoute(
+        path: modeSelectRoute,
+        builder: (_, __) => const ModeSelectScreen(),
+      ),
+      GoRoute(
         path: loginRoute,
         builder: (_, __) => const LoginScreen(),
       ),
@@ -90,6 +117,12 @@ class AppRouter {
       GoRoute(
         path: homeRoute,
         builder: (_, __) => const HomeScreen(),
+      ),GoRoute(
+        path: groupRoute,
+        builder: (_, __) => const GroupHomeScreen(),
+      ),GoRoute(
+        path: createGroupRoute,
+        builder: (_, __) => const CreateGroupScreen(),
       ),
       GoRoute(
         path: onboardingRoute,
@@ -175,3 +208,6 @@ const planRoute = '/plan';
 const createplanRoute = '/createplan';
 const onboardingRoute = '/dashboard';
 const rateRoute = '/rate';
+const groupRoute = '/grouphome';
+const createGroupRoute = '/creategroup';
+const modeSelectRoute = '/mode-select';
