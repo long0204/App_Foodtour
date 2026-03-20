@@ -1,70 +1,44 @@
-import 'package:Foodtour/services/auth_service.dart';
-import 'package:Foodtour/services/onboarding_loader.dart';
-import 'package:Foodtour/services/versionupdate.dart';
-import 'package:Foodtour/utils/logger.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'core/route.dart';
-import 'data/model/favorite_address_model.dart';
 import 'data/model/restaurant.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp();
-    await signInAnonymouslyIfNeeded();
-  } catch (e) {
-    logger.e("❌ Firebase initialization failed: $e");
-  }
-
+  await Firebase.initializeApp();
   await Hive.initFlutter();
-  Hive.registerAdapter(FavoritePlaceAdapter());
   Hive.registerAdapter(RestaurantAdapter());
-  await Hive.openBox<FavoritePlace>('favorites');
   await Hive.openBox<Restaurant>('restaurants');
   await Hive.openBox('userBox');
 
-  await authService.init();
-
-  await AppRouter.initRouterLoginStatus();
-  final username = authService.getUsername();
-  if (username != null) {
-    await fetchAndSaveOnboardingData(username);
-  }
-  appVersion
-    ..checkForceUpdate()
-    ..checkStoreVersion();
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: FoodTourApp()));
 }
 
-Future<void> signInAnonymouslyIfNeeded() async {
-  final auth = FirebaseAuth.instance;
-  if (auth.currentUser == null) {
-    await auth.signInAnonymously();
-    logger.d("✅ Đã đăng nhập ẩn danh");
-  } else {
-    logger.w("ℹ️ Đã có user: ${auth.currentUser!.uid}");
-  }
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class FoodTourApp extends StatelessWidget {
+  const FoodTourApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: AppRouter.router,
-      title: 'Foodtour',
-      theme: ThemeData(
-        primaryColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.red[100],
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp.router(
+          title: 'FoodTour Cộng Đồng',
+          debugShowCheckedModeBanner: false,
+          routerConfig: AppRouter.router,
+          theme: ThemeData(
+            primarySwatch: Colors.red,
+            scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+            useMaterial3: true,
+          ),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:Foodtour/config/constants/env.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
 
 Future<List<Map<String, dynamic>>> fetchGoogleSheetItems() async {
   const String range = 'Sheet1!A3:E1000';
@@ -26,4 +28,15 @@ Future<List<Map<String, dynamic>>> fetchGoogleSheetItems() async {
   } else {
     throw Exception('Không load được dữ liệu từ Google Sheets');
   }
+}
+Future<LatLng?> getCoordinatesFromAddress(String address) async {
+  try {
+    List<Location> locations = await locationFromAddress(address);
+    if (locations.isNotEmpty) {
+      return LatLng(locations.first.latitude, locations.first.longitude);
+    }
+  } catch (e) {
+    print("Lỗi chuyển đổi địa chỉ: $e");
+  }
+  return null;
 }

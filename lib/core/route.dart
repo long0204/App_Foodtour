@@ -2,21 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../ui/create_group/create_group_screen.dart';
-import '../ui/first_screen/root_screen.dart';
+import '../ui/add_place/add_place_screen.dart';
 import '../services/crashlytics.dart';
 import '../ui/auth/login/login_screen.dart';
 import '../ui/auth/provider/auth_notifier.dart';
 import '../ui/auth/register/register_screen.dart';
-import '../ui/detail/DetailScreen.dart';
-import '../ui/detail/widget/ratingscreen.dart';
 import '../ui/favorite_address/favorite_address.dart';
-import '../ui/group_home/group_home_sc.dart';
-import '../ui/home/HomeScreen.dart';
-import '../ui/list_address/list_address_screen.dart';
-import '../ui/mode_selection/mode_selection_sc.dart';
-import '../ui/plan/plan_sc.dart';
-import '../ui/plan/widget/create_plan.dart';
+import '../ui/home/home_screen.dart';
+import '../ui/map/food_map_screen.dart';
 import '../ui/root/root_screen.dart';
 import '../ui/spinWheel/SpinWheelScreen.dart';
 
@@ -76,35 +69,31 @@ class AppRouter {
       // }
       //
       // return null;
-        final goingToLogin = state.uri.toString() == loginRoute;
-        final goingToRegister = state.uri.toString() == registerRoute;
-        final goingToModeSelect = state.uri.toString() == modeSelectRoute;
-
-        if (!_isLoggedIn && !(goingToLogin || goingToRegister)) {
-          return loginRoute;
-        }
-
-        if (_isLoggedIn && (goingToLogin || goingToRegister)) {
-          return rootRoute;
-        }
-
-        final box = Hive.box('userBox');
-        final selectedMode = box.get('selectedMode');
-
-        if (selectedMode == null && !goingToModeSelect) {
-          return modeSelectRoute;
-        }
-        return null;
+      //   final goingToLogin = state.uri.toString() == loginRoute;
+      //   final goingToRegister = state.uri.toString() == registerRoute;
+      //   final goingToModeSelect = state.uri.toString() == modeSelectRoute;
+      //
+      //   if (!_isLoggedIn && !(goingToLogin || goingToRegister)) {
+      //     return loginRoute;
+      //   }
+      //
+      //   if (_isLoggedIn && (goingToLogin || goingToRegister)) {
+      //     return rootRoute;
+      //   }
+      //
+      //   final box = Hive.box('userBox');
+      //   final selectedMode = box.get('selectedMode');
+      //
+      //   if (selectedMode == null && !goingToModeSelect) {
+      //     return modeSelectRoute;
+      //   }
+      //   return null;
     },
 
     routes: [
       GoRoute(
         path: rootRoute,
         builder: (_, __) => const RootScreen(),
-      ),
-      GoRoute(
-        path: modeSelectRoute,
-        builder: (_, __) => const ModeSelectScreen(),
       ),
       GoRoute(
         path: loginRoute,
@@ -117,39 +106,13 @@ class AppRouter {
       GoRoute(
         path: homeRoute,
         builder: (_, __) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: foodMapRoute,
+        builder: (_, __) => const FoodMapScreen(),
       ),GoRoute(
-        path: groupRoute,
-        builder: (_, __) => const GroupHomeScreen(),
-      ),GoRoute(
-        path: createGroupRoute,
-        builder: (_, __) => const CreateGroupScreen(),
-      ),
-      GoRoute(
-        path: onboardingRoute,
-        builder: (_, __) => const OnboardingScreen(),
-      ),
-      GoRoute(
-        path: planRoute,
-        builder: (_, __) => const PlansTab(),
-      ),
-      GoRoute(
-        path: addressRoute,
-        builder: (_, __) => const RestaurantListScreen(),
-      ),
-      GoRoute(
-        path: createplanRoute,
-        builder: (_, __) => const CreatePlanScreen(),
-      ),
-      GoRoute(
-        path: rateRoute,
-        builder: (_, s) =>
-            RatingScreen(place: s.extra as Map<String, dynamic>),
-      ),
-      GoRoute(
-        path: detailRoute,
-        builder: (_, __) => const DetailScreen(
-          selectedItem: {},
-        ),
+        path: addPlaceRoute,
+        builder: (_, __) => const AddPlaceScreen(),
       ),
       GoRoute(
         path: favorite,
@@ -211,3 +174,5 @@ const rateRoute = '/rate';
 const groupRoute = '/grouphome';
 const createGroupRoute = '/creategroup';
 const modeSelectRoute = '/mode-select';
+const foodMapRoute = '/food-map';
+const addPlaceRoute = '/add-place';

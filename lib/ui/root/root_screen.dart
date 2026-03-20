@@ -1,75 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../account/account_screen.dart';
-import '../home/HomeScreen.dart';
-import '../home/widget/appbar_love.dart';
-import '../list_address/list_address_screen.dart';
-import '../plan/plan_sc.dart';
+import '../add_place/add_place_screen.dart';
+import '../home/home_screen.dart';
+import '../map/food_map_screen.dart';
 
-class RootScreen extends ConsumerStatefulWidget {
+class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
 
   @override
-  ConsumerState<RootScreen> createState() => _RootScreenState();
+  State<RootScreen> createState() => _RootScreenState();
 }
 
-class _RootScreenState extends ConsumerState<RootScreen> {
-  int _selectedIndex = 0;
+class _RootScreenState extends State<RootScreen> {
+  int _currentIndex = 0;
 
-  List<Widget> _screens = [
+  final List<Widget> _pages = [
     const HomeScreen(),
-    const PlansTab(),
-    const RestaurantListScreen(),
+     const FoodMapScreen(),
+     const AddPlaceScreen(),
+    //const RestaurantListScreen(),
     const AccountScreen(),
   ];
-
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-  PreferredSizeWidget? _buildAppBar(int index) {
-    switch (index) {
-      case 0:
-        return const LoveAppBar();
-      default:
-        return null;
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(_selectedIndex),
-      backgroundColor: Colors.red.shade300,
-      body: _screens[_selectedIndex],
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.red,
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.redAccent,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang Chủ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_note),
-            label: 'Kế Hoạch',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.store),
-            label: 'Danh sách quán',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Tài khoản',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Khám phá'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Bản đồ'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle, size: 32), label: 'Chia sẻ'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Danh sách'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Tôi'),
         ],
       ),
-
     );
   }
 }
