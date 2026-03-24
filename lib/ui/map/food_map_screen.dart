@@ -1,73 +1,451 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:geolocator/geolocator.dart';
+import '../../core/route.dart';
 import '../../data/model/restaurant.dart';
 import '../../providers/community_provider.dart';
+import '../../services/location_service.dart';
 
-class FoodMapScreen extends ConsumerWidget {
+class FoodMapScreen extends ConsumerStatefulWidget {
   const FoodMapScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FoodMapScreen> createState() => _FoodMapScreenState();
+}
+
+class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
+  final MapController _mapController = MapController();
+  Position? _userPosition;
+  bool _isLoadingLocation = true;
+  double _currentZoom = 14.0;
+  List<LatLng> _routePoints = [];
+
+  StreamSubscription<Position>? _positionStream;
+  Restaurant? _navigatingTo;
+  bool _isNavigating = false;
+
+  List<dynamic> _navigationSteps = [];
+  int _currentStepIndex = 0;
+  String _currentInstruction = "Đang bắt đầu...";
+  double _distanceToNextStep = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocationTracking();
+  }
+
+  void _initLocationTracking() async {
+    try {
+      final initialPos = await locationService.getCurrentPosition();
+      if (mounted) {
+        setState(() {
+          _userPosition = initialPos;
+          _isLoadingLocation = false;
+        });
+        if (initialPos != null) {
+          _mapController.move(LatLng(initialPos.latitude, initialPos.longitude), 14.0);
+        }
+      }
+
+      _positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 5,
+        ),
+      ).listen((Position position) {
+        if (!mounted) return;
+        setState(() => _userPosition = position);
+
+        if (_isNavigating && _navigatingTo != null) {
+          _updateNavigationInfo(position);
+        }
+      });
+    } catch (e) {
+      if (mounted) setState(() => _isLoadingLocation = false);
+    }
+  }
+
+  String _translateManeuver(Map<String, dynamic> maneuver) {
+    String type = maneuver['type'] ?? '';
+    String modifier = maneuver['modifier'] ?? '';
+
+    switch (type) {
+      case 'turn':
+        if (modifier.contains('left')) return "Rẽ trái";
+        if (modifier.contains('right')) return "Rẽ phải";
+        return "Chuẩn bị rẽ";
+      case 'continue':
+        return "Tiếp tục đi thẳng";
+      case 'depart':
+        return "Bắt đầu di chuyển";
+      case 'arrive':
+        return "Bạn đã tới nơi";
+      case 'merge':
+        return "Đi vào làn đường chính";
+      case 'roundabout':
+        return "Đi vào vòng xuyến";
+      default:
+        return "Tiếp tục đi theo đường";
+    }
+  }
+
+  void _updateNavigationInfo(Position currentPos) {
+    if (_navigationSteps.isEmpty) return;
+
+    final step = _navigationSteps[_currentStepIndex];
+    final List<dynamic> stepLoc = step['maneuver']['location'];
+    final stepLatLng = LatLng(stepLoc[1], stepLoc[0]);
+
+    double distance = Geolocator.distanceBetween(
+      currentPos.latitude,
+      currentPos.longitude,
+      stepLatLng.latitude,
+      stepLatLng.longitude,
+    );
+
+    setState(() {
+      _distanceToNextStep = distance;
+      _currentInstruction = _translateManeuver(step['maneuver']);
+    });
+
+    if (distance < 500 && _currentStepIndex < _navigationSteps.length - 1) {
+      setState(() => _currentStepIndex++);
+    }
+
+    _mapController.move(LatLng(currentPos.latitude, currentPos.longitude), 17.0);
+  }
+
+  Future<void> _startNavigation(Restaurant res) async {
+    if (_userPosition == null) return;
+
+    final url = Uri.parse(
+        'http://router.project-osrm.org/route/v1/driving/${_userPosition!.longitude},${_userPosition!.latitude};${res.longitude},${res.latitude}?geometries=geojson&steps=true');
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final route = data['routes'][0];
+        final List<dynamic> coords = route['geometry']['coordinates'];
+
+        setState(() {
+          _routePoints = coords.map((c) => LatLng(c[1], c[0])).toList();
+          _navigationSteps = route['legs'][0]['steps'];
+          _currentStepIndex = 0;
+          _isNavigating = true;
+          _navigatingTo = res;
+        });
+      }
+    } catch (e) {
+      debugPrint("Lỗi dẫn đường: $e");
+    }
+  }
+
+  void _stopNavigation() {
+    setState(() {
+      _isNavigating = false;
+      _navigatingTo = null;
+      _routePoints = [];
+      _navigationSteps = [];
+    });
+  }
+
+  @override
+  void dispose() {
+    _positionStream?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final restaurantsAsync = ref.watch(communityProvider);
 
     return Scaffold(
-      body: FlutterMap(
-        options: MapOptions(
-          initialCenter: LatLng(10.762622, 106.660172),
-          initialZoom: 13.0,
-        ),
+      body: Stack(
         children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.dinos.foodtour',
-          ),
-          MarkerLayer(
-            markers: restaurantsAsync.maybeWhen(
-              data: (list) => list.map((res) {
-                return Marker(
-                  point: LatLng(10.762622, 106.660172),
-                  width: 40,
-                  height: 40,
-                  child: GestureDetector(
-                    onTap: () => _showRestaurantQuickView(context, res),
-                    child: const Icon(Icons.location_on, color: Colors.red, size: 40),
-                  ),
-                );
-              }).toList(),
-              orElse: () => [],
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: const LatLng(21.0285, 105.8542),
+              initialZoom: 14.0,
+              onPositionChanged: (p, _) => setState(() => _currentZoom = p.zoom!),
             ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.dinos.foodtour',
+              ),
+              PolylineLayer(
+                polylines: [
+                  if (_routePoints.isNotEmpty)
+                    Polyline(
+                      points: _routePoints,
+                      color: Colors.blueAccent.withOpacity(0.8),
+                      strokeWidth: 6.0,
+                    ),
+                ],
+              ),
+              MarkerLayer(
+                markers: [
+                  if (_userPosition != null)
+                    Marker(
+                      point: LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                      width: 60,
+                      height: 60,
+                      child: const Icon(Icons.navigation, color: Colors.blue, size: 40),
+                    ),
+                  ...restaurantsAsync.maybeWhen(
+                    data: (list) {
+                      final validRestaurants = list
+                          .where((res) =>
+                      res.latitude != null && res.longitude != null)
+                          .toList();
+
+                      return validRestaurants.map((res) {
+                        final isZoomedIn = _currentZoom >= 15.5;
+
+                        final labelText = isZoomedIn
+                            ? "${res.name ?? ''}\n⭐${res.rating}"
+                            : (res.type ?? '');
+
+                        return Marker(
+                          point: LatLng(res.latitude!, res.longitude!),
+                          width: 200,
+                          height: 100,
+                          alignment: Alignment.center,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () => _showRestaurantQuickView(context, res),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.redAccent,
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(color: Colors.redAccent, width: 2),
+                                      boxShadow: const [
+                                        BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          labelText,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: isZoomedIn ? 11 : 12,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  Transform.translate(
+                                    offset: const Offset(0, -7.5),
+                                    child: Transform.rotate(
+                                      angle: 3.14159 / 4,
+                                      child: Container(
+                                        width: 12,
+                                        height: 12,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.redAccent,
+                                          border: Border(
+                                            bottom: BorderSide(color: Colors.redAccent, width: 2),
+                                            right: BorderSide(color: Colors.redAccent, width: 2),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList();
+                    },
+                    orElse: () => [],
+                  ),
+                ],
+              ),
+            ],
           ),
+          if (_isNavigating && _navigationSteps.isNotEmpty)
+            Positioned(
+              top: 50.h,
+              left: 16.w,
+              right: 16.w,
+              child: Container(
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1B5E20),
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
+                ),
+                child: Row(
+                  children: [
+                    _buildStepIcon(_navigationSteps[_currentStepIndex]['maneuver']['modifier']),
+                    Gap(16.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _distanceToNextStep > 1000
+                                ? "${(_distanceToNextStep/1000).toStringAsFixed(1)} km"
+                                : "${_distanceToNextStep.toStringAsFixed(0)} m",
+                            style: TextStyle(color: Colors.white, fontSize: 22.sp, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            _currentInstruction,
+                            style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: _stopNavigation,
+                    )
+                  ],
+                ),
+              ),
+            ),
+
+          if (_isLoadingLocation) const Center(child: CircularProgressIndicator()),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _mapController.move(LatLng(_userPosition!.latitude, _userPosition!.longitude), 16.0),
+        backgroundColor: Colors.white,
+        child: const Icon(Icons.my_location, color: Colors.blue),
+      ),
     );
+  }
+
+  Widget _buildStepIcon(String? modifier) {
+    IconData icon;
+    if (modifier == null) return const Icon(Icons.straight, color: Colors.white, size: 35);
+
+    if (modifier.contains('left')) {
+      icon = Icons.turn_left;
+    } else if (modifier.contains('right')) {
+      icon = Icons.turn_right;
+    } else {
+      icon = Icons.straight;
+    }
+    return Icon(icon, color: Colors.white, size: 40.sp);
   }
 
   void _showRestaurantQuickView(BuildContext context, Restaurant res) {
     showModalBottomSheet(
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
       builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        height: 150,
-        child: Row(
+        padding: EdgeInsets.all(16.w),
+        height: 200.h,
+        child: Column(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(res.imageUrls?.first ?? '', width: 100, height: 100, fit: BoxFit.cover),
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Image.network(
+                    res.imageUrls.isNotEmpty
+                        ? res.imageUrls.first
+                        : 'https://via.placeholder.com/150',
+                    width: 80.w,
+                    height: 80.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 80.w, height: 80.w, color: Colors.grey[300],
+                      child: const Icon(Icons.broken_image),
+                    ),
+                  ),
+                ),
+                Gap(12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        res.name,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Gap(8.h),
+                      Text(
+                        res.address,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                      Gap(8.h),
+                      Row(
+                        children: [const Icon(Icons.star, color: Colors.orange, size: 20),
+                          Text(" ${res.rating}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 14)),],
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(res.name ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                  Text(res.address ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
-                  Text("⭐ ${res.rating}", style: const TextStyle(color: Colors.orange)),
-                ],
-              ),
-            ),
+            const Spacer(),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      push(detailRoute, extra: res);
+                    },
+                    icon: const Icon(Icons.info_outline, color: Colors.blue),
+                    label: const Text("Chi tiết"),
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      side: const BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                ),
+                Gap(12.w),
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _startNavigation(res);
+                    },
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text("Bắt đầu"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),

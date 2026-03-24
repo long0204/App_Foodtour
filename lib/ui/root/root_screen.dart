@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../account/account_screen.dart';
 import '../add_place/add_place_screen.dart';
 import '../home/home_screen.dart';
+import '../list_address/restaurant_list_screen.dart';
 import '../map/food_map_screen.dart';
 
 class RootScreen extends StatefulWidget {
@@ -17,9 +18,9 @@ class _RootScreenState extends State<RootScreen> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-     const FoodMapScreen(),
-     const AddPlaceScreen(),
-    //const RestaurantListScreen(),
+    const FoodMapScreen(),
+    const AddPlaceScreen(),
+    const RestaurantListScreen(),
     const AccountScreen(),
   ];
 
@@ -36,8 +37,10 @@ class _RootScreenState extends State<RootScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Khám phá'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Bản đồ'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle, size: 32), label: 'Chia sẻ'),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Danh sách'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_circle, size: 32), label: 'Chia sẻ'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt), label: 'Danh sách'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Tôi'),
         ],
       ),

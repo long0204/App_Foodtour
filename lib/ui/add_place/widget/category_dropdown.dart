@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryDropdown extends StatefulWidget {
-  const CategoryDropdown({super.key});
+  final Function(String) onCategorySelected;
+
+  const CategoryDropdown({super.key, required this.onCategorySelected});
 
   @override
   State<CategoryDropdown> createState() => _CategoryDropdownState();
@@ -10,7 +12,21 @@ class CategoryDropdown extends StatefulWidget {
 
 class _CategoryDropdownState extends State<CategoryDropdown> {
   String? selectedValue;
-  final List<String> categories = ["Ăn sáng", "Cà phê", "Lẩu", "Ăn vặt", "Cơm", "Hải sản"];
+  final List<String> categories = [
+    "Bánh",
+    "Coffee",
+    "Lẩu",
+    "Bún",
+    "Chay",
+    "Chè",
+    "Gà",
+    "Nem",
+    "Nướng",
+    "Ốc",
+    "Trà sữa",
+    "Vịt",
+    "Cơm"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +47,9 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
         setState(() {
           selectedValue = value;
         });
+        if (value != null) {
+          widget.onCategorySelected(value); // Gọi callback truyền data ra ngoài
+        }
       },
       validator: (value) => value == null ? "Vui lòng chọn loại hình" : null,
     );

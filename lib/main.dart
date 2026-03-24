@@ -5,13 +5,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/route.dart';
 import 'data/model/restaurant.dart';
+import 'data/model/review.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
   await Hive.initFlutter();
+
+  Hive.registerAdapter(ReviewAdapter());
   Hive.registerAdapter(RestaurantAdapter());
+
   await Hive.openBox<Restaurant>('restaurants');
   await Hive.openBox('userBox');
 

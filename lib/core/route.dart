@@ -2,13 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../data/model/restaurant.dart';
 import '../ui/add_place/add_place_screen.dart';
 import '../services/crashlytics.dart';
+import '../ui/address/restaurant_detail_screen.dart';
 import '../ui/auth/login/login_screen.dart';
 import '../ui/auth/provider/auth_notifier.dart';
 import '../ui/auth/register/register_screen.dart';
 import '../ui/favorite_address/favorite_address.dart';
 import '../ui/home/home_screen.dart';
+import '../ui/list_address/community_list_screen.dart';
 import '../ui/map/food_map_screen.dart';
 import '../ui/root/root_screen.dart';
 import '../ui/spinWheel/SpinWheelScreen.dart';
@@ -122,6 +125,21 @@ class AppRouter {
         path: spinRoute,
         builder: (_, __) => const SpinWheelScreen(),
       ),
+      GoRoute(
+        path: communityListRoute,
+        builder: (context, state) {
+          final categoryName = state.extra as String? ?? "Danh mục";
+          return CommunityListScreen(categoryName: categoryName);
+        },
+      ),
+      GoRoute(
+        path: detailRoute,
+        builder: (context, state) {
+          final restaurant = state.extra as Restaurant;
+
+          return RestaurantDetailScreen(restaurant: restaurant);
+        },
+      ),
     ],
   );
 
@@ -176,3 +194,4 @@ const createGroupRoute = '/creategroup';
 const modeSelectRoute = '/mode-select';
 const foodMapRoute = '/food-map';
 const addPlaceRoute = '/add-place';
+const communityListRoute = '/community-list';
