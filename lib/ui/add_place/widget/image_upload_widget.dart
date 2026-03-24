@@ -1,13 +1,11 @@
-// File: lib/presentation/add_place/widget/image_upload_widget.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 
-// ĐỔI TÊN LỚP VÀ CALLBACK CỦA BẠN
 class MultiImageUploadWidget extends StatefulWidget {
-  final Function(List<File>) onImagesSelected; // CALLBACK MỚI: Trả về một danh sách
+  final Function(List<File>) onImagesSelected;
 
   const MultiImageUploadWidget({super.key, required this.onImagesSelected});
 
@@ -16,20 +14,19 @@ class MultiImageUploadWidget extends StatefulWidget {
 }
 
 class _MultiImageUploadWidgetState extends State<MultiImageUploadWidget> {
-  // SỬ DỤNG DANH SÁCH ẢNH
-  List<File> _images = [];
-  final ImagePicker _picker = ImagePicker(); // Sử dụng ImagePicker trực tiếp
+  final List<File> _images = [];
+  final ImagePicker _picker = ImagePicker();
+
+  final Color _bgColor = const Color(0xFFF5F1EA);
+  final Color _cardColor = Colors.white;
+  final Color _accentColor = const Color(0xFFE8C39F);
 
   Future<void> _pickImages() async {
-    // SỬ DỤNG HÀM pickMultiImage ĐỂ CHỌN NHIỀU ẢNH
-    final List<XFile>? pickedFiles = await _picker.pickMultiImage();
-
-    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+    final List<XFile> pickedFiles = await _picker.pickMultiImage();
+    if (pickedFiles.isNotEmpty) {
       setState(() {
-        // Thêm các ảnh mới được chọn vào danh sách
-        _images.addAll(pickedFiles.map((xFile) => File(xFile.path)));
+        _images.addAll(pickedFiles.map((x) => File(x.path)));
       });
-      // Gọi callback để cập nhật danh sách ảnh ra ngoài màn hình chính
       widget.onImagesSelected(_images);
     }
   }
@@ -38,79 +35,140 @@ class _MultiImageUploadWidgetState extends State<MultiImageUploadWidget> {
     setState(() {
       _images.removeAt(index);
     });
-    // Gọi callback để cập nhật danh sách ảnh ra ngoài màn hình chính
     widget.onImagesSelected(_images);
   }
 
   @override
   Widget build(BuildContext context) {
-    // Giao diện là một ListView nằm ngang
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: _cardColor,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildImageHeader(),
+          Gap(15.h),
+          _buildImagePickerRow(),
+          Gap(12.h),
+          Text(
+            "Thêm hình ảnh quán ăn (tối đa 5)",
+            style: TextStyle(
+                color: Colors.grey[700],
+                fontSize: 13.sp,
+                fontWeight: FontWeight.normal),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.collections, color: _accentColor, size: 22.sp),
+            Gap(10.w),
+            Text("Hình Ảnh",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp)),
+          ],
+        ),
+        ElevatedButton.icon(
+          onPressed: _pickImages,
+          icon: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
+          label: const Text("Chọn Hình Ảnh",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _accentColor,
+            foregroundColor: Colors.white,
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+            elevation: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImagePickerRow() {
     return SizedBox(
-      height: 120.h,
+      height: 70.w,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: _images.length + 1, // +1 là nút "Thêm ảnh"
+        itemCount: _images.length + 1,
         itemBuilder: (context, index) {
-          if (index == 0) {
-            // Nút "Thêm ảnh"
-            return Padding(
-              padding: EdgeInsets.only(right: 12.w),
-              child: GestureDetector(
-                onTap: _pickImages,
-                child: Container(
-                  width: 100.w,
-                  height: 100.h,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: Colors.grey[400]!),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_a_photo_outlined, color: Colors.grey[600], size: 32.sp),
-                      SizedBox(height: 4.h),
-                      Text("Thêm ảnh", style: TextStyle(color: Colors.grey[600], fontSize: 12.sp)),
-                      Text("(${_images.length}/5)", style: TextStyle(color: Colors.grey[600], fontSize: 10.sp)),
-                    ],
-                  ),
-                ),
-              ),
-            );
+          if (index < _images.length) {
+            return _buildImagePreview(index);
           } else {
-            // Hiển thị một ảnh
-            final int imageIndex = index - 1; // Chỉ số chính xác trong danh sách _images
-            final file = _images[imageIndex];
-            return Padding(
-              padding: EdgeInsets.only(right: 12.w),
-              child: Stack(
-                children: [
-                  Container(
-                    width: 100.w,
-                    height: 100.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      image: DecorationImage(image: FileImage(file), fit: BoxFit.cover),
-                    ),
-                  ),
-                  Positioned(
-                    top: 4.h,
-                    right: 4.w,
-                    child: GestureDetector(
-                      onTap: () => _removeImage(imageIndex),
-                      child: Container(
-                        padding: EdgeInsets.all(2.r),
-                        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                        child: Icon(Icons.close, color: Colors.red, size: 16.sp),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            return GestureDetector(
+              onTap: _pickImages,
+              child: _buildAddImageButton(),
             );
           }
         },
       ),
+    );
+  }
+
+  Widget _buildImagePreview(int index) {
+    return Padding(
+      padding: EdgeInsets.only(right: 12.w),
+      child: Stack(
+        children: [
+          Container(
+            width: 65.w,
+            height: 65.w,
+            decoration: BoxDecoration(
+              color: _bgColor,
+              borderRadius: BorderRadius.circular(15.r),
+              border: Border.all(color: Colors.grey[200]!, width: 2),
+              image: DecorationImage(
+                image: FileImage(_images[index]),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 2.h,
+            right: 2.w,
+            child: GestureDetector(
+              onTap: () => _removeImage(index),
+              child: Container(
+                padding: EdgeInsets.all(2.r),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, color: Colors.red, size: 14),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddImageButton() {
+    return Container(
+      width: 65.w,
+      height: 65.w,
+      decoration: BoxDecoration(
+        color: _bgColor,
+        borderRadius: BorderRadius.circular(15.r),
+        border: Border.all(
+          color: Colors.grey[300]!,
+          width: 2,
+          style: BorderStyle.solid,
+        ),
+      ),
+      child: const Icon(Icons.add, color: Colors.grey),
     );
   }
 }

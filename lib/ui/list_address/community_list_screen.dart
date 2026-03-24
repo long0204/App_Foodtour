@@ -183,76 +183,69 @@ class RestaurantCardVertical extends StatelessWidget {
     if (userPosition != null && restaurant.latitude != null && restaurant.longitude != null) {
       double dist = Geolocator.distanceBetween(
           userPosition!.latitude, userPosition!.longitude, restaurant.latitude!, restaurant.longitude!);
-      if (dist < 1000) {
-        distanceStr = " • ${dist.toStringAsFixed(0)}m";
-      } else {
-        distanceStr = " • ${(dist / 1000).toStringAsFixed(1)}km";
-      }
+      distanceStr = dist < 1000 ? " • ${dist.toStringAsFixed(0)}m" : " • ${(dist / 1000).toStringAsFixed(1)}km";
     }
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // Đảm bảo column thu gọn
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
             child: Image.network(
-              restaurant.imageUrls != null && restaurant.imageUrls!.isNotEmpty
-                  ? restaurant.imageUrls![0]
-                  : 'https://via.placeholder.com/150',
-              height: 160.h,
+              restaurant.imageUrls.isNotEmpty ? restaurant.imageUrls![0] : 'https://via.placeholder.com/150',
+              height: 130.h,
               width: double.infinity,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(
-                height: 160.h,
-                color: Colors.grey[300],
-                child: const Icon(Icons.broken_image),
+                height: 130.h, color: Colors.grey[300], child: const Icon(Icons.broken_image),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(10.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   restaurant.name ?? '',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 4.h),
                 Row(
                   children: [
-                    Icon(Icons.location_on, size: 14.sp, color: Colors.grey),
+                    Icon(Icons.location_on, size: 12.sp, color: Colors.grey),
                     SizedBox(width: 4.w),
                     Expanded(
                       child: Text(
                         "${restaurant.address ?? ''}$distanceStr",
-                        style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                        style: TextStyle(color: Colors.grey, fontSize: 11.sp),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 6.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       restaurant.price ?? '0',
-                      style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 13.sp),
                     ),
                     Row(
                       children: [
-                        const Icon(Icons.star, color: Colors.orange, size: 16),
-                        Text(" ${restaurant.rating}"),
+                        const Icon(Icons.star, color: Colors.orange, size: 14),
+                        Text(" ${restaurant.rating}", style: TextStyle(fontSize: 12.sp)),
                       ],
                     ),
                   ],

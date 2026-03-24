@@ -14,10 +14,8 @@ import '../../core/route.dart';
 import '../../providers/community_provider.dart';
 import '../../providers/tab_provider.dart';
 import '../../services/location_service.dart';
-// import '../address/restaurant_detail_screen.dart'; // KHÔNG dùng màn hình detail ở đây
 import '../address/restaurant_detail_screen.dart';
-import '../spinWheel/SpinWheelScreen.dart';
-import 'widget/restaurant_card.dart'; // SỬ DỤNG RestaurantCard cho danh sách
+import '../list_address/community_list_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -57,10 +55,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 180.h,
+            expandedHeight: 200.h,
             pinned: true,
             elevation: 0,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.redAccent,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
               background: Stack(
@@ -79,14 +77,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.black.withOpacity(0.1),
-                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.6),
                           ],
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    bottom: 60.h,
+                    bottom: 70.h,
                     left: 20.w,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,27 +99,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ],
               ),
             ),
-          ),
-
-          SliverToBoxAdapter(
-            child: Transform.translate(
-              offset: Offset(0, -30.h),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Container(
-                  height: 60.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15.r),
-                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))],
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Tìm quán ăn, món ăn...",
-                      prefixIcon: const Icon(Icons.search, color: Colors.blue),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.r), borderSide: BorderSide.none),
-                      filled: true,
-                      fillColor: Colors.white,
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(30.h),
+              child: Transform.translate(
+                offset: Offset(0, 30.h),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 10.h),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.r),
+                      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))],
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Tìm quán ăn, món ăn...",
+                        prefixIcon: const Icon(Icons.search, color: Colors.redAccent),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.r), borderSide: BorderSide.none),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: EdgeInsets.symmetric(vertical: 10.h),
+                      ),
                     ),
                   ),
                 ),
@@ -129,15 +127,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
 
-          // SliverToBoxAdapter(
-          //   child: Padding(
-          //     padding: EdgeInsets.only(top: 0.h, bottom: 20.h),
-          //     child: SizedBox(
-          //       height: 200.h, // Đặt chiều cao phù hợp cho vòng quay
-          //       child: const SpinWheelScreen(),
-          //     ),
-          //   ),
-          // ),
+          SliverToBoxAdapter(child: Gap(40.h)),
 
           SliverToBoxAdapter(
             child: Padding(
@@ -223,22 +213,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   return const SliverToBoxAdapter(child: Center(child: Text("Không có địa điểm nào.")));
                 }
 
-                // Tìm đến phần SliverGrid trong file home_screen.dart và sửa như sau:
                 return SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 15.w,
                     mainAxisSpacing: 15.h,
-                    childAspectRatio: 0.7,
+                    childAspectRatio: 0.65,
                   ),
                   delegate: SliverChildBuilderDelegate(
                         (context, index) {
                       final restaurant = list[index];
                       return GestureDetector(
                         onTap: () {
-                          push(detailRoute, extra: restaurant); // Chỉ mở Detail khi ấn vào
+                          push(detailRoute, extra: restaurant);
                         },
-                        child: RestaurantDetailScreen(restaurant: restaurant),
+                        child: RestaurantCardVertical(restaurant: restaurant),
                       );
                     },
                     childCount: list.length,
@@ -250,7 +239,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
 
-          SliverToBoxAdapter(child: Gap(100.h)),
+          SliverToBoxAdapter(child: Gap(120.h)),
         ],
       ),
     );

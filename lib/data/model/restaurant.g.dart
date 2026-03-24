@@ -26,13 +26,15 @@ class RestaurantAdapter extends TypeAdapter<Restaurant> {
       imageUrls: (fields[6] as List).cast<String>(),
       description: fields[7] as String?,
       reviews: (fields[8] as List?)?.cast<Review>(),
+      latitude: fields[9] as double?,
+      longitude: fields[10] as double?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Restaurant obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -50,7 +52,11 @@ class RestaurantAdapter extends TypeAdapter<Restaurant> {
       ..writeByte(7)
       ..write(obj.description)
       ..writeByte(8)
-      ..write(obj.reviews);
+      ..write(obj.reviews)
+      ..writeByte(9)
+      ..write(obj.latitude)
+      ..writeByte(10)
+      ..write(obj.longitude);
   }
 
   @override
