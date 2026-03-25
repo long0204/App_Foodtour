@@ -1,0 +1,10 @@
+synthetic-package: false
+# arb-dir: lib/config/l10n
+# template-arb-file: app_vi.arb
+# output-localization-file: app_l10n.dart
+# # untranslated-messages-file: lib/config/l10n/untranslated_messages_report.txt
+arb-dir: lib/config/l10n
+template-arb-file: app_vi.arb
+output-localization-file: app_l10n.dart
+output-class: AppLocalizations
+output-dir: lib/config/gen

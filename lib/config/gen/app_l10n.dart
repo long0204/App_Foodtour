@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Trang chủ'**
   String get homePage;
 
+  /// No description provided for @withdraw.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thu nhập'**
+  String get withdraw;
+
   /// No description provided for @news.
   ///
   /// In vi, this message translates to:
@@ -157,6 +163,24 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Xin chào,'**
   String get loginTitle;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chào buổi sáng!'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chào buổi chiều!'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chào buổi tối!'**
+  String get goodEvening;
 
   /// No description provided for @registerTitle.
   ///
@@ -569,7 +593,7 @@ abstract class AppLocalizations {
   /// No description provided for @delWarning1.
   ///
   /// In vi, this message translates to:
-  /// **'- Xoá các dữ liệu của bạn trên ứng dụng TingX.'**
+  /// **'- Xoá các dữ liệu của bạn trên ứng dụng tingX.'**
   String get delWarning1;
 
   /// No description provided for @delWarning2.
@@ -1901,7 +1925,7 @@ abstract class AppLocalizations {
   /// No description provided for @cosmetics.
   ///
   /// In vi, this message translates to:
-  /// **'Mỹ phẩm'**
+  /// **'Mua sắm & Dịch vụ'**
   String get cosmetics;
 
   /// No description provided for @tooManyTries.
@@ -2051,7 +2075,7 @@ abstract class AppLocalizations {
   /// No description provided for @passLengthInvalid.
   ///
   /// In vi, this message translates to:
-  /// **'Mật khẩu có độ dài từ 6 ký tự'**
+  /// **'Mật khẩu có độ dài từ 8 ký tự'**
   String get passLengthInvalid;
 
   /// No description provided for @passInvalid.
@@ -2378,11 +2402,23 @@ abstract class AppLocalizations {
   /// **'Cập nhật ngay để có trải nghiệm tốt hơn'**
   String get contentNerVersion;
 
+  /// No description provided for @contentNerVersionMust.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã có bản cập nhật hệ thống quan trọng. Vui lòng cập nhật ứng dụng để tiếp tục sử dụng.'**
+  String get contentNerVersionMust;
+
   /// No description provided for @update.
   ///
   /// In vi, this message translates to:
   /// **'Cập nhật'**
   String get update;
+
+  /// No description provided for @later.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để sau'**
+  String get later;
 
   /// No description provided for @exchangeGifts.
   ///
@@ -2515,6 +2551,90 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Vui lòng nhập'**
   String get emptyValid;
+
+  /// No description provided for @notPhone.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa cập nhật sdt'**
+  String get notPhone;
+
+  /// No description provided for @personalInformation.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin cá nhân'**
+  String get personalInformation;
+
+  /// No description provided for @showcaseInfoTab.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem chi tiết, theo dõi thu nhập chiến dịch tại đây!'**
+  String get showcaseInfoTab;
+
+  /// No description provided for @showcaseStatsTab.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo dõi thu nhập từ chiến dịch này của bạn tại đây!'**
+  String get showcaseStatsTab;
+
+  /// No description provided for @showcaseSteps.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem các bước thực hiện chiến dịch tại đây!'**
+  String get showcaseSteps;
+
+  /// No description provided for @showcaseJoinOffer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhấn \"Tiếp tục\" để tạo nội dung cho chiến dịch'**
+  String get showcaseJoinOffer;
+
+  /// No description provided for @showcaseQR.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quét QR hoặc chia sẻ link tại đây'**
+  String get showcaseQR;
+
+  /// No description provided for @showcaseContent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem nội dung mẫu để tạo bài đăng!'**
+  String get showcaseContent;
+
+  /// No description provided for @showcasePickImages.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ảnh sản phẩm để sử dụng!'**
+  String get showcasePickImages;
+
+  /// No description provided for @showcaseEditShare.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa mẫu, chia sẻ sang các nền tảng tại đây!'**
+  String get showcaseEditShare;
+
+  /// No description provided for @showcaseCheckGen.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra số lượt tạo nội dung còn lại tại đây!'**
+  String get showcaseCheckGen;
+
+  /// No description provided for @showcaseIntroDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giới thiệu về chiến dịch'**
+  String get showcaseIntroDescription;
+
+  /// No description provided for @invitingText.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiếm tiền thật dễ dàng chỉ với chiếc điện thoại'**
+  String get invitingText;
+
+  /// No description provided for @tryNow.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trải nghiệm ngay'**
+  String get tryNow;
 }
 
 class _AppLocalizationsDelegate

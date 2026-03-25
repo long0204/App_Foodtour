@@ -1,8 +1,10 @@
+import 'package:Foodtour/services/remote_config_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'config/gen/app_l10n.dart';
 import 'core/route.dart';
 import 'data/model/restaurant.dart';
 import 'data/model/review.dart';
@@ -12,7 +14,7 @@ void main() async {
 
   await Firebase.initializeApp();
   await Hive.initFlutter();
-
+  await RemoteConfigService().init();
   Hive.registerAdapter(ReviewAdapter());
   Hive.registerAdapter(RestaurantAdapter());
 
@@ -35,6 +37,8 @@ class FoodTourApp extends StatelessWidget {
         return MaterialApp.router(
           title: 'FoodTour Cộng Đồng',
           debugShowCheckedModeBanner: false,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           routerConfig: AppRouter.router,
           theme: ThemeData(
             primarySwatch: Colors.red,

@@ -21,6 +21,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homePage => 'Trang chủ';
 
   @override
+  String get withdraw => 'Thu nhập';
+
+  @override
   String get news => 'Bản tin';
 
   @override
@@ -38,6 +41,15 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loginTitle => 'Xin chào,';
+
+  @override
+  String get goodMorning => 'Chào buổi sáng!';
+
+  @override
+  String get goodAfternoon => 'Chào buổi chiều!';
+
+  @override
+  String get goodEvening => 'Chào buổi tối!';
 
   @override
   String get registerTitle => 'Chào mừng bạn,';
@@ -246,7 +258,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get delAccTitle => 'Lưu ý, sau khi xoá tài khoản:';
 
   @override
-  String get delWarning1 => '- Xoá các dữ liệu của bạn trên ứng dụng TingX.';
+  String get delWarning1 => '- Xoá các dữ liệu của bạn trên ứng dụng tingX.';
 
   @override
   String get delWarning2 => '- Không thể truy cập tài khoản.';
@@ -924,7 +936,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get finance => 'Tài chính';
 
   @override
-  String get cosmetics => 'Mỹ phẩm';
+  String get cosmetics => 'Mua sắm & Dịch vụ';
 
   @override
   String get tooManyTries => 'Quá nhiều lần thử';
@@ -1000,7 +1012,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get emailInvalid => 'Email không đúng định dạng';
 
   @override
-  String get passLengthInvalid => 'Mật khẩu có độ dài từ 6 ký tự';
+  String get passLengthInvalid => 'Mật khẩu có độ dài từ 8 ký tự';
 
   @override
   String get passInvalid => 'Mật khẩu sai định dạng';
@@ -1165,7 +1177,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get contentNerVersion => 'Cập nhật ngay để có trải nghiệm tốt hơn';
 
   @override
+  String get contentNerVersionMust =>
+      'Đã có bản cập nhật hệ thống quan trọng. Vui lòng cập nhật ứng dụng để tiếp tục sử dụng.';
+
+  @override
   String get update => 'Cập nhật';
+
+  @override
+  String get later => 'Để sau';
 
   @override
   String get exchangeGifts => 'Đổi quà';
@@ -1233,4 +1252,51 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get emptyValid => 'Vui lòng nhập';
+
+  @override
+  String get notPhone => 'Chưa cập nhật sdt';
+
+  @override
+  String get personalInformation => 'Thông tin cá nhân';
+
+  @override
+  String get showcaseInfoTab =>
+      'Xem chi tiết, theo dõi thu nhập chiến dịch tại đây!';
+
+  @override
+  String get showcaseStatsTab =>
+      'Theo dõi thu nhập từ chiến dịch này của bạn tại đây!';
+
+  @override
+  String get showcaseSteps => 'Xem các bước thực hiện chiến dịch tại đây!';
+
+  @override
+  String get showcaseJoinOffer =>
+      'Nhấn \"Tiếp tục\" để tạo nội dung cho chiến dịch';
+
+  @override
+  String get showcaseQR => 'Quét QR hoặc chia sẻ link tại đây';
+
+  @override
+  String get showcaseContent => 'Xem nội dung mẫu để tạo bài đăng!';
+
+  @override
+  String get showcasePickImages => 'Chọn ảnh sản phẩm để sử dụng!';
+
+  @override
+  String get showcaseEditShare =>
+      'Chỉnh sửa mẫu, chia sẻ sang các nền tảng tại đây!';
+
+  @override
+  String get showcaseCheckGen =>
+      'Kiểm tra số lượt tạo nội dung còn lại tại đây!';
+
+  @override
+  String get showcaseIntroDescription => 'Giới thiệu về chiến dịch';
+
+  @override
+  String get invitingText => 'Kiếm tiền thật dễ dàng chỉ với chiếc điện thoại';
+
+  @override
+  String get tryNow => 'Trải nghiệm ngay';
 }

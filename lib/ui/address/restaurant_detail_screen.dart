@@ -1,15 +1,20 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../config/gen/assets.gen.dart';
+import '../../config/themes/text_style.dart';
 import '../../data/model/restaurant.dart';
 import '../../core/route.dart';
 import '../../data/model/review.dart';
 import '../../providers/community_provider.dart';
 import '../../widgets/shared/back_btn.dart';
+import '../../widgets/shared/cached_image.dart';
 
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
   final Restaurant restaurant;
@@ -17,10 +22,12 @@ class RestaurantDetailScreen extends ConsumerStatefulWidget {
   const RestaurantDetailScreen({super.key, required this.restaurant});
 
   @override
-  ConsumerState<RestaurantDetailScreen> createState() => _RestaurantDetailScreenState();
+  ConsumerState<RestaurantDetailScreen> createState() =>
+      _RestaurantDetailScreenState();
 }
 
-class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen> {
+class _RestaurantDetailScreenState
+    extends ConsumerState<RestaurantDetailScreen> {
   int _currentImageIndex = 0;
   List<Review> _localReviews = [];
 
@@ -57,7 +64,8 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
   Future<void> _openGoogleMaps(String address) async {
     if (address.isEmpty) return;
     final query = Uri.encodeComponent(address);
-    final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
+    final url =
+        Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
 
     try {
       if (await canLaunchUrl(url)) {
@@ -94,7 +102,7 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                 "Chọn ứng dụng bản đồ",
                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 16.h),
+              Gap(16.h),
               ListTile(
                 leading: const Icon(Icons.map_outlined, color: Colors.blue),
                 title: const Text("Xem trên bản đồ FoodTour"),
@@ -106,15 +114,17 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
               ),
               const Divider(),
               ListTile(
-                leading: const Icon(Icons.location_on_outlined, color: Colors.red),
+                leading:
+                    const Icon(Icons.location_on_outlined, color: Colors.red),
                 title: const Text("Mở bằng Google Maps"),
                 subtitle: const Text("Tìm đường đi bằng ứng dụng ngoài"),
                 onTap: () {
                   Navigator.pop(context);
-                  _openGoogleMaps("${widget.restaurant.name} ${widget.restaurant.address}");
+                  _openGoogleMaps(
+                      "${widget.restaurant.name} ${widget.restaurant.address}");
                 },
               ),
-              SizedBox(height: 10.h),
+              Gap(10.h),
             ],
           ),
         );
@@ -124,6 +134,17 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    double displayRating = widget.restaurant.rating ?? 0.0;
+
+    if (_localReviews.isNotEmpty) {
+      double sum = 0;
+      for (var review in _localReviews) {
+        sum += review.rating;
+      }
+      displayRating = sum / _localReviews.length;
+    }
+    String ratingStr = displayRating.toStringAsFixed(1);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -137,7 +158,9 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
             elevation: 0,
             pinned: true,
             title: _showTitle
-                ? Text(widget.restaurant.name ?? "Chi tiết quán", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+                ? Text(widget.restaurant.name ?? "Chi tiết quán",
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold))
                 : null,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
@@ -145,13 +168,15 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                 fit: StackFit.expand,
                 children: [
                   if (widget.restaurant.imageUrls.isNotEmpty)
-                    Image.network(
+                    CachedImage(
                       widget.restaurant.imageUrls[0],
+                      height: double.infinity,
+                      width: double.infinity,
                       fit: BoxFit.cover,
                     )
                   else
-                    Image.network('https://via.placeholder.com/250x150', fit: BoxFit.cover),
-
+                    Assets.images.shared.placeholderImage
+                        .image(fit: BoxFit.cover),
                   ClipRect(
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
@@ -161,7 +186,6 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                       ),
                     ),
                   ),
-
                   PageView.builder(
                     itemCount: widget.restaurant.imageUrls.isNotEmpty
                         ? widget.restaurant.imageUrls.length
@@ -172,19 +196,20 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                       });
                     },
                     itemBuilder: (context, index) {
-                      return Image.network(
+                      return CachedImage(
                         widget.restaurant.imageUrls.isNotEmpty
                             ? widget.restaurant.imageUrls[index]
-                            : 'https://via.placeholder.com/250x150',
+                            : '',
+                        height: double.infinity,
+                        width: double.infinity,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                        ),
+                        errorWidget: Assets.images.shared.placeholderImage
+                            .image(fit: BoxFit.contain),
+                        placeholder: Assets.images.shared.placeholderImage
+                            .image(fit: BoxFit.contain),
                       );
                     },
                   ),
-
                   if (widget.restaurant.imageUrls.length > 1)
                     Positioned(
                       bottom: 16.h,
@@ -192,14 +217,17 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                       right: 0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(widget.restaurant.imageUrls!.length, (index) {
+                        children: List.generate(
+                            widget.restaurant.imageUrls!.length, (index) {
                           return Container(
                             margin: EdgeInsets.symmetric(horizontal: 4.w),
                             width: 8.w,
                             height: 8.h,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: _currentImageIndex == index ? Colors.redAccent : Colors.white54,
+                              color: _currentImageIndex == index
+                                  ? Colors.redAccent
+                                  : Colors.white54,
                             ),
                           );
                         }),
@@ -209,7 +237,6 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
               ),
             ),
           ),
-
           SliverToBoxAdapter(
             child: Container(
               decoration: BoxDecoration(
@@ -227,23 +254,25 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                       children: [
                         Text(
                           widget.restaurant.name ?? "",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20.sp),
                         ),
-                        SizedBox(height: 8.h),
-
+                        Gap(8.h),
                         Row(
                           children: [
-                            Icon(Icons.location_on_outlined, size: 16.sp, color: Colors.black54),
-                            Gap( 4.w),
+                            Icon(Icons.location_on_outlined,
+                                size: 16.sp, color: Colors.black54),
+                            Gap(4.w),
                             Expanded(
                               child: Text(
                                 widget.restaurant.address ?? "",
-                                style: TextStyle(color: Colors.black54, fontSize: 13.sp),
+                                style: TextStyle(
+                                    color: Colors.black54, fontSize: 13.sp),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Gap( 8.w),
+                            Gap(8.w),
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.blue.withOpacity(0.1),
@@ -252,29 +281,30 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                               child: IconButton(
                                 padding: EdgeInsets.all(6.w),
                                 constraints: const BoxConstraints(),
-                                icon: Icon(Icons.map, color: Colors.blue, size: 20.sp),
+                                icon: Icon(Icons.map,
+                                    color: Colors.blue, size: 20.sp),
                                 onPressed: () => _showMapOptions(context),
                               ),
                             ),
                           ],
                         ),
                         Gap(12.h),
-                        // Tìm đến dòng 262 nơi chứa Row Rating và Price:
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded( // THÊM Expanded ở đây
+                            Expanded(
                               child: Row(
                                 children: [
-                                  Icon(Icons.star, color: Colors.orange, size: 20.sp),
+                                  Icon(Icons.star,
+                                      color: Colors.orange, size: 20.sp),
                                   Text(
-                                    " ${widget.restaurant.rating}",
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                                    " $ratingStr",
+                                    style: k2d600.s16,
                                   ),
                                   Flexible(
                                     child: Text(
                                       " (${_localReviews.length} Đánh giá)",
-                                      style: TextStyle(color: Colors.black54, fontSize: 13.sp),
+                                      style: k2d600.s12,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -283,30 +313,34 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                             ),
                             Text(
                               widget.restaurant.price ?? "0đ",
-                              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16.sp),
+                              style:
+                                  k2d600.s16.copyWith(color: Colors.redAccent),
                             ),
                           ],
                         ),
-                        SizedBox(height: 16.h),
+                        Gap(16.h),
                         Divider(color: Colors.grey[200], thickness: 1),
-                        SizedBox(height: 8.h),
-
+                        Gap(8.h),
                         Text(
                           "Mô tả",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                          style: k2d600.s16,
                         ),
-                        SizedBox(height: 8.h),
+                        Gap(8.h),
                         Text(
-                          (widget.restaurant.description != null && widget.restaurant.description!.isNotEmpty)
-                              ? widget.restaurant.description!
-                              : "Chưa có mô tả cho quán này.",
-                          style: TextStyle(color: Colors.black87, fontSize: 14.sp, height: 1.5),
-                        ),
-                        SizedBox(height: 24.h),
+                            (widget.restaurant.description != null &&
+                                    widget.restaurant.description!.isNotEmpty)
+                                ? widget.restaurant.description!
+                                : "Chưa có mô tả cho quán này.",
+                            style: k2d500.s14
+                            // TextStyle(
+                            //     color: Colors.black87,
+                            //     fontSize: 14.sp,
+                            //     height: 1.5),
+                            ),
+                        Gap(24.h),
                       ],
                     ),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Column(
@@ -314,20 +348,22 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                       children: [
                         Text(
                           "Lời Đánh giá",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                          style: k2d500.s16,
                         ),
                         SizedBox(height: 12.h),
-
                         if (_localReviews.isEmpty)
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 20.h),
-                            child: const Center(
-                              child: Text("Chưa có đánh giá nào. Hãy là người đầu tiên!", style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic)),
-                            ),
+                            child: Center(
+                                child: Text(
+                                    "Chưa có đánh giá nào. Hãy là người đầu tiên!",
+                                    style: k2d400.copyWith(
+                                        fontStyle: FontStyle.italic))),
                           )
                         else
-                          ..._localReviews.map((review) => _buildReviewCard(review)).toList(),
-
+                          ..._localReviews
+                              .map((review) => _buildReviewCard(review))
+                              .toList(),
                         SizedBox(height: 20.h),
                       ],
                     ),
@@ -338,7 +374,6 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
           ),
         ],
       ),
-
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
         elevation: 10,
@@ -348,14 +383,18 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               minimumSize: Size(double.infinity, 50.h),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.r)),
             ),
             onPressed: () {
               _showAddReviewBottomSheet(context);
             },
             child: Text(
               "Rate & Review",
-              style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -367,7 +406,9 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
     final difference = DateTime.now().difference(review.createdAt);
     String timeAgo = difference.inDays > 0
         ? "${difference.inDays} ngày trước"
-        : (difference.inHours > 0 ? "${difference.inHours} giờ trước" : "Vừa xong");
+        : (difference.inHours > 0
+            ? "${difference.inHours} giờ trước"
+            : "Vừa xong");
 
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
@@ -381,11 +422,17 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
         children: [
           CircleAvatar(
             radius: 20.r,
-            backgroundImage: NetworkImage(review.reviewImageUrl ?? 'https://via.placeholder.com/40'),
+            backgroundImage: (review.reviewImageUrl != null &&
+                    review.reviewImageUrl!.isNotEmpty)
+                ? CachedNetworkImageProvider(review.reviewImageUrl!)
+                    as ImageProvider
+                : Assets.images.user.avtDefault.provider(),
             backgroundColor: Colors.grey[300],
+            onBackgroundImageError: (exception, stackTrace) {
+              debugPrint("Lỗi load avatar: $exception");
+            },
           ),
-          SizedBox(width: 12.w),
-
+          Gap(12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,7 +442,8 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                   children: [
                     Text(
                       review.userName,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 14.sp),
                     ),
                     Text(
                       timeAgo,
@@ -404,7 +452,6 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                   ],
                 ),
                 SizedBox(height: 4.h),
-
                 Row(
                   children: List.generate(5, (index) {
                     return Icon(
@@ -415,7 +462,6 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                   }),
                 ),
                 SizedBox(height: 8.h),
-
                 Text(
                   review.comment,
                   style: TextStyle(color: Colors.black87, fontSize: 13.sp),
@@ -444,21 +490,26 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
             return Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 16.w, right: 16.w, top: 20.h,
+                left: 16.w,
+                right: 16.w,
+                top: 20.h,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Đánh giá quán", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
+                  Text("Đánh giá quán",
+                      style: TextStyle(
+                          fontSize: 18.sp, fontWeight: FontWeight.bold)),
                   SizedBox(height: 16.h),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(5, (index) {
                       return IconButton(
                         icon: Icon(
-                          index < currentRating ? Icons.star : Icons.star_border,
+                          index < currentRating
+                              ? Icons.star
+                              : Icons.star_border,
                           color: Colors.orange,
                           size: 36.sp,
                         ),
@@ -471,17 +522,16 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                     }),
                   ),
                   SizedBox(height: 16.h),
-
                   TextField(
                     controller: commentController,
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: "Nhập cảm nhận của bạn về quán...",
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r)),
                     ),
                   ),
                   SizedBox(height: 20.h),
-
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -491,27 +541,40 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                       ),
                       onPressed: () async {
                         if (commentController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Vui lòng nhập bình luận")));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Vui lòng nhập bình luận")));
                           return;
                         }
 
                         if (widget.restaurant.id == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Lỗi: Không tìm thấy ID quán")));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text("Lỗi: Không tìm thấy ID quán")));
                           return;
                         }
 
-                        final reviewId = FirebaseFirestore.instance.collection('dummy').doc().id;
+                        final reviewId = FirebaseFirestore.instance
+                            .collection('dummy')
+                            .doc()
+                            .id;
+
+                        final currentUser = FirebaseAuth.instance.currentUser;
 
                         final newReview = Review(
                           id: reviewId,
-                          userName: "Ẩn danh",
+                          userId: currentUser!.uid, // ĐÂY LÀ TRƯỜNG QUAN TRỌNG ĐỂ BIẾT AI ĐÃ ĐÁNH GIÁ
+                          userName: currentUser.displayName ?? "Ẩn danh",
                           rating: currentRating,
                           comment: commentController.text,
                           createdAt: DateTime.now(),
                         );
 
                         try {
-                          await ref.read(communityProvider.notifier).addReview(widget.restaurant.id!, newReview);
+                          await ref
+                              .read(communityProvider.notifier)
+                              .addReview(widget.restaurant.id!, newReview);
 
                           if (!context.mounted) return;
                           Navigator.pop(context);
@@ -520,13 +583,18 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                             _localReviews.insert(0, newReview);
                           });
 
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Gửi đánh giá thành công!")));
-                        } catch(e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Gửi đánh giá thành công!")));
+                        } catch (e) {
                           if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Lỗi: $e")));
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text("Lỗi: $e")));
                         }
                       },
-                      child: Text("Gửi đánh giá", style: TextStyle(color: Colors.white, fontSize: 16.sp)),
+                      child: Text("Gửi đánh giá",
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 16.sp)),
                     ),
                   ),
                   SizedBox(height: 20.h),

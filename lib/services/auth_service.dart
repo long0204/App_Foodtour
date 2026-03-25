@@ -1,106 +1,108 @@
-import 'dart:io';
-
+// lib/services/auth_service.dart
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:hive/hive.dart';
-
-import '../ui/auth/provider/auth_notifier.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class AuthService {
-  static final AuthService _instance = AuthService._();
-  static AuthService get instance => _instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  late Box _box;
-
-  String? getUsername() => _box.get('username');
-
-
-  AuthService._();
-
-  Future<void> init() async {
-    _box = Hive.box('userBox');
+  String _generateRandomKey(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*';
+    return String.fromCharCodes(Iterable.generate(length, (_) => chars.codeUnitAt(Random().nextInt(chars.length))));
   }
 
-  Future<void> login(String username, String password) async {
-    final query = await FirebaseFirestore.instance
-        .collection('users')
-        .where('username', isEqualTo: username)
-        .where('password', isEqualTo: password)
-        .get();
-
-    if (query.docs.isEmpty) {
-      throw Exception("Tài khoản hoặc mật khẩu sai");
-    }
-
-    final userDoc = query.docs.first;
-    final key = userDoc['key'];
-    await _box.put('token', key);
-    await _box.put('username', username);
-    authNotifier.login();
+  Future<void> _saveToken(String uid) async {
+    var box = await Hive.openBox('userBox');
+    await box.put('token', uid);
   }
 
-  Future<void> register({
-    required String username,
-    required String password,
-    required String key,
-  }) async {
-    final query = await FirebaseFirestore.instance
-        .collection('users')
-        .where('username', isEqualTo: username)
-        .get();
+  Future<void> _saveUserToFirestore(User user, {String? password, String? fullname}) async {
+    final userDoc = _firestore.collection('users').doc(user.uid);
 
-    if (query.docs.isNotEmpty) {
-      throw Exception("Email đã được sử dụng");
-    }
-
-    await FirebaseFirestore.instance.collection('users').add({
-      'username': username,
-      'password': password,
-      'key': key,
-      'created_at': DateTime.now().toIso8601String(),
-      'avatar': null,
-      'birth_date': null,
-      'fullname': null,
-    });
-
-    await _box.put('token', key);
-  }
-
-  Future<String> uploadAvatar(File file, String key) async {
-    final ref = FirebaseStorage.instance.ref().child('avatars/$key.jpg');
-    await ref.putFile(file);
-    return await ref.getDownloadURL();
-  }
-
-  Future<void> updateProfile({
-    required String key,
-    String? avatar,
-    DateTime? birthDate,
-  }) async {
-    final users = await FirebaseFirestore.instance
-        .collection('users')
-        .where('key', isEqualTo: key)
-        .get();
-
-    if (users.docs.isNotEmpty) {
-      final doc = users.docs.first;
-      await doc.reference.update({
-        if (avatar != null) 'avatar': avatar,
-        if (birthDate != null) 'birth_date': birthDate.toIso8601String(),
+    final docSnapshot = await userDoc.get();
+    if (!docSnapshot.exists) {
+      await userDoc.set({
+        'userId': user.uid,
+        'username': user.email,
+        'fullname': fullname ?? user.displayName,
+        'avatar': user.photoURL,
+        'created_at': DateTime.now().toIso8601String(),
+        'key': _generateRandomKey(20),
+        'password': password ?? '',
       });
     }
+    await _saveToken(user.uid);
   }
 
-
-
-  bool isLoggedIn() => _box.get('token') != null;
-
-  Future<void> logout() async {
-    await _box.delete('token');
-    await _box.delete('username');
+  // 1. Đăng ký Email
+  Future<UserCredential> signUpWithEmail(String email, String password) async {
+    final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    if (cred.user != null) {
+      await _saveUserToFirestore(cred.user!, password: password);
+    }
+    return cred;
   }
 
-  String? getToken() => _box.get('token');
+  // 2. Đăng nhập Email
+  Future<UserCredential> signInWithEmail(String email, String password) async {
+    final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    if (cred.user != null) {
+      await _saveToken(cred.user!.uid);
+    }
+    return cred;
+  }
+
+  // 3. Đăng nhập Google
+  Future<UserCredential?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return null;
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final cred = await _auth.signInWithCredential(GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken, idToken: googleAuth.idToken,
+    ));
+    if (cred.user != null) {
+      await _saveUserToFirestore(cred.user!);
+    }
+    return cred;
+  }
+
+  Future<UserCredential?> signInWithApple() async {
+    final appleIdCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
+    );
+    final cred = await _auth.signInWithCredential(OAuthProvider('apple.com').credential(
+      idToken: appleIdCredential.identityToken, accessToken: appleIdCredential.authorizationCode,
+    ));
+    if (cred.user != null) {
+      await _saveUserToFirestore(cred.user!, fullname: "${appleIdCredential.givenName} ${appleIdCredential.familyName}");
+    }
+    return cred;
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    var box = await Hive.openBox('userBox');
+    await box.delete('token');
+    await box.clear();
+  }
+
+  Future<void> updateProfile({String? fullname, String? avatarUrl}) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final updates = <String, dynamic>{};
+    if (fullname != null) updates['fullname'] = fullname;
+    if (avatarUrl != null) updates['avatar'] = avatarUrl;
+
+    if (updates.isNotEmpty) {
+      await _firestore.collection('users').doc(user.uid).update(updates);
+
+      if (fullname != null) await user.updateDisplayName(fullname);
+      if (avatarUrl != null) await user.updatePhotoURL(avatarUrl);
+    }
+  }
 }
-
-final authService = AuthService.instance;

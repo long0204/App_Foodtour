@@ -14,20 +14,24 @@ class Review extends HiveObject {
   final String userName;
 
   @HiveField(2)
-  final String? reviewImageUrl;
+  final String userId;
 
   @HiveField(3)
-  final double rating;
+  final String? reviewImageUrl;
 
   @HiveField(4)
-  final String comment;
+  final double rating;
 
   @HiveField(5)
+  final String comment;
+
+  @HiveField(6)
   final DateTime createdAt;
 
   Review({
     required this.id,
     required this.userName,
+    required this.userId,
     this.reviewImageUrl,
     required this.rating,
     required this.comment,
@@ -38,6 +42,7 @@ class Review extends HiveObject {
     return Review(
       id: json['id'] ?? '',
       userName: json['userName'] ?? 'Ẩn danh',
+      userId: json['userId'] ?? 'Ẩn danh',
       reviewImageUrl: json['reviewImageUrl'],
       rating: (json['rating'] ?? 0).toDouble(),
       comment: json['comment'] ?? '',
@@ -51,6 +56,7 @@ class Review extends HiveObject {
     return {
       'id': id,
       'userName': userName,
+      'userId': userId,
       'reviewImageUrl': reviewImageUrl,
       'rating': rating,
       'comment': comment,

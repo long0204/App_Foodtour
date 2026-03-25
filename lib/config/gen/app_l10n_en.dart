@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homePage => 'Home';
 
   @override
+  String get withdraw => 'With Draw';
+
+  @override
   String get news => 'News';
 
   @override
@@ -38,6 +41,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginTitle => 'Hello,';
+
+  @override
+  String get goodMorning => 'Good Morning!';
+
+  @override
+  String get goodAfternoon => 'Good Afternoon!';
+
+  @override
+  String get goodEvening => 'Good Evening!';
 
   @override
   String get registerTitle => 'Welcome,';
@@ -246,7 +258,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delAccTitle => 'Warning. After deleting your account:';
 
   @override
-  String get delWarning1 => '- Delete your data on the TingX app.';
+  String get delWarning1 => '- Delete your data on the tingX app.';
 
   @override
   String get delWarning2 => '- Can not access to TingX.';
@@ -999,7 +1011,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailInvalid => 'Invalid email';
 
   @override
-  String get passLengthInvalid => 'Password must have at least 6 characters';
+  String get passLengthInvalid => 'Password must have at least 8 characters';
 
   @override
   String get passInvalid => 'Invalid password';
@@ -1164,7 +1176,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contentNerVersion => 'Update now for a better experience';
 
   @override
+  String get contentNerVersionMust =>
+      'A major system update is available. Please update the app to continue using it.';
+
+  @override
   String get update => 'Update';
+
+  @override
+  String get later => 'Later';
 
   @override
   String get exchangeGifts => 'TingX gifts';
@@ -1232,4 +1251,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emptyValid => 'Please enter';
+
+  @override
+  String get notPhone => 'No Phone';
+
+  @override
+  String get personalInformation => 'Personal Information';
+
+  @override
+  String get showcaseInfoTab => 'View campaign details here!';
+
+  @override
+  String get showcaseStatsTab => 'Track your earnings from this campaign here!';
+
+  @override
+  String get showcaseSteps =>
+      'See the steps to run an affiliate campaign here!';
+
+  @override
+  String get showcaseJoinOffer => 'Continue to create campaign content';
+
+  @override
+  String get showcaseQR => 'Scan QR or share the link here';
+
+  @override
+  String get showcaseContent => 'View sample content to create your post!';
+
+  @override
+  String get showcasePickImages => 'Select product images to use!';
+
+  @override
+  String get showcaseEditShare => 'Edit templates and share to platforms here!';
+
+  @override
+  String get showcaseCheckGen => 'Check remaining content generations here!';
+
+  @override
+  String get showcaseIntroDescription => 'Introduction to the campaign';
+
+  @override
+  String get invitingText => 'Easy money? Just your phone. Start now';
+
+  @override
+  String get tryNow => 'Try Now';
 }

@@ -430,8 +430,14 @@ class $AssetsLottieGen {
   /// File path: assets/lottie/fire.json
   String get fire => 'assets/lottie/fire.json';
 
+  /// File path: assets/lottie/quiz.json
+  String get quiz => 'assets/lottie/quiz.json';
+
+  /// File path: assets/lottie/warning.json
+  String get warning => 'assets/lottie/warning.json';
+
   /// List of all assets
-  List<String> get values => [coinFlip, fire];
+  List<String> get values => [coinFlip, fire, quiz, warning];
 }
 
 class $AssetsRiveGen {
@@ -465,8 +471,23 @@ class $AssetsImagesAuthGen {
 class $AssetsImagesHomeGen {
   const $AssetsImagesHomeGen();
 
+  /// File path: assets/images/home/bestfood.jpg
+  AssetGenImage get bestfood =>
+      const AssetGenImage('assets/images/home/bestfood.jpg');
+
   /// File path: assets/images/home/card.svg
   SvgGenImage get card => const SvgGenImage('assets/images/home/card.svg');
+
+  /// File path: assets/images/home/che-dac-san-mien-nam-10.webp
+  AssetGenImage get cheDacSanMienNam10 =>
+      const AssetGenImage('assets/images/home/che-dac-san-mien-nam-10.webp');
+
+  /// File path: assets/images/home/chè.webp
+  AssetGenImage get che => const AssetGenImage('assets/images/home/chè.webp');
+
+  /// File path: assets/images/home/coffee.jpg
+  AssetGenImage get coffee =>
+      const AssetGenImage('assets/images/home/coffee.jpg');
 
   /// File path: assets/images/home/ecomerce_bg.svg
   SvgGenImage get ecomerceBg =>
@@ -490,6 +511,10 @@ class $AssetsImagesHomeGen {
   AssetGenImage get moneyBg =>
       const AssetGenImage('assets/images/home/money_bg.png');
 
+  /// File path: assets/images/home/nuong.jpeg
+  AssetGenImage get nuong =>
+      const AssetGenImage('assets/images/home/nuong.jpeg');
+
   /// File path: assets/images/home/service_bg.svg
   SvgGenImage get serviceBg =>
       const SvgGenImage('assets/images/home/service_bg.svg');
@@ -507,13 +532,18 @@ class $AssetsImagesHomeGen {
 
   /// List of all assets
   List<dynamic> get values => [
+        bestfood,
         card,
+        cheDacSanMienNam10,
+        che,
+        coffee,
         ecomerceBg,
         financeImg,
         homeBg,
         insurL,
         insurR,
         moneyBg,
+        nuong,
         serviceBg,
         startNowBg,
         startNowImg,
@@ -750,13 +780,45 @@ class $AssetsImagesUserGen {
 }
 
 class Assets {
-  Assets._();
+  const Assets._();
 
+  static const String food = 'assets/Food.json';
+  static const String heart = 'assets/Heart.json';
+  static const AssetGenImage avtdoi = AssetGenImage('assets/avtdoi.png');
+  static const AssetGenImage avthla = AssetGenImage('assets/avthla.gif');
+  static const AssetGenImage avthlac = AssetGenImage('assets/avthlac.gif');
+  static const AssetGenImage avtllac = AssetGenImage('assets/avtllac.gif');
+  static const AssetGenImage avtnu = AssetGenImage('assets/avtnu.png');
+  static const AssetGenImage dice = AssetGenImage('assets/dice.png');
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
+  static const String heart2 = 'assets/heart2.json';
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const String lineheart = 'assets/lineheart.json';
   static const $AssetsLottieGen lottie = $AssetsLottieGen();
+  static const String nhieutim = 'assets/nhieutim.json';
+  static const AssetGenImage random = AssetGenImage('assets/random.png');
   static const $AssetsRiveGen rive = $AssetsRiveGen();
+  static const AssetGenImage spinwheel = AssetGenImage('assets/spinwheel.png');
+  static const String success = 'assets/success.json';
+
+  /// List of all assets
+  static List<dynamic> get values => [
+        food,
+        heart,
+        avtdoi,
+        avthla,
+        avthlac,
+        avtllac,
+        avtnu,
+        dice,
+        heart2,
+        lineheart,
+        nhieutim,
+        random,
+        spinwheel,
+        success
+      ];
 }
 
 class AssetGenImage {
@@ -792,7 +854,7 @@ class AssetGenImage {
     bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
-    FilterQuality filterQuality = FilterQuality.low,
+    FilterQuality filterQuality = FilterQuality.medium,
     int? cacheWidth,
     int? cacheHeight,
   }) {

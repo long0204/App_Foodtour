@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import '../../config/themes/text_style.dart';
 import '../../core/route.dart';
 import '../../data/model/restaurant.dart';
 import '../../data/sources/remote/google_service.dart';
@@ -109,13 +110,13 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.redAccent,
               expandedHeight: 80.h,
               pinned: true,
               elevation: 0,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text("Thêm Địa Điểm Mới",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.sp)),
+                    style:  k2d500.s18.white),
                 centerTitle: false,
                 titlePadding: EdgeInsets.only(left: 20.w, bottom: 15.h),
               ),

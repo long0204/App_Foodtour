@@ -12,6 +12,7 @@ import '../../core/route.dart';
 import '../../data/model/restaurant.dart';
 import '../../providers/community_provider.dart';
 import '../../services/location_service.dart';
+import '../../widgets/shared/cached_image.dart';
 
 class FoodMapScreen extends ConsumerStatefulWidget {
   const FoodMapScreen({super.key});
@@ -45,28 +46,18 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
   void _initLocationTracking() async {
     try {
       final initialPos = await locationService.getCurrentPosition();
-      if (mounted) {
+      if (mounted && initialPos != null) {
         setState(() {
           _userPosition = initialPos;
           _isLoadingLocation = false;
         });
-        if (initialPos != null) {
-          _mapController.move(LatLng(initialPos.latitude, initialPos.longitude), 14.0);
-        }
+        _mapController.move(LatLng(initialPos.latitude, initialPos.longitude), 15.0);
       }
 
       _positionStream = Geolocator.getPositionStream(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 5,
-        ),
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 10),
       ).listen((Position position) {
-        if (!mounted) return;
-        setState(() => _userPosition = position);
-
-        if (_isNavigating && _navigatingTo != null) {
-          _updateNavigationInfo(position);
-        }
+        if (mounted) setState(() => _userPosition = position);
       });
     } catch (e) {
       if (mounted) setState(() => _isLoadingLocation = false);
@@ -367,17 +358,11 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.r),
-                  child: Image.network(
-                    res.imageUrls.isNotEmpty
-                        ? res.imageUrls.first
-                        : 'https://via.placeholder.com/150',
+                  child: CachedImage(
+                    res.imageUrls.isNotEmpty ? res.imageUrls.first : '',
                     width: 80.w,
                     height: 80.w,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 80.w, height: 80.w, color: Colors.grey[300],
-                      child: const Icon(Icons.broken_image),
-                    ),
                   ),
                 ),
                 Gap(12.w),

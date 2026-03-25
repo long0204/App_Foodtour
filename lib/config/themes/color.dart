@@ -11,6 +11,7 @@ const cl82AAFA = Color(0xff82AAFA);
 const D6D8FF = Color(0xffD6D8FF);
 
 const white = Colors.white;
+const neutralWhite = Color(0xFFF5F2FF);
 const transparent = Colors.transparent;
 const whiteDefault = Color(0xFFF5F5F5);
 const whiteF9 = Color(0xFFF6F8F9);
@@ -26,6 +27,7 @@ const grey400 = Color(0xffCCCCCC);
 const grey450 = Color(0xffB3B3B3);
 const grey500 = Color(0xff9B9B9B);
 const grey600 = Color(0xff808080);
+const grey61 = Color(0xff616161);
 const grey700 = Color(0xff646464);
 const grey800 = Color(0xff4D4D4D);
 const grey900 = Color(0xff2E2E2E);
@@ -67,6 +69,10 @@ const red700 = Color(0xffA72035);
 const red800 = Color(0xff811929);
 const red900 = Color(0xff631320);
 const redSolid = Color(0xff670E3D);
+const redScarlet = Color(0xffFF2400);
+const redNeon = Color(0xffFF3131);
+const redOrange = Color(0xffFF4433);
+const redBrick = Color(0xffE53112);
 
 const yellow50 = Color(0xffFDF6E6);
 const yellow100 = Color(0xffF8E3B0);
@@ -80,22 +86,30 @@ const yellow800 = Color(0xff815B01);
 const yellow900 = Color(0xff624600);
 const yellow04 = Color(0xffF6BD04);
 const yellowSolid = Color(0xff845A11);
+const yellowGolden = Color(0xffFCD84B);
+const yellowPastel = Color(0xffFFF799);
+
+const orange500 = Color(0xffFF9800);
+const orangePumpkin = Color(0xffFF7518);
+const orangeSafety = Color(0xffFF5F15);
+const orangeCoral = Color(0xffFF7F50);
+
 
 extension RemoveAll on String {
   String removeAll(Iterable<String> values) => values.fold(
       this,
-      (
-        String result,
-        String pattern,
-      ) =>
+          (
+          String result,
+          String pattern,
+          ) =>
           result.replaceAll(pattern, ''));
 }
 
 extension AsHtmlColorToColor on String {
   Color htmlColorToColor() => Color(
-        int.parse(
-          removeAll(['0x', '#']).padLeft(8, 'ff'),
-          radix: 16,
-        ),
-      );
+    int.parse(
+      removeAll(['0x', '#']).padLeft(8, 'ff'),
+      radix: 16,
+    ),
+  );
 }
