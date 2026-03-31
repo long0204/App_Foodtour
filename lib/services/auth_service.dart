@@ -6,6 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../core/api/api_client.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -36,6 +38,24 @@ class AuthService {
       });
     }
     await _saveToken(user.uid);
+
+    await _syncUserToBackend(user, fullname: fullname);
+  }
+
+  Future<void> _syncUserToBackend(User user, {String? fullname, String? avatarUrl}) async {
+    try {
+      await apiClient.post(
+        '/users/sync',
+        data: {
+          "id": user.uid,
+          "fullname": fullname ?? user.displayName ?? "Người dùng",
+          "username": user.email,
+          "avatar_url": avatarUrl ?? user.photoURL ?? "",
+        },
+      );
+    } catch (e) {
+      print("Lỗi đồng bộ Backend: $e");
+    }
   }
 
   // 1. Đăng ký Email
@@ -96,13 +116,17 @@ class AuthService {
 
     final updates = <String, dynamic>{};
     if (fullname != null) updates['fullname'] = fullname;
-    if (avatarUrl != null) updates['avatar'] = avatarUrl;
+    if (avatarUrl != null) updates['avatar'] = avatarUrl; // Firestore lưu là 'avatar'
 
     if (updates.isNotEmpty) {
+      // Lưu Firebase
       await _firestore.collection('users').doc(user.uid).update(updates);
 
       if (fullname != null) await user.updateDisplayName(fullname);
       if (avatarUrl != null) await user.updatePhotoURL(avatarUrl);
+
+      await _syncUserToBackend(user, fullname: fullname, avatarUrl: avatarUrl);
     }
   }
+
 }

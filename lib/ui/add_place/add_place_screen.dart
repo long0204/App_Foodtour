@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import '../../config/themes/text_style.dart';
+import '../../core/api/api_client.dart';
 import '../../core/route.dart';
 import '../../data/model/restaurant.dart';
 import '../../data/sources/remote/google_service.dart';
@@ -63,21 +65,20 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
         if (finalImageUrls.isNotEmpty) {
           final coords = await getCoordinatesFromAddress(_addressController.text);
 
-          final newDocRef = FirebaseFirestore.instance.collection('restaurants').doc();
-          final newRes = Restaurant(
-            id: newDocRef.id,
-            name: _nameController.text,
-            address: _addressController.text,
-            type: _selectedCategory!,
-            price: _priceController.text,
-            rating: 5.0,
-            imageUrls: finalImageUrls,
-            description: _descriptionController.text.isEmpty ? null : _descriptionController.text,
-            latitude: coords?.latitude,
-            longitude: coords?.longitude,
+          // Gửi data lên Server qua Dio
+          await apiClient.post(
+            '/restaurants',
+            data: {
+              "name": _nameController.text.trim(),
+              "address": _addressController.text.trim(),
+              "type": _selectedCategory,
+              "price": _priceController.text.trim(),
+              "description": _descriptionController.text.trim(),
+              "image_urls": finalImageUrls,
+              "lat": coords?.latitude,
+              "lng": coords?.longitude,
+            },
           );
-
-          await ref.read(communityProvider.notifier).uploadNewRestaurant(newRes);
 
           if (!mounted) return;
           Navigator.of(context).pop();
@@ -91,7 +92,13 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
             _selectedCategory = null;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Đăng bài thành công!")));
+          if (coords != null) {
+            ref.read(suggestionProvider.notifier).fetchSuggestions(coords.latitude, coords.longitude);
+
+            ref.read(communityProvider.notifier).fetchAllRestaurants();
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Thêm quán thành công!")));
           pushReplacement(rootRoute);
         }
       } catch (e) {

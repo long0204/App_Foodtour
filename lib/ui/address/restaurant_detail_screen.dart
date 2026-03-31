@@ -9,6 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/gen/assets.gen.dart';
 import '../../config/themes/text_style.dart';
+import '../../core/api/api_client.dart';
 import '../../data/model/restaurant.dart';
 import '../../core/route.dart';
 import '../../data/model/review.dart';
@@ -37,10 +38,9 @@ class _RestaurantDetailScreenState
   @override
   void initState() {
     super.initState();
-    _localReviews = widget.restaurant.reviews ?? [];
-
     _scrollController = ScrollController();
     _scrollController.addListener(_listenScroll);
+    _fetchReviews(); // Gọi hàm tải đánh giá
   }
 
   void _listenScroll() {
@@ -59,6 +59,27 @@ class _RestaurantDetailScreenState
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchReviews() async {
+    try {
+      final response = await apiClient.get('/restaurants/${widget.restaurant.id}/reviews');
+      final List items = response as List;
+
+      setState(() {
+        _localReviews = items.map((e) => Review(
+          id: e['id'] ?? '',
+          userId: e['user_id'] ?? '',
+          userName: e['profiles']?['fullname'] ?? 'Ẩn danh',
+          rating: (e['rating'] as num?)?.toDouble() ?? 5.0,
+          comment: e['comment'] ?? '',
+          reviewImageUrl: e['profiles']?['avatar_url'],
+          createdAt: e['created_at'] != null ? DateTime.parse(e['created_at']) : DateTime.now(),
+        )).toList();
+      });
+    } catch (e) {
+      debugPrint("Lỗi tải đánh giá: $e");
+    }
   }
 
   Future<void> _openGoogleMaps(String address) async {
@@ -541,55 +562,33 @@ class _RestaurantDetailScreenState
                       ),
                       onPressed: () async {
                         if (commentController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Vui lòng nhập bình luận")));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Vui lòng nhập bình luận")));
                           return;
                         }
-
-                        if (widget.restaurant.id == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text("Lỗi: Không tìm thấy ID quán")));
-                          return;
-                        }
-
-                        final reviewId = FirebaseFirestore.instance
-                            .collection('dummy')
-                            .doc()
-                            .id;
 
                         final currentUser = FirebaseAuth.instance.currentUser;
-
-                        final newReview = Review(
-                          id: reviewId,
-                          userId: currentUser!.uid, // ĐÂY LÀ TRƯỜNG QUAN TRỌNG ĐỂ BIẾT AI ĐÃ ĐÁNH GIÁ
-                          userName: currentUser.displayName ?? "Ẩn danh",
-                          rating: currentRating,
-                          comment: commentController.text,
-                          createdAt: DateTime.now(),
-                        );
+                        if (currentUser == null) return;
 
                         try {
-                          await ref
-                              .read(communityProvider.notifier)
-                              .addReview(widget.restaurant.id!, newReview);
+                          await apiClient.post(
+                            '/reviews',
+                            data: {
+                              "restaurant_id": widget.restaurant.id,
+                              "user_id": currentUser.uid,
+                              "rating": currentRating,
+                              "comment": commentController.text,
+                            },
+                          );
 
                           if (!context.mounted) return;
                           Navigator.pop(context);
 
-                          setState(() {
-                            _localReviews.insert(0, newReview);
-                          });
+                          _fetchReviews();
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Gửi đánh giá thành công!")));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Gửi đánh giá thành công!")));
                         } catch (e) {
                           if (!context.mounted) return;
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(content: Text("Lỗi: $e")));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Lỗi: $e")));
                         }
                       },
                       child: Text("Gửi đánh giá",

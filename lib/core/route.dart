@@ -7,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../data/model/restaurant.dart';
 import '../ui/account/widgets/edit_profile_screen.dart';
+import '../ui/account/widgets/history_screen.dart';
 import '../ui/add_place/add_place_screen.dart';
 import '../services/crashlytics.dart';
 import '../ui/address/restaurant_detail_screen.dart';
@@ -118,6 +119,15 @@ class AppRouter {
         path: editProfileRoute,
         builder: (_, __) => const EditProfileScreen(),
       ),
+      GoRoute(
+        path: historyRoute,
+        builder: (context, state) {
+          final uid = state.extra as String;
+
+          return HistoryScreen(uid: uid);
+        },
+       // builder: (_, __) => const HistoryScreen(uid:uid,),
+      ),
       // GoRoute(
       //   path: communityListRoute,
       //   builder: (context, state) {
@@ -206,3 +216,4 @@ const addPlaceRoute = '/add-place';
 const communityListRoute = '/community-list';
 const emailAuthRoute = '/email-auth';
 const editProfileRoute = '/edit-profile';
+const historyRoute = '/history-screen';

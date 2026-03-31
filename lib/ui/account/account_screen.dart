@@ -30,7 +30,13 @@ class AccountScreen extends ConsumerWidget {
                     title: "Hoạt động của tôi",
                     items: [
                       _buildMenuItem(Icons.history, "Lịch sử ăn uống", Colors.blue, () {}),
-                      _buildMenuItem(Icons.star_outline, "Quán ăn đã đánh giá", Colors.orange, () {}),
+                      _buildMenuItem(Icons.star_outline, "Quán ăn đã đánh giá", Colors.orange, () {
+                        final user = FirebaseAuth.instance.currentUser;
+                        if (user != null) {
+                          // apiClient.get('/users/${user.uid}/history');
+                          push('/history-screen');
+                        }
+                      }),
                       _buildMenuItem(Icons.favorite_border, "Địa điểm đã lưu", Colors.red, () {}),
                     ],
                   ),

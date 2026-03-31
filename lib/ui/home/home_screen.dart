@@ -20,6 +20,7 @@ import '../../services/remote_config_service.dart';
 import '../../utils/string.dart';
 import '../../widgets/shared/cached_image.dart';
 import '../auth/providers/auth_notifier.dart';
+import '../list_address/restaurant_list_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -30,11 +31,25 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   Position? _userPosition;
-  late ScrollController _scrollController; // Đã khai báo late
+  late ScrollController _scrollController;
   final FocusNode _searchFocusNode = FocusNode();
 
   bool _isCollapsed = false;
   bool _isSearchFocused = false;
+  final Map<String, String> _categoryIcons = const {
+    "Bánh": "🍰", "Coffee": "☕", "Lẩu": "🥘", "Bún": "🍜", "Chay": "🥗",
+    "Chè": "🍧", "Gà": "🍗", "Nem": "🌯", "Nướng": "🍢", "Ốc": "🐚",
+    "Trà sữa": "🧋", "Vịt": "🦆", "Cơm": "🍚",
+  };
+
+  // Bộ Màu sắc tương ứng
+  final Map<String, Color> _categoryColors = const {
+    "Bánh": Colors.pinkAccent, "Coffee": Colors.brown, "Lẩu": Colors.deepOrange,
+    "Bún": Colors.orange, "Chay": Colors.green, "Chè": Colors.purpleAccent,
+    "Gà": Colors.amber, "Nem": Colors.lime, "Nướng": Colors.deepOrangeAccent,
+    "Ốc": Colors.teal, "Trà sữa": Colors.pink, "Vịt": Colors.orangeAccent,
+    "Cơm": Colors.blueAccent,
+  };
 
   @override
   void initState() {
@@ -66,6 +81,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final position = await locationService.getCurrentPosition();
       if (mounted && position != null) {
         setState(() => _userPosition = position);
+        // Gọi API gợi ý
+        ref.read(suggestionProvider.notifier).fetchSuggestions(position.latitude, position.longitude);
       }
     } catch (e) {
       debugPrint("Lỗi GPS Home: $e");
@@ -85,10 +102,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final restaurantsAsync = ref.watch(communityProvider);
+    final suggestionAsync = ref.watch(suggestionProvider);
+    final allRestaurantsAsync = ref.watch(communityProvider);
+
     final greeting = getGreeting(context);
     final greetingIcon = _getGreetingIcon();
     final userData = ref.watch(userFirestoreProvider).value;
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: CustomScrollView(
@@ -102,8 +122,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             title: _isSearchFocused
                 ? Text("Bạn muốn tìm địa điểm nào?", style: k2d500.s16.white)
                 : (_isCollapsed
-                    ? Text("Hôm nay bạn muốn ăn gì?", style: k2d500.s16.white)
-                    : null),
+                ? Text("Hôm nay bạn muốn ăn gì?", style: k2d500.s16.white)
+                : null),
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
               background: Stack(
@@ -138,7 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         Row(
                           children: [
-                            Text("${greeting}", style: k2d400.s16.white),
+                            Text("$greeting", style: k2d400.s16.white),
                             Gap(4.w),
                             Icon(
                               greetingIcon,
@@ -160,14 +180,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               preferredSize: Size.fromHeight(30.h),
               child: ZoomTap(
                 onTap: () {
+                  ref.read(autoFocusSearchProvider.notifier).state = true;
                   ref.read(tabIndexProvider.notifier).state = 3;
                 },
                 child: Transform.translate(
                   offset:
-                      Offset(0, (_isSearchFocused || _isCollapsed) ? 0 : 30.h),
+                  Offset(0, (_isSearchFocused || _isCollapsed) ? 0 : 30.h),
                   child: Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -191,7 +212,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             filled: true,
                             fillColor: Colors.white,
                             contentPadding:
-                                EdgeInsets.symmetric(vertical: 10.h),
+                            EdgeInsets.symmetric(vertical: 10.h),
                           ),
                         ),
                       ),
@@ -211,7 +232,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Row(
                     children: [
                       Text("Địa điểm gần bạn", style: k2d500.s16),
-                      //Icon(Icons.map_outlined, color: Colors.blue)
                     ],
                   ),
                   Gap(12.h),
@@ -236,69 +256,146 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         borderRadius: BorderRadius.circular(15.r),
                         child: (_userPosition == null)
                             ? Center(
-                                child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Đang lấy vị trí",
-                                      style: k2d400.copyWith(
-                                          color: Colors.grey, fontSize: 14.sp)),
-                                  WaveLoadingText(
-                                    text: "...",
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Đang lấy vị trí",
                                     style: k2d400.copyWith(
-                                        color: Colors.grey, fontSize: 14.sp),
-                                  ),
-                                ],
-                              ))
-                            : FlutterMap(
-                                options: MapOptions(
-                                  initialCenter: LatLng(_userPosition!.latitude,
-                                      _userPosition!.longitude),
-                                  initialZoom: 13.0,
-                                  interactionOptions: const InteractionOptions(
-                                      flags: InteractiveFlag.none),
+                                        color: Colors.grey, fontSize: 14.sp)),
+                                WaveLoadingText(
+                                  text: "...",
+                                  style: k2d400.copyWith(
+                                      color: Colors.grey, fontSize: 14.sp),
                                 ),
-                                children: [
-                                  TileLayer(
-                                    urlTemplate:
-                                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                    userAgentPackageName: 'com.dinos.foodtour',
-                                  ),
-                                  MarkerLayer(
-                                    markers: [
-                                      Marker(
-                                        point: LatLng(_userPosition!.latitude,
-                                            _userPosition!.longitude),
-                                        width: 40,
-                                        height: 40,
-                                        child: const Icon(
-                                            Icons.person_pin_circle_sharp,
-                                            color: Colors.blue,
-                                            size: 25),
-                                      ),
-                                      ...restaurantsAsync.maybeWhen(
-                                        data: (list) {
-                                          final hasLatLng = list.where((r) =>
-                                              r.latitude != null &&
-                                              r.longitude != null);
-                                          return hasLatLng.take(3).map((res) {
-                                            return Marker(
-                                              point: LatLng(res.latitude!,
-                                                  res.longitude!),
-                                              width: 30,
-                                              height: 30,
-                                              child: const Icon(
-                                                  Icons.location_on,
-                                                  color: Colors.red,
-                                                  size: 20),
-                                            );
-                                          }).toList();
-                                        },
-                                        orElse: () => [],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                              ],
+                            ))
+                            : FlutterMap(
+                          options: MapOptions(
+                            initialCenter: LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                            initialZoom: 13,
+                            interactionOptions: const InteractionOptions(flags: InteractiveFlag.none),
+                          ),
+                          children: [
+                            TileLayer(
+                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName: 'com.dinos.foodtour',
+                            ),
+                            MarkerLayer(
+                              markers: [
+                                Marker(
+                                  point: LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                                  width: 40,
+                                  height: 40,
+                                  child: const Icon(
+                                      Icons.person_pin_circle_sharp,
+                                      color: Colors.blue,
+                                      size: 35),
+                                ),
+
+                                ...allRestaurantsAsync.maybeWhen(
+                                  data: (list) {
+                                    final hasLatLng = list.where((r) => r.latitude != null && r.longitude != null).toList();
+
+                                    hasLatLng.sort((a, b) {
+                                      final distA = const Distance().distance(
+                                          LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                                          LatLng(a.latitude!, a.longitude!)
+                                      );
+                                      final distB = const Distance().distance(
+                                          LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                                          LatLng(b.latitude!, b.longitude!)
+                                      );
+                                      return distA.compareTo(distB);
+                                    });
+
+                                      return hasLatLng.take(5).map((res) {
+                                        // Xác định Màu, Icon và Text
+                                        final String type = res.type ?? "";
+                                        final Color markerColor = _categoryColors[type] ?? Colors.redAccent;
+                                        final String markerIcon = _categoryIcons[type] ?? "🍽️";
+                                        final String labelText = type.isNotEmpty ? type : "Quán ngon";
+
+                                        return Marker(
+                                          point: LatLng(res.latitude!, res.longitude!),
+                                          width: 120, // Kích thước khung vẽ
+                                          height: 80,
+                                          alignment: Alignment.center, // Căn giữa
+                                          child: Center(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                // Bấm vào Marker ở màn Home thì chuyển sang màn Chi tiết
+                                                push(detailRoute, extra: res);
+                                              },
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: markerColor,
+                                                      borderRadius: BorderRadius.circular(20),
+                                                      border: Border.all(color: Colors.white, width: 1.5),
+                                                      boxShadow: const [
+                                                        BoxShadow(
+                                                            color: Colors.black26,
+                                                            blurRadius: 4,
+                                                            offset: Offset(0, 2))
+                                                      ],
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                          markerIcon,
+                                                          style: TextStyle(fontSize: 12.sp),
+                                                        ),
+                                                        const SizedBox(width: 4),
+                                                        Flexible(
+                                                          child: Text(
+                                                            labelText,
+                                                            style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: 10.sp, // Nhỏ hơn màn Map 1 xíu để vừa khung
+                                                            ),
+                                                            textAlign: TextAlign.center,
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Transform.translate(
+                                                    offset: const Offset(0, -6),
+                                                    child: Transform.rotate(
+                                                      angle: 3.14159 / 4,
+                                                      child: Container(
+                                                        width: 10,
+                                                        height: 10,
+                                                        decoration: BoxDecoration(
+                                                          color: markerColor,
+                                                          border: const Border(
+                                                            bottom: BorderSide(color: Colors.white, width: 1.5),
+                                                            right: BorderSide(color: Colors.white, width: 1.5),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList();
+                                  },
+                                  orElse: () => <Marker>[], // Chống lỗi List<dynamic>
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -309,15 +406,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-              child: Text("Đề xuất cho bạn", style: k2d500.s16),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final mealType = ref.watch(suggestionProvider.notifier).currentMealType;
+                  return Text(
+                      mealType == 'bạn' ? "Đề xuất cho bạn" : "Gợi ý cho bạn nên chọn $mealType",
+                      style: k2d500.s16
+                  );
+                },
+              ),
             ),
           ),
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            sliver: restaurantsAsync.when(
+            sliver: suggestionAsync.when(
               data: (list) {
-                list.sort(
-                    (a, b) => (b.rating ?? 0.0).compareTo(a.rating ?? 0.0));
+                list.sort((a, b) => (b.rating ?? 0.0).compareTo(a.rating ?? 0.0));
 
                 if (list.isEmpty) {
                   return const SliverToBoxAdapter(
@@ -332,7 +436,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     childAspectRatio: 0.65,
                   ),
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) {
+                        (context, index) {
                       final restaurant = list[index];
                       return GestureDetector(
                         onTap: () {

@@ -1,8 +1,7 @@
 class ENV {
   ENV._();
 
-  static const baseUrl = 'https://prod-be.tingx.vn/api';
-  static const devUrl = 'https://be-dev.tingx.vn/api';
+  static const ProUrl = 'https://foodend.onrender.com/api';
   static const baseImageUrl =
       'https://s3.ap-southeast-1.amazonaws.com/storage.dinos.vn';
 
@@ -10,5 +9,9 @@ class ENV {
   static const apiKey = 'AIzaSyCVGKpHpigRX3b15mHDbXU2w40GBMXTC9g';
   static const url = 'https://sheets.googleapis.com/v4/spreadsheets';
   static const urlscripts = 'https://script.google.com/macros/s/AKfycby8gyhy65kZjAvMUhEDSwrbgi1oVO4UxWdg5rRgNZbT-YBvXRDtT4-1KuJ6gt--Q-LYqQ/exec';
+  static const String appwriteProjectId = 'foodtour-9112d';
+  static const String appwriteProjectName = 'Foodtour';
+  static const String appwritePublicEndpoint = 'https://sgp.cloud.appwrite.io/v1';
 
+  static const baseUrl= ENV.ProUrl;
 }

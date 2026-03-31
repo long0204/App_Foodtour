@@ -8,6 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../core/api/api_client.dart';
 import '../../core/route.dart';
 import '../../data/model/restaurant.dart';
 import '../../providers/community_provider.dart';
@@ -36,6 +37,8 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
   int _currentStepIndex = 0;
   String _currentInstruction = "Đang bắt đầu...";
   double _distanceToNextStep = 0;
+  Timer? _debounce;
+  List<Restaurant> _mapRestaurants = [];
 
   @override
   void initState() {
@@ -51,11 +54,21 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
           _userPosition = initialPos;
           _isLoadingLocation = false;
         });
+
+        // 1. Dịch chuyển Camera về vị trí người dùng
         _mapController.move(LatLng(initialPos.latitude, initialPos.longitude), 15.0);
+
+        // 2. TỰ ĐỘNG GỌI API SAU 0.5 GIÂY ĐỂ HIỆN QUÁN (Chữa lỗi phải vuốt mới hiện)
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            _fetchRestaurantsInBounds();
+          }
+        });
       }
 
       _positionStream = Geolocator.getPositionStream(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 10),
+        locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high, distanceFilter: 10),
       ).listen((Position position) {
         if (mounted) setState(() => _userPosition = position);
       });
@@ -88,37 +101,12 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
     }
   }
 
-  void _updateNavigationInfo(Position currentPos) {
-    if (_navigationSteps.isEmpty) return;
-
-    final step = _navigationSteps[_currentStepIndex];
-    final List<dynamic> stepLoc = step['maneuver']['location'];
-    final stepLatLng = LatLng(stepLoc[1], stepLoc[0]);
-
-    double distance = Geolocator.distanceBetween(
-      currentPos.latitude,
-      currentPos.longitude,
-      stepLatLng.latitude,
-      stepLatLng.longitude,
-    );
-
-    setState(() {
-      _distanceToNextStep = distance;
-      _currentInstruction = _translateManeuver(step['maneuver']);
-    });
-
-    if (distance < 500 && _currentStepIndex < _navigationSteps.length - 1) {
-      setState(() => _currentStepIndex++);
-    }
-
-    _mapController.move(LatLng(currentPos.latitude, currentPos.longitude), 17.0);
-  }
-
   Future<void> _startNavigation(Restaurant res) async {
     if (_userPosition == null) return;
 
+    // Sửa thành HTTPS để tránh lỗi bảo mật của Android chặn Request
     final url = Uri.parse(
-        'http://router.project-osrm.org/route/v1/driving/${_userPosition!.longitude},${_userPosition!.latitude};${res.longitude},${res.latitude}?geometries=geojson&steps=true');
+        'https://router.project-osrm.org/route/v1/driving/${_userPosition!.longitude},${_userPosition!.latitude};${res.longitude},${res.latitude}?geometries=geojson&steps=true');
 
     try {
       final response = await http.get(url);
@@ -140,6 +128,30 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
     }
   }
 
+  Future<void> _fetchRestaurantsInBounds() async {
+    if (_userPosition == null) return;
+    final bounds = _mapController.camera.visibleBounds;
+
+    try {
+      final data = await apiClient.get(
+        '/restaurants/in-bounds',
+        queryParameters: {
+          'minLat': bounds.south,
+          'minLng': bounds.west,
+          'maxLat': bounds.north,
+          'maxLng': bounds.east,
+        },
+      );
+
+      final List items = data as List;
+      setState(() {
+        _mapRestaurants = items.map((e) => parseRestaurantData(e)).toList();
+      });
+    } catch (e) {
+      debugPrint("Lỗi tải quán ăn trên Map: $e");
+    }
+  }
+
   void _stopNavigation() {
     setState(() {
       _isNavigating = false;
@@ -152,12 +164,35 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
   @override
   void dispose() {
     _positionStream?.cancel();
+    _debounce?.cancel();
     super.dispose();
   }
 
+  final Map<String, String> _categoryIcons = const {
+    "Bánh": "🍰", "Coffee": "☕", "Lẩu": "🥘", "Bún": "🍜", "Chay": "🥗",
+    "Chè": "🍧", "Gà": "🍗", "Nem": "🌯", "Nướng": "🍢", "Ốc": "🐚",
+    "Trà sữa": "🧋", "Vịt": "🦆", "Cơm": "🍚",
+  };
+
+  final Map<String, Color> _categoryColors = const {
+    "Bánh": Colors.pinkAccent,
+    "Coffee": Colors.brown,
+    "Lẩu": Colors.deepOrange,
+    "Bún": Colors.orange,
+    "Chay": Colors.green,
+    "Chè": Colors.purpleAccent,
+    "Gà": Colors.amber,
+    "Nem": Colors.lime,
+    "Nướng": Colors.deepOrangeAccent,
+    "Ốc": Colors.teal,
+    "Trà sữa": Colors.pink,
+    "Vịt": Colors.orangeAccent,
+    "Cơm": Colors.blueAccent,
+  };
+
   @override
   Widget build(BuildContext context) {
-    final restaurantsAsync = ref.watch(communityProvider);
+    // Không cần dùng ref.watch(communityProvider) ở đây nữa vì Map đã gọi riêng _fetchRestaurantsInBounds
 
     return Scaffold(
       body: Stack(
@@ -165,9 +200,17 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              initialCenter: const LatLng(21.0285, 105.8542),
+              initialCenter: const LatLng(21.0285, 105.8542), // Sẽ tự động nhảy về vị trí User
               initialZoom: 14.0,
-              onPositionChanged: (p, _) => setState(() => _currentZoom = p.zoom!),
+              onPositionChanged: (camera, hasGesture) {
+                if (mounted) setState(() => _currentZoom = camera.zoom);
+                if (hasGesture) {
+                  if (_debounce?.isActive ?? false) _debounce!.cancel();
+                  _debounce = Timer(const Duration(milliseconds: 600), () {
+                    _fetchRestaurantsInBounds();
+                  });
+                }
+              },
             ),
             children: [
               TileLayer(
@@ -188,90 +231,96 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
                 markers: [
                   if (_userPosition != null)
                     Marker(
-                      point: LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                      point: LatLng(
+                          _userPosition!.latitude, _userPosition!.longitude),
                       width: 60,
                       height: 60,
-                      child: const Icon(Icons.navigation, color: Colors.blue, size: 40),
+                      child: const Icon(Icons.navigation,
+                          color: Colors.blue, size: 40),
                     ),
-                  ...restaurantsAsync.maybeWhen(
-                    data: (list) {
-                      final validRestaurants = list
-                          .where((res) =>
-                      res.latitude != null && res.longitude != null)
-                          .toList();
+                  ..._mapRestaurants
+                      .where((res) => res.latitude != null && res.longitude != null)
+                      .map((res) {
+                    final isZoomedIn = _currentZoom >= 15.5;
+                    final labelText = isZoomedIn
+                        ? "${res.name ?? ''}\n⭐${res.rating}"
+                        : (res.type ?? '');
 
-                      return validRestaurants.map((res) {
-                        final isZoomedIn = _currentZoom >= 15.5;
+                    final String type = res.type ?? "";
+                    final Color markerColor = _categoryColors[type] ?? Colors.redAccent;
+                    final String markerIcon = _categoryIcons[type] ?? "🍽️";
 
-                        final labelText = isZoomedIn
-                            ? "${res.name ?? ''}\n⭐${res.rating}"
-                            : (res.type ?? '');
-
-                        return Marker(
-                          point: LatLng(res.latitude!, res.longitude!),
-                          width: 200,
-                          height: 100,
-                          alignment: Alignment.center,
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: () => _showRestaurantQuickView(context, res),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    return Marker(
+                      point: LatLng(res.latitude!, res.longitude!),
+                      width: 200,
+                      height: 100,
+                      alignment: Alignment.center,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () => _showRestaurantQuickView(context, res),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: markerColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Colors.white, width: 1.5),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2))
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      markerIcon,
+                                      style: TextStyle(fontSize: isZoomedIn ? 12 : 14),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Flexible(
+                                      child: Text(
+                                        labelText,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isZoomedIn ? 11 : 12,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Transform.translate(
+                                offset: const Offset(0, -7.5),
+                                child: Transform.rotate(
+                                  angle: 3.14159 / 4,
+                                  child: Container(
+                                    width: 12,
+                                    height: 12,
                                     decoration: BoxDecoration(
-                                      color: Colors.redAccent,
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(color: Colors.redAccent, width: 2),
-                                      boxShadow: const [
-                                        BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          labelText,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: isZoomedIn ? 11 : 12,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  Transform.translate(
-                                    offset: const Offset(0, -7.5),
-                                    child: Transform.rotate(
-                                      angle: 3.14159 / 4,
-                                      child: Container(
-                                        width: 12,
-                                        height: 12,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.redAccent,
-                                          border: Border(
-                                            bottom: BorderSide(color: Colors.redAccent, width: 2),
-                                            right: BorderSide(color: Colors.redAccent, width: 2),
-                                          ),
-                                        ),
+                                      color: markerColor,
+                                      border: const Border(
+                                        bottom: BorderSide(color: Colors.white, width: 1.5),
+                                        right: BorderSide(color: Colors.white, width: 1.5),
                                       ),
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        );
-                      }).toList();
-                    },
-                    orElse: () => [],
-                  ),
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ],
@@ -286,11 +335,14 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF1B5E20),
                   borderRadius: BorderRadius.circular(12.r),
-                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black26, blurRadius: 10)
+                  ],
                 ),
                 child: Row(
                   children: [
-                    _buildStepIcon(_navigationSteps[_currentStepIndex]['maneuver']['modifier']),
+                    _buildStepIcon(_navigationSteps[_currentStepIndex]
+                    ['maneuver']['modifier']),
                     Gap(16.w),
                     Expanded(
                       child: Column(
@@ -298,13 +350,17 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
                         children: [
                           Text(
                             _distanceToNextStep > 1000
-                                ? "${(_distanceToNextStep/1000).toStringAsFixed(1)} km"
+                                ? "${(_distanceToNextStep / 1000).toStringAsFixed(1)} km"
                                 : "${_distanceToNextStep.toStringAsFixed(0)} m",
-                            style: TextStyle(color: Colors.white, fontSize: 22.sp, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.bold),
                           ),
                           Text(
                             _currentInstruction,
-                            style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                            style:
+                            TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ],
                       ),
@@ -317,12 +373,18 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
                 ),
               ),
             ),
-
-          if (_isLoadingLocation) const Center(child: CircularProgressIndicator()),
+          if (_isLoadingLocation)
+            const Center(child: CircularProgressIndicator()),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _mapController.move(LatLng(_userPosition!.latitude, _userPosition!.longitude), 16.0),
+        onPressed: () {
+          if (_userPosition != null) {
+            _mapController.move(
+                LatLng(_userPosition!.latitude, _userPosition!.longitude), 16.0);
+            _fetchRestaurantsInBounds(); // Cập nhật lại danh sách khi nhấn nút Focus
+          }
+        },
         backgroundColor: Colors.white,
         child: const Icon(Icons.my_location, color: Colors.blue),
       ),
@@ -331,7 +393,9 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
 
   Widget _buildStepIcon(String? modifier) {
     IconData icon;
-    if (modifier == null) return const Icon(Icons.straight, color: Colors.white, size: 35);
+    if (modifier == null) {
+      return const Icon(Icons.straight, color: Colors.white, size: 35);
+    }
 
     if (modifier.contains('left')) {
       icon = Icons.turn_left;
@@ -371,24 +435,28 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        res.name,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                        res.name ?? "Đang cập nhật",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16.sp),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       Gap(8.h),
                       Text(
-                        res.address,
+                        res.address ?? "Chưa có địa chỉ",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Colors.grey),
                       ),
                       Gap(8.h),
                       Row(
-                        children: [const Icon(Icons.star, color: Colors.orange, size: 20),
-                          Text(" ${res.rating}",
+                        children: [
+                          const Icon(Icons.star,
+                              color: Colors.orange, size: 20),
+                          Text(" ${res.rating ?? 5.0}",
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14)),],
+                                  fontWeight: FontWeight.bold, fontSize: 14)),
+                        ],
                       )
                     ],
                   ),

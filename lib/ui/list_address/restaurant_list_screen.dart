@@ -13,6 +13,7 @@ import '../../providers/tab_provider.dart';
 import '../../services/location_service.dart';
 import '../../widgets/shared/cached_image.dart';
 import 'widgets/category_selector.dart';
+final autoFocusSearchProvider = StateProvider<bool>((ref) => false);
 
 class RestaurantListScreen extends ConsumerStatefulWidget {
   const RestaurantListScreen({super.key});
@@ -55,13 +56,14 @@ class _RestaurantListScreenState extends ConsumerState<RestaurantListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<int>(tabIndexProvider, (previous, next) {
-      if (next == 3) {
+    ref.listen<bool>(autoFocusSearchProvider, (previous, next) {
+      if (next == true) {
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) {
             _searchFocusNode.requestFocus();
           }
         });
+        Future.microtask(() => ref.read(autoFocusSearchProvider.notifier).state = false);
       }
     });
     final restaurantsAsync = ref.watch(communityProvider);
