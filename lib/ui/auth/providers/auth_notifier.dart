@@ -29,28 +29,50 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
 
   Future<void> loginGoogle() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _authService.signInWithGoogle());
+
+    final result = await AsyncValue.guard(() => _authService.signInWithGoogle());
+
+    if (result is AsyncData && result.value != null) {
+      _ref.read(tabIndexProvider.notifier).state = 0;
+    }
+
+    state = result;
   }
 
   Future<void> loginApple() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _authService.signInWithApple());
+
+    final result = await AsyncValue.guard(() => _authService.signInWithApple());
+
+    if (result is AsyncData && result.value != null) {
+      _ref.read(tabIndexProvider.notifier).state = 0;
+    }
+
+    state = result;
   }
 
   Future<void> loginWithEmail(String email, String password) async {
     state = const AsyncLoading();
 
-    _ref.read(tabIndexProvider.notifier).state = 0;
+    final result = await AsyncValue.guard(() => _authService.signInWithEmail(email, password));
 
-    state = await AsyncValue.guard(() => _authService.signInWithEmail(email, password));
+    if (result is AsyncData && result.value != null) {
+      _ref.read(tabIndexProvider.notifier).state = 0;
+    }
+
+    state = result;
   }
 
   Future<void> registerWithEmail(String email, String password) async {
     state = const AsyncLoading();
 
-    _ref.read(tabIndexProvider.notifier).state = 0;
+    final result = await AsyncValue.guard(() => _authService.signUpWithEmail(email, password));
 
-    state = await AsyncValue.guard(() => _authService.signUpWithEmail(email, password));
+    if (result is AsyncData && result.value != null) {
+      _ref.read(tabIndexProvider.notifier).state = 0;
+    }
+
+    state = result;
   }
 
   Future<void> logout() async {

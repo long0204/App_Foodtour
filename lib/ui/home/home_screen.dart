@@ -21,6 +21,7 @@ import '../../utils/string.dart';
 import '../../widgets/shared/cached_image.dart';
 import '../auth/providers/auth_notifier.dart';
 import '../list_address/restaurant_list_screen.dart';
+import '../../widgets/shared/shimmer.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -98,6 +99,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       return Icons.nightlight_round;
     }
+  }
+
+  // TẠO HÀM RENDER GRID SHIMMER GIẢ LẬP
+  Widget _buildGridShimmer() {
+    return SliverGrid(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 15.w,
+        mainAxisSpacing: 15.h,
+        childAspectRatio: 0.65,
+      ),
+      delegate: SliverChildBuilderDelegate(
+            (context, index) {
+          return ShimmerLoading(
+            height: double.infinity,
+            radius: 15.r,
+          );
+        },
+        childCount: 4, // Hiển thị 4 ô giả lập trong lúc chờ
+      ),
+    );
   }
 
   @override
@@ -254,21 +276,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(15.r),
-                        child: (_userPosition == null)
-                            ? Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Đang lấy vị trí",
-                                    style: k2d400.copyWith(
-                                        color: Colors.grey, fontSize: 14.sp)),
-                                WaveLoadingText(
-                                  text: "...",
-                                  style: k2d400.copyWith(
-                                      color: Colors.grey, fontSize: 14.sp),
-                                ),
-                              ],
-                            ))
+                        // 1. ÁP DỤNG SHIMMER CHO BẢN ĐỒ
+                        child: (_userPosition == null || allRestaurantsAsync.isLoading)
+                            ? ShimmerLoading(height: 150.h, radius: 15.r)
                             : FlutterMap(
                           options: MapOptions(
                             initialCenter: LatLng(_userPosition!.latitude, _userPosition!.longitude),
@@ -308,86 +318,86 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       return distA.compareTo(distB);
                                     });
 
-                                      return hasLatLng.take(5).map((res) {
-                                        // Xác định Màu, Icon và Text
-                                        final String type = res.type ?? "";
-                                        final Color markerColor = _categoryColors[type] ?? Colors.redAccent;
-                                        final String markerIcon = _categoryIcons[type] ?? "🍽️";
-                                        final String labelText = type.isNotEmpty ? type : "Quán ngon";
+                                    return hasLatLng.take(5).map((res) {
+                                      // Xác định Màu, Icon và Text
+                                      final String type = res.type ?? "";
+                                      final Color markerColor = _categoryColors[type] ?? Colors.redAccent;
+                                      final String markerIcon = _categoryIcons[type] ?? "🍽️";
+                                      final String labelText = type.isNotEmpty ? type : "Quán ngon";
 
-                                        return Marker(
-                                          point: LatLng(res.latitude!, res.longitude!),
-                                          width: 120, // Kích thước khung vẽ
-                                          height: 80,
-                                          alignment: Alignment.center, // Căn giữa
-                                          child: Center(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                push(detailRoute, extra: res);
-                                              },
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: markerColor,
-                                                      borderRadius: BorderRadius.circular(20),
-                                                      border: Border.all(color: Colors.white, width: 1.5),
-                                                      boxShadow: const [
-                                                        BoxShadow(
-                                                            color: Colors.black26,
-                                                            blurRadius: 4,
-                                                            offset: Offset(0, 2))
-                                                      ],
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Text(
-                                                          markerIcon,
-                                                          style: TextStyle(fontSize: 12.sp),
-                                                        ),
-                                                        const SizedBox(width: 4),
-                                                        Flexible(
-                                                          child: Text(
-                                                            labelText,
-                                                            style: TextStyle(
-                                                              color: Colors.white,
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 10.sp,
-                                                            ),
-                                                            textAlign: TextAlign.center,
-                                                            maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                      return Marker(
+                                        point: LatLng(res.latitude!, res.longitude!),
+                                        width: 120, // Kích thước khung vẽ
+                                        height: 80,
+                                        alignment: Alignment.center, // Căn giữa
+                                        child: Center(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              push(detailRoute, extra: res);
+                                            },
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: markerColor,
+                                                    borderRadius: BorderRadius.circular(20),
+                                                    border: Border.all(color: Colors.white, width: 1.5),
+                                                    boxShadow: const [
+                                                      BoxShadow(
+                                                          color: Colors.black26,
+                                                          blurRadius: 4,
+                                                          offset: Offset(0, 2))
+                                                    ],
                                                   ),
-                                                  Transform.translate(
-                                                    offset: const Offset(0, -6),
-                                                    child: Transform.rotate(
-                                                      angle: 3.14159 / 4,
-                                                      child: Container(
-                                                        width: 10,
-                                                        height: 10,
-                                                        decoration: BoxDecoration(
-                                                          color: markerColor,
-                                                          border: const Border(
-                                                            bottom: BorderSide(color: Colors.white, width: 1.5),
-                                                            right: BorderSide(color: Colors.white, width: 1.5),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        markerIcon,
+                                                        style: TextStyle(fontSize: 12.sp),
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Flexible(
+                                                        child: Text(
+                                                          labelText,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 10.sp,
                                                           ),
+                                                          textAlign: TextAlign.center,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Transform.translate(
+                                                  offset: const Offset(0, -6),
+                                                  child: Transform.rotate(
+                                                    angle: 3.14159 / 4,
+                                                    child: Container(
+                                                      width: 10,
+                                                      height: 10,
+                                                      decoration: BoxDecoration(
+                                                        color: markerColor,
+                                                        border: const Border(
+                                                          bottom: BorderSide(color: Colors.white, width: 1.5),
+                                                          right: BorderSide(color: Colors.white, width: 1.5),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        );
-                                      }).toList();
+                                        ),
+                                      );
+                                    }).toList();
                                   },
                                   orElse: () => <Marker>[], // Chống lỗi List<dynamic>
                                 ),
@@ -449,8 +459,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 );
               },
-              loading: () => const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator())),
+              // 2. ÁP DỤNG SHIMMER CHO LƯỚI DANH SÁCH GỢI Ý
+              loading: () => _buildGridShimmer(),
               error: (err, stack) =>
                   SliverToBoxAdapter(child: Center(child: Text("Lỗi: $err"))),
             ),

@@ -16,7 +16,7 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: Colors.redAccent.withOpacity(0.9),
+      //backgroundColor: Colors.redAccent.withOpacity(0.9),
       body: Padding(
         padding: EdgeInsets.all(30.w),
         child: Column(
@@ -24,44 +24,38 @@ class LoginScreen extends ConsumerWidget {
           children: [
             Assets.icons.favicon.icRound.image(height: 100.h),
             Gap(20.h),
-            Text("Chào mừng tới FoodTour", style: k2d600.s24.white),
+            Text("Chào mừng tới FoodTour",
+                style: k2d600.s24.copyWith(color: Colors.redAccent)),
             Gap(40.h),
-
             _buildAuthButton(
               Icons.email,
               "Tiếp tục với Email",
               Colors.grey[800]!,
-              // Dùng context.push của GoRouter
-                  () => push(emailAuthRoute),
+              () => push(emailAuthRoute),
             ),
-
             Gap(15.h),
             _buildAuthButton(
                 Icons.g_mobiledata_rounded,
                 "Đăng nhập với Google",
                 Colors.blue,
-                    () => ref.read(authNotifierProvider.notifier).loginGoogle()
-            ),
-
+                () => ref.read(authNotifierProvider.notifier).loginGoogle()),
             Gap(15.h),
-            _buildAuthButton(
-                Icons.apple,
-                "Đăng nhập với Apple",
-                Colors.black,
-                    () => ref.read(authNotifierProvider.notifier).loginApple()
-            ),
+            _buildAuthButton(Icons.apple, "Đăng nhập với Apple", Colors.black,
+                () => ref.read(authNotifierProvider.notifier).loginApple()),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAuthButton(IconData icon, String label, Color color, VoidCallback onTap) {
+  Widget _buildAuthButton(
+      IconData icon, String label, Color color, VoidCallback onTap) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         minimumSize: Size(double.infinity, 50.h),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       ),
       icon: Icon(icon, color: Colors.white),
       label: Text(label, style: k2d500.s14.white),
