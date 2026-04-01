@@ -63,19 +63,24 @@ class _RestaurantDetailScreenState
 
   Future<void> _fetchReviews() async {
     try {
-      final response = await apiClient.get('/restaurants/${widget.restaurant.id}/reviews');
+      final response =
+          await apiClient.get('/restaurants/${widget.restaurant.id}/reviews');
       final List items = response as List;
 
       setState(() {
-        _localReviews = items.map((e) => Review(
-          id: e['id'] ?? '',
-          userId: e['user_id'] ?? '',
-          userName: e['profiles']?['fullname'] ?? 'Ẩn danh',
-          rating: (e['rating'] as num?)?.toDouble() ?? 5.0,
-          comment: e['comment'] ?? '',
-          reviewImageUrl: e['profiles']?['avatar_url'],
-          createdAt: e['created_at'] != null ? DateTime.parse(e['created_at']) : DateTime.now(),
-        )).toList();
+        _localReviews = items
+            .map((e) => Review(
+                  id: e['id'] ?? '',
+                  userId: e['user_id'] ?? '',
+                  userName: e['profiles']?['fullname'] ?? 'Ẩn danh',
+                  rating: (e['rating'] as num?)?.toDouble() ?? 5.0,
+                  comment: e['comment'] ?? '',
+                  reviewImageUrl: e['profiles']?['avatar_url'],
+                  createdAt: e['created_at'] != null
+                      ? DateTime.parse(e['created_at'])
+                      : DateTime.now(),
+                ))
+            .toList();
       });
     } catch (e) {
       debugPrint("Lỗi tải đánh giá: $e");
@@ -121,13 +126,13 @@ class _RestaurantDetailScreenState
             children: [
               Text(
                 "Chọn ứng dụng bản đồ",
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                style: k2d600.s18,
               ),
               Gap(16.h),
               ListTile(
                 leading: const Icon(Icons.map_outlined, color: Colors.blue),
-                title: const Text("Xem trên bản đồ FoodTour"),
-                subtitle: const Text("Xem vị trí quán trong ứng dụng"),
+                title:  Text("Xem trên bản đồ FoodTour",style: k2d600.s16),
+                subtitle:  Text("Xem vị trí quán trong ứng dụng",style: k2d500.s14.grey600ts,),
                 onTap: () {
                   pop();
                   push(foodMapRoute);
@@ -136,9 +141,9 @@ class _RestaurantDetailScreenState
               const Divider(),
               ListTile(
                 leading:
-                    const Icon(Icons.location_on_outlined, color: Colors.red),
-                title: const Text("Mở bằng Google Maps"),
-                subtitle: const Text("Tìm đường đi bằng ứng dụng ngoài"),
+                    const Icon(Icons.location_on_outlined, color: Colors.green),
+                title: Text("Mở bằng Google Maps",style: k2d600.s16),
+                subtitle:  Text("Tìm đường đi bằng ứng dụng google map",style: k2d500.s14.grey600ts,),
                 onTap: () {
                   Navigator.pop(context);
                   _openGoogleMaps(
@@ -275,8 +280,7 @@ class _RestaurantDetailScreenState
                       children: [
                         Text(
                           widget.restaurant.name ?? "",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20.sp),
+                          style: k2d600B.s20,
                         ),
                         Gap(8.h),
                         Row(
@@ -287,8 +291,8 @@ class _RestaurantDetailScreenState
                             Expanded(
                               child: Text(
                                 widget.restaurant.address ?? "",
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 13.sp),
+                                style:
+                                    k2d400.s13.copyWith(color: Colors.black54),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -412,10 +416,7 @@ class _RestaurantDetailScreenState
             },
             child: Text(
               "Rate & Review",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold),
+              style: k2d600.s16.white,
             ),
           ),
         ),
@@ -463,12 +464,11 @@ class _RestaurantDetailScreenState
                   children: [
                     Text(
                       review.userName,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 14.sp),
+                      style: k2d600.s14,
                     ),
                     Text(
                       timeAgo,
-                      style: TextStyle(color: Colors.black54, fontSize: 12.sp),
+                      style: k2d500.s12.copyWith(color: Colors.black54),
                     ),
                   ],
                 ),
@@ -485,7 +485,7 @@ class _RestaurantDetailScreenState
                 SizedBox(height: 8.h),
                 Text(
                   review.comment,
-                  style: TextStyle(color: Colors.black87, fontSize: 13.sp),
+                  style: k2d500.s13.copyWith(color: Colors.black87),
                 ),
               ],
             ),
@@ -562,7 +562,9 @@ class _RestaurantDetailScreenState
                       ),
                       onPressed: () async {
                         if (commentController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Vui lòng nhập bình luận")));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Vui lòng nhập bình luận")));
                           return;
                         }
 
@@ -585,10 +587,13 @@ class _RestaurantDetailScreenState
 
                           _fetchReviews();
 
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Gửi đánh giá thành công!")));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Gửi đánh giá thành công!")));
                         } catch (e) {
                           if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Lỗi: $e")));
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text("Lỗi: $e")));
                         }
                       },
                       child: Text("Gửi đánh giá",

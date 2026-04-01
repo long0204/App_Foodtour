@@ -174,6 +174,9 @@ class $AssetsIconsGen {
   SvgGenImage get eyePassword =>
       const SvgGenImage('assets/icons/eye-password.svg');
 
+  /// Directory path: assets/icons/favicon
+  $AssetsIconsFaviconGen get favicon => const $AssetsIconsFaviconGen();
+
   /// File path: assets/icons/filter.svg
   SvgGenImage get filter => const SvgGenImage('assets/icons/filter.svg');
 
@@ -448,6 +451,21 @@ class $AssetsRiveGen {
 
   /// List of all assets
   List<String> get values => [bunnyLogin];
+}
+
+class $AssetsIconsFaviconGen {
+  const $AssetsIconsFaviconGen();
+
+  /// File path: assets/icons/favicon/ic_round.png
+  AssetGenImage get icRound =>
+      const AssetGenImage('assets/icons/favicon/ic_round.png');
+
+  /// File path: assets/icons/favicon/playstore_icon.png
+  AssetGenImage get playstoreIcon =>
+      const AssetGenImage('assets/icons/favicon/playstore_icon.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [icRound, playstoreIcon];
 }
 
 class $AssetsImagesAuthGen {

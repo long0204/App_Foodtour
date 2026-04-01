@@ -598,14 +598,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-  facebook_app_events:
-    dependency: "direct main"
-    description:
-      name: facebook_app_events
-      sha256: "3658a3e6983c23c1c1a52eb553b1be84816abd57c186aabe9bc538a4bfac2ed6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.24.0"
   fake_async:
     dependency: transitive
     description:
@@ -875,14 +867,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  flutter_facebook_app_links:
-    dependency: "direct main"
-    description:
-      name: flutter_facebook_app_links
-      sha256: d0c4b8e952418804a9442a43d637f7fcd117928bd640c4653f7af5fa6e852a8e
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
   flutter_fortune_wheel:
     dependency: "direct main"
     description:
@@ -2170,14 +2154,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.0"
-  posthog_flutter:
-    dependency: "direct main"
-    description:
-      name: posthog_flutter
-      sha256: "4082d692332ae5ffab71a06aa3732d4e8fad2c3d7b95d423648ab4ccd94b8309"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.21.0"
   pretty_dio_logger:
     dependency: "direct main"
     description:
@@ -2631,14 +2607,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.4"
-  tiktok_events_sdk:
-    dependency: "direct main"
-    description:
-      name: tiktok_events_sdk
-      sha256: d6430bc75c06c15acc63cfcde77d6398cdfb3bd1f0be68f5da49c63aed3d5ee5
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.3"
   time:
     dependency: transitive
     description:

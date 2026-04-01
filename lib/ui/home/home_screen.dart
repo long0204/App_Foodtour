@@ -323,7 +323,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           child: Center(
                                             child: GestureDetector(
                                               onTap: () {
-                                                // Bấm vào Marker ở màn Home thì chuyển sang màn Chi tiết
                                                 push(detailRoute, extra: res);
                                               },
                                               child: Column(
@@ -356,7 +355,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                             style: TextStyle(
                                                               color: Colors.white,
                                                               fontWeight: FontWeight.bold,
-                                                              fontSize: 10.sp, // Nhỏ hơn màn Map 1 xíu để vừa khung
+                                                              fontSize: 10.sp,
                                                             ),
                                                             textAlign: TextAlign.center,
                                                             maxLines: 1,
@@ -438,8 +437,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   delegate: SliverChildBuilderDelegate(
                         (context, index) {
                       final restaurant = list[index];
-                      return GestureDetector(
+                      return ZoomTap(
                         onTap: () {
+                          FocusScope.of(context).unfocus();
                           push(detailRoute, extra: restaurant);
                         },
                         child: RestaurantCardVertical(restaurant: restaurant),

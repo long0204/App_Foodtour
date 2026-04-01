@@ -219,7 +219,10 @@ class RestaurantCardHorizontal extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: GestureDetector(
-        onTap: () => push(detailRoute, extra: restaurant),
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          push(detailRoute, extra: restaurant);
+        },
         child: Container(
           height: 110.h,
           decoration: BoxDecoration(
@@ -279,21 +282,29 @@ class RestaurantCardHorizontal extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            restaurant.price ?? '0',
-                            style: TextStyle(
+                          Expanded(
+                            child: Text(
+                              restaurant.price ?? 'Đang cập nhật',
+                              style: TextStyle(
                                 color: Colors.redAccent,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14.sp),
+                                fontSize: 14.sp,
+                              ),
+                              maxLines: 1, // Giới hạn 1 dòng
+                              overflow: TextOverflow.ellipsis, // Dài quá thì hiện 3 chấm
+                            ),
                           ),
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(Icons.star,
                                   color: Colors.orange, size: 16),
-                              Text(" ${restaurant.rating}",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13.sp)),
+                              Text(
+                                " ${restaurant.rating}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13.sp),
+                              ),
                             ],
                           ),
                         ],

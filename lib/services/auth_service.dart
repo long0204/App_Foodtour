@@ -116,7 +116,7 @@ class AuthService {
 
     final updates = <String, dynamic>{};
     if (fullname != null) updates['fullname'] = fullname;
-    if (avatarUrl != null) updates['avatar'] = avatarUrl; // Firestore lưu là 'avatar'
+    if (avatarUrl != null) updates['avatar'] = avatarUrl;
 
     if (updates.isNotEmpty) {
       // Lưu Firebase

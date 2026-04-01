@@ -1,12 +1,21 @@
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:ui';
+import 'package:Foodtour/utils/string.dart';
+import 'package:Foodtour/widgets/base/base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:Foodtour/core/route.dart';
+import 'package:Foodtour/providers/community_provider.dart';
+import 'package:Foodtour/widgets/shared/cached_image.dart';
 
-import '../../../services/cloudinary_service.dart';
+import '../../../config/themes/text_style.dart';
+import '../../../services/remote_config_service.dart';
+import '../../../services/cloudinary_service.dart'; // Phải có thư viện up ảnh của bạn
+import '../../../widgets/helpers/showmanager.dart';
+import '../../../widgets/shared/back_btn.dart';
 import '../../auth/providers/auth_notifier.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -17,120 +26,260 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
-  late TextEditingController _nameController;
-  final User? _user = FirebaseAuth.instance.currentUser;
-
-  File? _selectedImage;
+  late TextEditingController _usernameController;
+  late TextEditingController _fullnameController;
+  File? _image;
+  final picker = ImagePicker();
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: _user?.displayName);
+    final userFirestore = ref.read(userFirestoreProvider).value;
+    _usernameController = TextEditingController(text: userFirestore?['username'] ?? '');
+    _fullnameController = TextEditingController(text: userFirestore?['fullname'] ?? '');
   }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _fullnameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _getImage(ImageSource source) async {
+    final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _image = File(pickedFile.path);
       });
     }
+    Navigator.pop(context);
+  }
+
+  void _showAvatarOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Thay đổi ảnh đại diện", style: k2d500.s16),
+              Gap(20.h),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Colors.blue),
+                title: const Text("Chọn từ thư viện"),
+                onTap: () => _getImage(ImageSource.gallery),
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: Colors.redAccent),
+                title: const Text("Chụp ảnh mới"),
+                onTap: () => _getImage(ImageSource.camera),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final userFirestore = ref.watch(userFirestoreProvider).value;
+    final String currentAvatar = userFirestore?['avatar_url'] ?? ''; // Firebase đang lưu là 'avatar' hoặc 'avatar_url' tuỳ db của bạn
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Chỉnh sửa tài khoản")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(20.w),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50.r,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: _selectedImage != null
-                          ? FileImage(_selectedImage!) as ImageProvider
-                          : (_user?.photoURL != null && _user!.photoURL!.isNotEmpty)
-                          ? NetworkImage(_user!.photoURL!)
-                          : null,
-                      child: (_selectedImage == null && (_user?.photoURL == null || _user!.photoURL!.isEmpty))
-                          ? Icon(Icons.person, size: 50.sp, color: Colors.grey)
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: EdgeInsets.all(6.w),
-                        decoration: const BoxDecoration(
-                          color: Colors.redAccent,
-                          shape: BoxShape.circle,
+      backgroundColor: Colors.grey[50],
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 250.h,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: Colors.redAccent,
+            leading: MyBackButton(),
+            title: Text("Chỉnh sửa hồ sơ", style: k2d500.s16.white),
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.parallax,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedImage(RemoteConfigService().imageAppbarHome,width: 50.w,height: 50.h, fit: BoxFit.cover),
+                  BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: Container(decoration: BoxDecoration(color: Colors.black.withOpacity(0.3))),
+                  ),
+                  Positioned(
+                    bottom: 30.h,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: ZoomTap(
+                        onTap: _showAvatarOptions,
+                        child: Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 3),
+                                boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 5))],
+                              ),
+                              child: CircleAvatar(
+                                radius: 60.r,
+                                backgroundColor: Colors.white,
+                                backgroundImage: _image != null
+                                    ? FileImage(_image!)
+                                    : (currentAvatar.isNotEmpty
+                                    ? NetworkImage(currentAvatar)
+                                    : null) as ImageProvider?,
+                                child: _image == null && currentAvatar.isEmpty
+                                    ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                                    : null,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(8.w),
+                                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                child: const Icon(Icons.camera_alt, color: Colors.redAccent, size: 20),
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Icon(Icons.camera_alt, color: Colors.white, size: 16.sp),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Gap(30.h),
+            ),
+          ),
 
-              // --- PHẦN FORM ---
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: "Họ và tên", border: OutlineInputBorder()),
+          // 2. PHẦN NHẬP LIỆU
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Tên đăng nhập", style: k2d500.s16),
+                  Gap(12.h),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.r),
+                      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))],
+                    ),
+                    child: TextField(
+                      controller: _usernameController,
+                      enabled: false, // Email/username thường không cho sửa
+                      style: k2d400.s14.copyWith(color: Colors.grey),
+                      decoration: InputDecoration(
+                        hintText: "Nhập tên đăng nhập...",
+                        prefixIcon: const Icon(Icons.alternate_email, color: Colors.grey),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.r), borderSide: BorderSide.none),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        contentPadding: EdgeInsets.symmetric(vertical: 16.h),
+                      ),
+                    ),
+                  ),
+                  Gap(20.h),
+
+                  Text("Tên đầy đủ", style: k2d500.s16),
+                  Gap(12.h),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.r),
+                      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))],
+                    ),
+                    child: TextField(
+                      controller: _fullnameController,
+                      style: k2d400.s14,
+                      decoration: InputDecoration(
+                        hintText: "Nhập tên đầy đủ...",
+                        prefixIcon: const Icon(Icons.person, color: Colors.redAccent),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.r), borderSide: BorderSide.none),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: EdgeInsets.symmetric(vertical: 16.h),
+                      ),
+                    ),
+                  ),
+                  Gap(40.h),
+                ],
               ),
-              Gap(30.h),
+            ),
+          ),
+        ],
+      ),
 
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-                ),
-                onPressed: _isLoading ? null : () async {
-                  setState(() => _isLoading = true);
-
-                  try {
-                    String? newAvatarUrl;
-
-                    if (_selectedImage != null) {
-                      newAvatarUrl = await cloudinaryService.uploadImage(_selectedImage!);
-                    }
-
-                    // 2. Gọi hàm updateProfile
-                    final authService = ref.read(authServiceProvider);
-                    await authService.updateProfile(
-                      fullname: _nameController.text.trim(),
-                      avatarUrl: newAvatarUrl,
-                    );
-
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cập nhật thành công!")));
-                      Navigator.pop(context);
-                    }
-                  } catch (e) {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Lỗi: $e")));
-                    }
-                  } finally {
-                    if (mounted) setState(() => _isLoading = false);
-                  }
-                },
-                child: _isLoading
-                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : const Text("Lưu thay đổi", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              )
+      // 3. NÚT LƯU THAY ĐỔI
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: const BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -5))]),
+        child: ElevatedButton(
+          onPressed: _isLoading ? null : _handleSyncUserData,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+            elevation: 5,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_isLoading)
+                const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              else
+                const Icon(Icons.save, color: Colors.white),
+              Gap(10.w),
+              Text(_isLoading ? "Đang lưu..." : "Lưu thay đổi", style: k2d500.s16.white),
             ],
           ),
         ),
       ),
     );
+  }
+
+  // LOGIC UP ẢNH VÀ LƯU DATA CHUẨN CỦA BẠN (Dùng _isLoading và authService)
+  Future<void> _handleSyncUserData() async {
+    setState(() => _isLoading = true);
+
+    try {
+      String? newAvatarUrl;
+
+      // 1. Up ảnh lên Cloudinary nếu người dùng có chọn ảnh mới
+      if (_image != null) {
+        newAvatarUrl = await cloudinaryService.uploadImage(_image!);
+      }
+
+      // 2. Gọi hàm updateProfile từ AuthService
+      final authService = ref.read(authServiceProvider);
+      await authService.updateProfile(
+        fullname: _fullnameController.text.trim(),
+        avatarUrl: newAvatarUrl,
+      );
+
+      if (mounted) {
+        showManager.showToast( "Cập nhật hồ sơ thành công!");
+        Navigator.pop(context);
+        ref.invalidate(userFirestoreProvider); // Refresh lại data sau khi sửa
+      }
+    } catch (e) {
+      if (mounted) {
+        showManager.showToast( "Lỗi cập nhật: $e",isSuccess:false);
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 }

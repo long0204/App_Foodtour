@@ -1,4 +1,3 @@
-// lib/ui/auth/login_screen.dart
 import 'package:Foodtour/ui/auth/providers/auth_notifier.dart';
 import 'package:Foodtour/ui/auth/widgets/email_auth_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,14 +16,15 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: Colors.redAccent.withOpacity(0.9),
       body: Padding(
         padding: EdgeInsets.all(30.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Assets.images.shared.logo.image(height: 100.h),
+            Assets.icons.favicon.icRound.image(height: 100.h),
             Gap(20.h),
-            Text("Chào mừng tới FoodTour", style: k2d600.s24.red500ts),
+            Text("Chào mừng tới FoodTour", style: k2d600.s24.white),
             Gap(40.h),
 
             _buildAuthButton(

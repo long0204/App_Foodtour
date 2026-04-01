@@ -122,11 +122,11 @@ class AppRouter {
       GoRoute(
         path: historyRoute,
         builder: (context, state) {
-          final uid = state.extra as String;
+          final user = FirebaseAuth.instance.currentUser;
+          final uid = user?.uid ?? '';
 
           return HistoryScreen(uid: uid);
         },
-       // builder: (_, __) => const HistoryScreen(uid:uid,),
       ),
       // GoRoute(
       //   path: communityListRoute,

@@ -57,7 +57,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
               children: [
                 // 1. HEADER VÀ LOGO
                 Center(
-                  child: Assets.images.shared.logo.image(height: 80.h),
+                  child: Assets.icons.favicon.icRound.image(height: 80.h),
                 ),
                 Gap(30.h),
                 Text(

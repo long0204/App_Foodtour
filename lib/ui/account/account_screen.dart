@@ -21,7 +21,7 @@ class AccountScreen extends ConsumerWidget {
           data: (userData) => SingleChildScrollView(
             child: Column(
               children: [
-                _buildHeader(context, userData), // Truyền dữ liệu Firestore vào đây
+                _buildHeader(context, userData),
                 Padding(
                   padding: EdgeInsets.all(20.w),
               child: Column(
@@ -29,7 +29,7 @@ class AccountScreen extends ConsumerWidget {
                   _buildMenuSection(
                     title: "Hoạt động của tôi",
                     items: [
-                      _buildMenuItem(Icons.history, "Lịch sử ăn uống", Colors.blue, () {}),
+                      // _buildMenuItem(Icons.history, "Lịch sử ăn uống", Colors.blue, () {}),
                       _buildMenuItem(Icons.star_outline, "Quán ăn đã đánh giá", Colors.orange, () {
                         final user = FirebaseAuth.instance.currentUser;
                         if (user != null) {
@@ -37,7 +37,7 @@ class AccountScreen extends ConsumerWidget {
                           push('/history-screen');
                         }
                       }),
-                      _buildMenuItem(Icons.favorite_border, "Địa điểm đã lưu", Colors.red, () {}),
+                      // _buildMenuItem(Icons.favorite_border, "Địa điểm đã lưu", Colors.red, () {}),
                     ],
                   ),
                   Gap(20.h),
@@ -48,8 +48,8 @@ class AccountScreen extends ConsumerWidget {
                         // Điều hướng sang màn hình chỉnh sửa
                         push('/edit-profile');
                       }),
-                      _buildMenuItem(Icons.notifications_none, "Thông báo", Colors.purple, () {}),
-                      _buildMenuItem(Icons.language, "Ngôn ngữ", Colors.brown, () {}),
+                      // _buildMenuItem(Icons.notifications_none, "Thông báo", Colors.purple, () {}),
+                      // _buildMenuItem(Icons.language, "Ngôn ngữ", Colors.brown, () {}),
                     ],
                   ),
                   Gap(30.h),
