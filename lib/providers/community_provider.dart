@@ -7,8 +7,24 @@ import '../../utils/logger.dart';
 class SuggestionNotifier extends StateNotifier<AsyncValue<List<Restaurant>>> {
   SuggestionNotifier() : super(const AsyncValue.loading());
   String currentMealType = "bạn";
+  
+  // Cache for suggestions
+  final Map<String, List<Restaurant>> _cache = {};
+  final Map<String, DateTime> _cacheTime = {};
+  static const _cacheDuration = Duration(minutes: 5);
 
   Future<void> fetchSuggestions(double lat, double lng) async {
+    final cacheKey = '${lat}_${lng}';
+    
+    // Check cache first
+    if (_cache.containsKey(cacheKey)) {
+      final cacheAge = DateTime.now().difference(_cacheTime[cacheKey]!);
+      if (cacheAge < _cacheDuration) {
+        state = AsyncValue.data(_cache[cacheKey]!);
+        return;
+      }
+    }
+    
     state = const AsyncValue.loading();
     try {
       final data = await apiClient.get(
@@ -20,34 +36,77 @@ class SuggestionNotifier extends StateNotifier<AsyncValue<List<Restaurant>>> {
       final List items = data['restaurants'] ?? [];
 
       final list = items.map((e) => parseRestaurantData(e)).toList();
+      
+      // Update cache
+      _cache[cacheKey] = list;
+      _cacheTime[cacheKey] = DateTime.now();
 
       state = AsyncValue.data(list);
     } catch (e, stack) {
       state = AsyncValue.error(e.toString(), stack);
     }
   }
+  
+  // Clear cache when disposed
+  @override
+  void dispose() {
+    _cache.clear();
+    _cacheTime.clear();
+    super.dispose();
+  }
 }
-final suggestionProvider = StateNotifierProvider<SuggestionNotifier, AsyncValue<List<Restaurant>>>((ref) => SuggestionNotifier());
+final suggestionProvider = StateNotifierProvider.autoDispose<SuggestionNotifier, AsyncValue<List<Restaurant>>>((ref) => SuggestionNotifier());
 
 class CommunityRestaurantNotifier extends StateNotifier<AsyncValue<List<Restaurant>>> {
-  CommunityRestaurantNotifier() : super(const AsyncValue.loading()) {
-    fetchAllRestaurants();
-  }
-
+  CommunityRestaurantNotifier() : super(const AsyncValue.loading());
+  
+  // Cache
+  List<Restaurant>? _cachedData;
+  DateTime? _cacheTime;
+  static const _cacheDuration = Duration(minutes: 10);
+  
+  // Lazy load - don't fetch on init
   Future<void> fetchAllRestaurants() async {
+    // Check cache first
+    if (_cachedData != null && _cacheTime != null) {
+      final cacheAge = DateTime.now().difference(_cacheTime!);
+      if (cacheAge < _cacheDuration) {
+        state = AsyncValue.data(_cachedData!);
+        return;
+      }
+    }
+    
+    state = const AsyncValue.loading();
     try {
       final data = await apiClient.get('/restaurants');
       final List items = data as List;
 
       final list = items.map((e) => parseRestaurantData(e)).toList();
+      
+      // Update cache
+      _cachedData = list;
+      _cacheTime = DateTime.now();
 
       state = AsyncValue.data(list);
     } catch (e, stack) {
       state = AsyncValue.error(e.toString(), stack);
     }
   }
+  
+  @override
+  void dispose() {
+    _cachedData = null;
+    _cacheTime = null;
+    super.dispose();
+  }
 }
-final communityProvider = StateNotifierProvider<CommunityRestaurantNotifier, AsyncValue<List<Restaurant>>>((ref) => CommunityRestaurantNotifier());
+// Use autoDispose for better memory management
+final communityProvider = StateNotifierProvider.autoDispose<CommunityRestaurantNotifier, AsyncValue<List<Restaurant>>>((ref) {
+  final notifier = CommunityRestaurantNotifier();
+  // Fetch on first access
+  notifier.fetchAllRestaurants();
+  return notifier;
+});
 
 double _decodeEWKBDouble(String hex) {
   final bytes = Uint8List(8);

@@ -19,7 +19,6 @@ dependencies:
   equatable: ^2.0.5
   flutter_riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
-  get: ^4.6.5
 
   # Dependency Injection
   get_it: 7.7.0
@@ -83,11 +82,11 @@ dependencies:
   #  qr_flutter: ^4.1.0
   pretty_qr_code: ^3.5.0
   expansion_tile_group: ^2.1.0
-  carousel_slider: ^5.0.0
+  carousel_slider: ^5.1.2  # Updated from 5.0.0
   lottie: ^3.3.0
   #rive: ^0.13.20
   custom_refresh_indicator: ^4.0.1
-  animations: ^2.0.11
+  animations: ^2.1.2  # Updated from 2.0.11
   animate_do: ^4.2.0
   flutter_custom_carousel: ^0.1.0+1
   confetti: ^0.8.0
@@ -99,8 +98,8 @@ dependencies:
   pin_code_fields: 8.0.1
   dropdown_button2: 2.3.9
   video_player: ^2.10.0
-  chewie: ^1.8.5
-  calendar_date_picker2: ^2.0.0
+  chewie: ^1.13.0  # Updated from 1.8.5
+  calendar_date_picker2: ^2.0.1  # Updated from 2.0.0
 
   # Helper
   flutter_local_notifications: 19.0.0-dev.7 #17.2.2

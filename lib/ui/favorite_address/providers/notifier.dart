@@ -16,62 +16,92 @@ class FavoritePlacesNotifier extends StateNotifier<List<FavoritePlace>> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> loadFavoritePlaces() async {
-    var box = await Hive.openBox<FavoritePlace>('favorites');
-    // Load dữ liệu từ Firebase
-    QuerySnapshot snapshot = await _firestore.collection('favorite_places').get();
+    Box<FavoritePlace>? box;
+    try {
+      box = await Hive.openBox<FavoritePlace>('favorites');
+      // Load dữ liệu từ Firebase
+      QuerySnapshot snapshot = await _firestore.collection('favorite_places').get();
 
-    // Duyệt qua các địa điểm từ Firebase và thêm vào Hive
-    List<FavoritePlace> firebasePlaces = snapshot.docs.map((doc) {
-      return FavoritePlace(
-        name: doc['name'],
-        address: doc['address'],
-        type: doc['type'] ?? 'Không có',
-        price: doc['price'] ?? '0.0',
-      );
-    }).toList();
+      // Duyệt qua các địa điểm từ Firebase và thêm vào Hive
+      List<FavoritePlace> firebasePlaces = snapshot.docs.map((doc) {
+        return FavoritePlace(
+          name: doc['name'],
+          address: doc['address'],
+          type: doc['type'] ?? 'Không có',
+          price: doc['price'] ?? '0.0',
+        );
+      }).toList();
 
-    // Lấy dữ liệu từ Hive
-    List<FavoritePlace> localPlaces = box.values.toList();
+      // Lấy dữ liệu từ Hive
+      List<FavoritePlace> localPlaces = box.values.toList();
 
-    state = List.from(Set<FavoritePlace>.from(localPlaces)..addAll(firebasePlaces));
+      state = List.from(Set<FavoritePlace>.from(localPlaces)..addAll(firebasePlaces));
+    } catch (e) {
+      logger.e('❌ Error loading favorite places: $e');
+      // Keep current state on error
+    } finally {
+      // Don't close box - it's used globally
+      // await box?.close();
+    }
   }
 
   Future<void> removeFavoritePlace(int index) async {
-    var box = await Hive.openBox<FavoritePlace>('favorites');
+    Box<FavoritePlace>? box;
+    try {
+      box = await Hive.openBox<FavoritePlace>('favorites');
 
-    if (index < 0 || index >= box.length) {
-      logger.w('⚠️ Index không hợp lệ: $index');
-      return;
-    }
-
-    final place = box.getAt(index);
-
-    await box.deleteAt(index);
-
-    if (place != null) {
-      final snapshot = await _firestore
-          .collection('favorite_places')
-          .where('name', isEqualTo: place.name)
-          .get();
-
-      for (var doc in snapshot.docs) {
-        await doc.reference.delete();
+      if (index < 0 || index >= box.length) {
+        logger.w('⚠️ Index không hợp lệ: $index');
+        return;
       }
-    }
 
-    // Cập nhật danh sách
-    loadFavoritePlaces();
+      final place = box.getAt(index);
+
+      await box.deleteAt(index);
+
+      if (place != null) {
+        final snapshot = await _firestore
+            .collection('favorite_places')
+            .where('name', isEqualTo: place.name)
+            .get();
+
+        for (var doc in snapshot.docs) {
+          await doc.reference.delete();
+        }
+      }
+
+      // Cập nhật danh sách
+      await loadFavoritePlaces();
+    } catch (e) {
+      logger.e('❌ Error removing favorite place: $e');
+      // Reload to ensure consistency
+      await loadFavoritePlaces();
+    } finally {
+      // Don't close box - it's used globally
+      // await box?.close();
+    }
   }
 
 
   Future<void> openGoogleMaps(BuildContext context, String address) async {
-    final Uri googleMapsUri = Uri.parse("https://www.google.com/maps/search/?q=$address");
-    if (await canLaunch(googleMapsUri.toString())) {
-      await launch(googleMapsUri.toString());
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Không thể mở Google Maps')),
-      );
+    try {
+      final Uri googleMapsUri = Uri.parse("https://www.google.com/maps/search/?q=$address");
+      if (await canLaunch(googleMapsUri.toString())) {
+        await launch(googleMapsUri.toString());
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Không thể mở Google Maps')),
+          );
+        }
+      }
+    } catch (e) {
+      logger.e('❌ Error opening Google Maps: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: ${e.toString()}')),
+        );
+      }
     }
   }
 

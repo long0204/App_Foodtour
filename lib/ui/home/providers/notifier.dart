@@ -9,11 +9,23 @@ import '../../../data/sources/remote/google_service.dart';
 part 'state.dart';
 
 class RandomItemNotifier extends StateNotifier<RandomItemState> {
-  RandomItemNotifier() : super(RandomItemState.initial()) {
-    loadItems();
-  }
+  RandomItemNotifier() : super(RandomItemState.initial());
+  
+  // Cache
+  List<Map<String, dynamic>>? _cachedItems;
+  DateTime? _cacheTime;
+  static const _cacheDuration = Duration(minutes: 15);
 
   Future<void> loadItems() async {
+    // Check cache first
+    if (_cachedItems != null && _cacheTime != null) {
+      final cacheAge = DateTime.now().difference(_cacheTime!);
+      if (cacheAge < _cacheDuration) {
+        state = state.copyWith(items: _cachedItems!, isLoading: false);
+        return;
+      }
+    }
+    
     try {
       final data = await fetchGoogleSheetItems();
 
@@ -24,18 +36,41 @@ class RandomItemNotifier extends StateNotifier<RandomItemState> {
       await box.addAll(restaurants);
 
       final items = restaurants.map((e) => e.toMap()).toList();
+      
+      // Update cache
+      _cachedItems = items;
+      _cacheTime = DateTime.now();
 
       state = state.copyWith(items: items, isLoading: false);
     } catch (e) {
+      debugPrint('❌ Error loading items: $e');
       state = state.copyWith(isLoading: false);
+      // Try to load from Hive as fallback
+      loadFromHive();
     }
   }
 
   void loadFromHive() {
-    final box = Hive.box<Restaurant>('restaurants');
-    final items = box.values.map((e) => e.toMap()).toList();
+    try {
+      final box = Hive.box<Restaurant>('restaurants');
+      final items = box.values.map((e) => e.toMap()).toList();
+      
+      // Update cache
+      _cachedItems = items;
+      _cacheTime = DateTime.now();
 
-    state = state.copyWith(items: items, isLoading: false);
+      state = state.copyWith(items: items, isLoading: false);
+    } catch (e) {
+      debugPrint('❌ Error loading from Hive: $e');
+      state = state.copyWith(isLoading: false);
+    }
+  }
+  
+  @override
+  void dispose() {
+    _cachedItems = null;
+    _cacheTime = null;
+    super.dispose();
   }
 
 
@@ -76,6 +111,11 @@ class RandomItemNotifier extends StateNotifier<RandomItemState> {
 }
 
 final randomItemNotifierProvider =
-StateNotifierProvider<RandomItemNotifier, RandomItemState>(
-      (ref) => RandomItemNotifier(),
+StateNotifierProvider.autoDispose<RandomItemNotifier, RandomItemState>(
+      (ref) {
+    final notifier = RandomItemNotifier();
+    // Load items on first access
+    notifier.loadItems();
+    return notifier;
+  },
 );

@@ -7,6 +7,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../core/api/api_client.dart';
+import 'secure_storage_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -17,9 +18,21 @@ class AuthService {
     return String.fromCharCodes(Iterable.generate(length, (_) => chars.codeUnitAt(Random().nextInt(chars.length))));
   }
 
+  /// Lưu token vào secure storage (encrypted)
   Future<void> _saveToken(String uid) async {
-    var box = await Hive.openBox('userBox');
-    await box.put('token', uid);
+    try {
+      // Save vào secure storage (NEW - encrypted)
+      await secureStorage.saveAuthToken(uid);
+      await secureStorage.saveUserId(uid);
+      
+      // TODO: Remove Hive storage sau khi migration hoàn tất
+      // Tạm thời giữ để backward compatibility
+      var box = await Hive.openBox('userBox');
+      await box.put('token', uid);
+    } catch (e) {
+      print('❌ Error saving token: $e');
+      rethrow;
+    }
   }
 
   Future<void> _saveUserToFirestore(User user, {String? password, String? fullname}) async {
@@ -29,9 +42,9 @@ class AuthService {
     if (!docSnapshot.exists) {
       await userDoc.set({
         'userId': user.uid,
-        'username': user.email,
-        'fullname': fullname ?? user.displayName,
-        'avatar': user.photoURL,
+        'username': user.email ?? '', // ✅ Null check added
+        'fullname': fullname ?? user.displayName ?? 'Người dùng', // ✅ Null check added
+        'avatar': user.photoURL ?? '', // ✅ Null check added
         'created_at': DateTime.now().toIso8601String(),
         'key': _generateRandomKey(20),
         'password': password ?? '',
@@ -98,16 +111,30 @@ class AuthService {
       idToken: appleIdCredential.identityToken, accessToken: appleIdCredential.authorizationCode,
     ));
     if (cred.user != null) {
-      await _saveUserToFirestore(cred.user!, fullname: "${appleIdCredential.givenName} ${appleIdCredential.familyName}");
+      // ✅ Null check for Apple name fields
+      final givenName = appleIdCredential.givenName ?? '';
+      final familyName = appleIdCredential.familyName ?? '';
+      final fullName = '$givenName $familyName'.trim();
+      await _saveUserToFirestore(cred.user!, fullname: fullName.isEmpty ? null : fullName);
     }
     return cred;
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
-    var box = await Hive.openBox('userBox');
-    await box.delete('token');
-    await box.clear();
+    try {
+      await _auth.signOut();
+      
+      // Clear secure storage (NEW)
+      await secureStorage.clearAll();
+      
+      // Clear Hive (OLD - for backward compatibility)
+      var box = await Hive.openBox('userBox');
+      await box.delete('token');
+      await box.clear();
+    } catch (e) {
+      print('❌ Error during sign out: $e');
+      rethrow;
+    }
   }
 
   Future<void> updateProfile({String? fullname, String? avatarUrl}) async {

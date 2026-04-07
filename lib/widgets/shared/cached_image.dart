@@ -41,9 +41,13 @@ class CachedImage extends StatelessWidget {
       fit: fit,
       height: height,
       width: width,
-      fadeInDuration: fadeInDuration ?? const Duration(milliseconds: 500),
-      memCacheHeight: cacheH?.ceil() ?? (height.isFinite ? (height * 2.5).ceil() : null),
-      memCacheWidth: cacheW?.ceil() ?? (width.isFinite ? (width * 2.5).ceil() : null),
+      fadeInDuration: fadeInDuration ?? const Duration(milliseconds: 300),
+      // Optimize memory cache - use 2x for retina displays
+      memCacheHeight: cacheH?.ceil() ?? (height.isFinite ? (height * 2).ceil() : null),
+      memCacheWidth: cacheW?.ceil() ?? (width.isFinite ? (width * 2).ceil() : null),
+      // Limit max cache size to prevent memory issues
+      maxHeightDiskCache: 1000,
+      maxWidthDiskCache: 1000,
       errorWidget: (context, url, error) =>
       errorWidget ?? Assets.images.shared.placeholderImage.image(
           height: height,
@@ -51,7 +55,14 @@ class CachedImage extends StatelessWidget {
           fit: fit
       ),
       placeholder: (context, url) =>
-      placeholder ?? Container(color: Colors.grey[200], width: width, height: height),
+      placeholder ?? Container(
+        color: Colors.grey[200], 
+        width: width, 
+        height: height,
+        child: const Center(
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ),
     );
   }
 }
