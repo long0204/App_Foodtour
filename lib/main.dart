@@ -31,7 +31,7 @@ void main() async {
     await Hive.initFlutter();
     await RemoteConfigService().init();
     
-    // Migrate old tokens from Hive to SecureStorage (one-time)
+    // Migrate old tokens from Hive to SecureStorage
     await secureStorage.migrateFromHive();
     
     Hive.registerAdapter(ReviewAdapter());
@@ -42,7 +42,6 @@ void main() async {
 
     runApp(const ProviderScope(child: FoodTourApp()));
   }, (error, stack) {
-    // Catch errors from runZonedGuarded
     errorHandler.logError(error, stack, reason: 'Uncaught error in main zone', fatal: true);
   });
 }

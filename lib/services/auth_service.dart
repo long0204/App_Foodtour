@@ -21,12 +21,9 @@ class AuthService {
   /// Lưu token vào secure storage (encrypted)
   Future<void> _saveToken(String uid) async {
     try {
-      // Save vào secure storage (NEW - encrypted)
       await secureStorage.saveAuthToken(uid);
       await secureStorage.saveUserId(uid);
-      
-      // TODO: Remove Hive storage sau khi migration hoàn tất
-      // Tạm thời giữ để backward compatibility
+
       var box = await Hive.openBox('userBox');
       await box.put('token', uid);
     } catch (e) {
@@ -42,9 +39,9 @@ class AuthService {
     if (!docSnapshot.exists) {
       await userDoc.set({
         'userId': user.uid,
-        'username': user.email ?? '', // ✅ Null check added
-        'fullname': fullname ?? user.displayName ?? 'Người dùng', // ✅ Null check added
-        'avatar': user.photoURL ?? '', // ✅ Null check added
+        'username': user.email ?? '',
+        'fullname': fullname ?? user.displayName ?? 'Người dùng',
+        'avatar': user.photoURL ?? '',
         'created_at': DateTime.now().toIso8601String(),
         'key': _generateRandomKey(20),
         'password': password ?? '',
@@ -111,7 +108,6 @@ class AuthService {
       idToken: appleIdCredential.identityToken, accessToken: appleIdCredential.authorizationCode,
     ));
     if (cred.user != null) {
-      // ✅ Null check for Apple name fields
       final givenName = appleIdCredential.givenName ?? '';
       final familyName = appleIdCredential.familyName ?? '';
       final fullName = '$givenName $familyName'.trim();
@@ -123,11 +119,8 @@ class AuthService {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
-      
-      // Clear secure storage (NEW)
+
       await secureStorage.clearAll();
-      
-      // Clear Hive (OLD - for backward compatibility)
       var box = await Hive.openBox('userBox');
       await box.delete('token');
       await box.clear();

@@ -101,7 +101,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  // TẠO HÀM RENDER GRID SHIMMER GIẢ LẬP
   Widget _buildGridShimmer() {
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -117,7 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             radius: 15.r,
           );
         },
-        childCount: 4, // Hiển thị 4 ô giả lập trong lúc chờ
+        childCount: 4,
       ),
     );
   }
@@ -327,9 +326,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                                       return Marker(
                                         point: LatLng(res.latitude!, res.longitude!),
-                                        width: 120, // Kích thước khung vẽ
+                                        width: 120,
                                         height: 80,
-                                        alignment: Alignment.center, // Căn giữa
+                                        alignment: Alignment.center,
                                         child: Center(
                                           child: GestureDetector(
                                             onTap: () {
@@ -459,7 +458,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 );
               },
-              // 2. ÁP DỤNG SHIMMER CHO LƯỚI DANH SÁCH GỢI Ý
               loading: () => _buildGridShimmer(),
               error: (err, stack) =>
                   SliverToBoxAdapter(child: Center(child: Text("Lỗi: $err"))),
