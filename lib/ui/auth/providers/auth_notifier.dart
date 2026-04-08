@@ -30,25 +30,41 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
   Future<void> loginGoogle() async {
     state = const AsyncLoading();
 
-    final result = await AsyncValue.guard(() => _authService.signInWithGoogle());
+    try {
+      final result = await _authService.signInWithGoogle();
 
-    if (result is AsyncData && result.value != null) {
-      _ref.read(tabIndexProvider.notifier).state = 0;
+      if (result != null && result.user != null) {
+        state = const AsyncData(null);
+        _ref.read(tabIndexProvider.notifier).state = 0;
+        print("✅ Login Google successful, navigating to home");
+      } else {
+        state = AsyncError("Đăng nhập bị hủy", StackTrace.current);
+        print("❌ Login Google cancelled");
+      }
+    } catch (e, stack) {
+      state = AsyncError(e, stack);
+      print("❌ Login Google error: $e");
     }
-
-    state = result;
   }
 
   Future<void> loginApple() async {
     state = const AsyncLoading();
 
-    final result = await AsyncValue.guard(() => _authService.signInWithApple());
+    try {
+      final result = await _authService.signInWithApple();
 
-    if (result is AsyncData && result.value != null) {
-      _ref.read(tabIndexProvider.notifier).state = 0;
+      if (result != null && result.user != null) {
+        state = const AsyncData(null);
+        _ref.read(tabIndexProvider.notifier).state = 0;
+        print("✅ Login Apple successful, navigating to home");
+      } else {
+        state = AsyncError("Đăng nhập bị hủy", StackTrace.current);
+        print("❌ Login Apple cancelled");
+      }
+    } catch (e, stack) {
+      state = AsyncError(e, stack);
+      print("❌ Login Apple error: $e");
     }
-
-    state = result;
   }
 
   Future<void> loginWithEmail(String email, String password) async {

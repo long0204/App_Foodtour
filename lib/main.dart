@@ -34,6 +34,11 @@ void main() async {
     // Migrate old tokens from Hive to SecureStorage
     await secureStorage.migrateFromHive();
     
+    // ✅ Initialize API Client BEFORE running app
+    print("🔧 Initializing API Client...");
+    apiClient = ApiClient(secureStorage: secureStorage);
+    print("✅ API Client initialized successfully");
+    
     Hive.registerAdapter(ReviewAdapter());
     Hive.registerAdapter(RestaurantAdapter());
 

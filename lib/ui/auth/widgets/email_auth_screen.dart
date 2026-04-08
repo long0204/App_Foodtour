@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import '../../../config/gen/assets.gen.dart';
 import '../../../config/themes/text_style.dart';
+import '../../../services/secure_storage_service.dart'; // ✅ NEW: Import secure storage
 import '../providers/auth_notifier.dart';
+import '../forgot_password_screen.dart'; // ✅ NEW: Import forgot password screen
 
 class EmailAuthScreen extends ConsumerStatefulWidget {
   const EmailAuthScreen({super.key});
@@ -19,6 +21,52 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLogin = true;
   bool _obscurePassword = true;
+  bool _rememberMe = false; // ✅ NEW: Remember me state
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRememberMe(); // ✅ NEW: Load saved credentials
+  }
+
+  // ✅ NEW: Load remember me credentials
+  Future<void> _loadRememberMe() async {
+    final data = await secureStorage.getRememberMe();
+    if (data['email'] != null && data['email']!.isNotEmpty) {
+      setState(() {
+        _emailController.text = data['email']!;
+        _passwordController.text = data['password'] ?? '';
+        _rememberMe = true;
+      });
+    }
+  }
+
+  // ✅ NEW: Handle login with remember me
+  Future<void> _handleLogin() async {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      final pass = _passwordController.text.trim();
+      
+      // Save or clear remember me
+      if (_rememberMe) {
+        await secureStorage.saveRememberMe(email, pass);
+      } else {
+        await secureStorage.clearRememberMe();
+      }
+      
+      // Perform login
+      ref.read(authNotifierProvider.notifier).loginWithEmail(email, pass);
+    }
+  }
+
+  // ✅ NEW: Handle register
+  Future<void> _handleRegister() async {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      final pass = _passwordController.text.trim();
+      ref.read(authNotifierProvider.notifier).registerWithEmail(email, pass);
+    }
+  }
 
   bool _isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
@@ -105,12 +153,31 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                     return null;
                   },
                 ),
+                Gap(10.h),
+
+                // ✅ NEW: Remember me checkbox (only show in login mode)
+                if (_isLogin)
+                  CheckboxListTile(
+                    value: _rememberMe,
+                    onChanged: (value) => setState(() => _rememberMe = value ?? false),
+                    title: Text("Ghi nhớ tài khoản", style: k2d400.s14),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    activeColor: Colors.redAccent,
+                  ),
 
                 if (_isLogin)
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Navigate to forgot password screen
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
                       child: Text("Quên mật khẩu?", style: k2d500.s13.red500ts),
                     ),
                   ),
@@ -127,14 +194,11 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
                   onPressed: authState.isLoading
                       ? null
                       : () {
-                    if (_formKey.currentState!.validate()) {
-                      final email = _emailController.text.trim();
-                      final pass = _passwordController.text.trim();
-                      if (_isLogin) {
-                        ref.read(authNotifierProvider.notifier).loginWithEmail(email, pass);
-                      } else {
-                        ref.read(authNotifierProvider.notifier).registerWithEmail(email, pass);
-                      }
+                    // ✅ UPDATED: Use new handlers
+                    if (_isLogin) {
+                      _handleLogin();
+                    } else {
+                      _handleRegister();
                     }
                   },
                   child: authState.isLoading

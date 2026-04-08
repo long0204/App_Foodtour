@@ -24,6 +24,9 @@ class SecureStorageService {
   static const String _authTokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
+  static const String _rememberEmailKey = 'remember_email';
+  static const String _rememberPasswordKey = 'remember_password';
+  static const String _biometricEnabledKey = 'biometric_enabled';
 
   /// Lưu auth token (encrypted)
   Future<void> saveAuthToken(String token) async {
@@ -118,6 +121,77 @@ class SecureStorageService {
   Future<bool> hasAuthToken() async {
     final token = await getAuthToken();
     return token != null && token.isNotEmpty;
+  }
+
+  // ==================== Remember Me Feature ====================
+  
+  /// Lưu email và password cho remember me
+  Future<void> saveRememberMe(String email, String password) async {
+    try {
+      await _secureStorage.write(key: _rememberEmailKey, value: email);
+      await _secureStorage.write(key: _rememberPasswordKey, value: password);
+      _logger.i('✅ Remember me credentials saved securely');
+    } catch (e) {
+      _logger.e('❌ Error saving remember me: $e');
+      rethrow;
+    }
+  }
+  
+  /// Lấy email và password đã lưu
+  Future<Map<String, String?>> getRememberMe() async {
+    try {
+      final email = await _secureStorage.read(key: _rememberEmailKey);
+      final password = await _secureStorage.read(key: _rememberPasswordKey);
+      return {'email': email, 'password': password};
+    } catch (e) {
+      _logger.e('❌ Error reading remember me: $e');
+      return {'email': null, 'password': null};
+    }
+  }
+  
+  /// Xóa remember me credentials
+  Future<void> clearRememberMe() async {
+    try {
+      await _secureStorage.delete(key: _rememberEmailKey);
+      await _secureStorage.delete(key: _rememberPasswordKey);
+      _logger.i('✅ Remember me credentials cleared');
+    } catch (e) {
+      _logger.e('❌ Error clearing remember me: $e');
+      rethrow;
+    }
+  }
+  
+  /// Check xem có remember me không
+  Future<bool> hasRememberMe() async {
+    final data = await getRememberMe();
+    return data['email'] != null && data['email']!.isNotEmpty;
+  }
+
+  // ==================== Biometric Authentication ====================
+  
+  /// Lưu biometric enabled preference
+  Future<void> setBiometricEnabled(bool enabled) async {
+    try {
+      await _secureStorage.write(
+        key: _biometricEnabledKey,
+        value: enabled.toString(),
+      );
+      _logger.i('✅ Biometric preference saved: $enabled');
+    } catch (e) {
+      _logger.e('❌ Error saving biometric preference: $e');
+      rethrow;
+    }
+  }
+  
+  /// Lấy biometric enabled preference
+  Future<bool> getBiometricEnabled() async {
+    try {
+      final value = await _secureStorage.read(key: _biometricEnabledKey);
+      return value == 'true';
+    } catch (e) {
+      _logger.e('❌ Error reading biometric preference: $e');
+      return false;
+    }
   }
 
   /// Migrate data từ Hive sang SecureStorage (one-time migration)
