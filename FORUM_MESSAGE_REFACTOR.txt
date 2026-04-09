@@ -1,0 +1,58 @@
+🔧 **REFACTOR ACTION PLAN - FOODTOUR APP**
+
+📅 **Ngày:** 09/04/2026 - 19:30
+👤 **Người thực hiện:** Hương Ngáo (QA & PM)
+🎯 **Mục tiêu:** Chuẩn hóa architecture, loại bỏ duplicate code, tối ưu performance
+
+---
+
+## 📊 **AUDIT FINDINGS**
+
+Sau khi kiểm tra toàn bộ dự án, phát hiện các vấn đề:
+
+❌ **3 auth providers khác nhau** → Duplicate logic, confusion
+❌ **Mix GetIt + Riverpod** → DI không consistent  
+❌ **API keys hardcoded** → Security risk
+❌ **Unused/commented code** → Code smell
+❌ **Mixed state management** → Khó maintain
+
+---
+
+## 🎯 **ACTION PLAN (3 PHASES)**
+
+### **PHASE 1: CRITICAL FIXES** ⚡ (2-3h)
+✅ Chuẩn hóa Auth System (chọn 1, xóa 2)
+✅ Loại bỏ GetIt DI (chỉ dùng Riverpod)
+✅ Secure Environment Variables (.env file)
+
+### **PHASE 2: CODE CLEANUP** 🧹 (1-2h)
+✅ Xóa unused/commented code
+✅ Chuẩn hóa State Management (Riverpod Generator)
+✅ API Client refactor
+
+### **PHASE 3: OPTIMIZATION** 🚀 (2-3h)
+✅ Improve caching strategy
+✅ Error handling enhancement
+✅ Testing setup
+✅ Documentation
+
+---
+
+## ⏱️ **TIMELINE**
+
+**Bắt đầu:** 09/04/2026 - 19:30
+**Dự kiến hoàn thành:** 10/04/2026 - 02:00 (6-8 giờ)
+
+---
+
+## 📄 **CHI TIẾT**
+
+Full action plan: `REFACTOR_ACTION_PLAN.md`
+
+---
+
+**Status:** 🟡 STARTING NOW
+**Priority:** 🔴 HIGH
+**Impact:** Architecture cleanup, better maintainability
+
+Em bắt đầu Phase 1 ngay! 💪

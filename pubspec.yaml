@@ -20,13 +20,11 @@ dependencies:
   flutter_riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
 
-  # Dependency Injection
-  get_it: 7.7.0
-
   # Remote API
   dio: ^5.3.2
   #  pusher_channels_flutter: ^2.5.0
   pretty_dio_logger: ^1.4.0
+  flutter_dotenv: ^5.1.0
 
   # Gen data
   # json_annotation: ^4.8.1
@@ -170,7 +168,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.15
+  build_runner: ^2.4.13
   flutter_gen_runner: ^5.8.0
   json_serializable: ^6.8.0
   hive_generator: ^2.0.1
@@ -225,6 +223,7 @@ flutter:
   generate: true
 
   assets:
+    - .env
     - assets/
     - assets/fonts/
     - assets/images/

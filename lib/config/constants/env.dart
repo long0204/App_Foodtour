@@ -1,17 +1,23 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ENV {
   ENV._();
 
-  static const ProUrl = 'https://foodend.onrender.com/api';
-  static const baseImageUrl =
-      'https://s3.ap-southeast-1.amazonaws.com/storage.dinos.vn';
+  // API Configuration
+  static String get baseUrl => dotenv.env['BASE_URL'] ?? 'https://foodend.onrender.com/api';
+  static String get baseImageUrl => dotenv.env['BASE_IMAGE_URL'] ?? 'https://s3.ap-southeast-1.amazonaws.com/storage.dinos.vn';
 
-  static const spreadsheetId = '14Y_Y8-UFLkVKo3HYmsBPylz28SZy2fPj2z5DzORxFac';
-  static const apiKey = 'AIzaSyCVGKpHpigRX3b15mHDbXU2w40GBMXTC9g';
-  static const url = 'https://sheets.googleapis.com/v4/spreadsheets';
-  static const urlscripts = 'https://script.google.com/macros/s/AKfycby8gyhy65kZjAvMUhEDSwrbgi1oVO4UxWdg5rRgNZbT-YBvXRDtT4-1KuJ6gt--Q-LYqQ/exec';
-  static const String appwriteProjectId = 'foodtour-9112d';
-  static const String appwriteProjectName = 'Foodtour';
-  static const String appwritePublicEndpoint = 'https://sgp.cloud.appwrite.io/v1';
+  // Google Sheets API
+  static String get spreadsheetId => dotenv.env['SPREADSHEET_ID'] ?? '';
+  static String get apiKey => dotenv.env['GOOGLE_SHEETS_API_KEY'] ?? '';
+  static String get url => dotenv.env['GOOGLE_SHEETS_URL'] ?? 'https://sheets.googleapis.com/v4/spreadsheets';
+  static String get urlscripts => dotenv.env['GOOGLE_SCRIPTS_URL'] ?? '';
 
-  static const baseUrl= ENV.ProUrl;
+  // Appwrite Configuration
+  static String get appwriteProjectId => dotenv.env['APPWRITE_PROJECT_ID'] ?? 'foodtour-9112d';
+  static String get appwriteProjectName => dotenv.env['APPWRITE_PROJECT_NAME'] ?? 'Foodtour';
+  static String get appwritePublicEndpoint => dotenv.env['APPWRITE_ENDPOINT'] ?? 'https://sgp.cloud.appwrite.io/v1';
+
+  // Legacy aliases (for backward compatibility)
+  static String get ProUrl => baseUrl;
 }

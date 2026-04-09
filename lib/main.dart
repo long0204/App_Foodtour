@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'config/gen/app_l10n.dart';
 import 'core/api/api_client.dart';
 import 'core/route.dart';
@@ -17,6 +18,10 @@ import 'data/model/review.dart';
 void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    // Load environment variables
+    await dotenv.load(fileName: ".env");
+    print("✅ Environment variables loaded");
 
     await Firebase.initializeApp();
 

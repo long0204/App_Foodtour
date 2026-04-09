@@ -3,6 +3,10 @@
 /build
 .flutter-plugins-dependencies
 *.salive
+
+# Environment variables
+.env
+
 lib/config/apple-app-site-association
 lib/config/assetlinks.json
 ios/Podfile.lock

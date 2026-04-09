@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 
 class HeartShapeDialog extends StatelessWidget {
   final String title;

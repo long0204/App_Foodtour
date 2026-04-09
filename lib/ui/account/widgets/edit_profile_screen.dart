@@ -1,14 +1,11 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:Foodtour/utils/string.dart';
 import 'package:Foodtour/widgets/base/base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:Foodtour/core/route.dart';
-import 'package:Foodtour/providers/community_provider.dart';
 import 'package:Foodtour/widgets/shared/cached_image.dart';
 
 import '../../../config/themes/text_style.dart';
