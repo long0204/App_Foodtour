@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:animate_do/animate_do.dart';
-import '../../config/gen/assets.gen.dart';
 import '../../config/themes/text_style.dart';
 import '../../services/auth_service.dart';
 import '../../widgets/dialogs/dialogs.dart';

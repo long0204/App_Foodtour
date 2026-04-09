@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../../../../config/themes/text_style.dart';
 import '../../../../core/route.dart';
 import '../../../../data/model/restaurant.dart';
 import '../../../../widgets/shared/cached_image.dart';

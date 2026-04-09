@@ -1,12 +1,7 @@
-import 'dart:io';
-
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../../config/l10n/l10n.dart';
 import '../../config/themes/theme.dart';
 import '../../core/route.dart';
 import '../shared/loading_full.dart';

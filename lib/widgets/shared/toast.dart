@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-import '../../config/themes/color.dart' as k2d400;
-import '../../config/themes/text_style.dart';
-
 class ToastWidget extends StatelessWidget {
   const ToastWidget({
     super.key,

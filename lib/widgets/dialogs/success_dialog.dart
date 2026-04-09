@@ -1,7 +1,6 @@
 // lib/widgets/dialogs/success_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lottie/lottie.dart';
 import '../../config/themes/text_style.dart';
 import 'common_dialog.dart';
 

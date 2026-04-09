@@ -8,7 +8,6 @@ import '../../config/gen/assets.gen.dart';
 import '../../config/themes/text_style.dart';
 import '../../providers/tab_provider.dart';
 import '../../services/biometric_service.dart';
-import '../../services/auth_service.dart';
 import '../../core/route.dart';
 
 class BiometricLoginScreen extends ConsumerStatefulWidget {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../config/gen/assets.gen.dart';
 import '../../../config/themes/text_style.dart';
 import '../../../data/model/restaurant.dart';
 import '../../../widgets/shared/cached_image.dart';

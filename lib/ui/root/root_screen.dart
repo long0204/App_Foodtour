@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/tab_provider.dart';
 import '../account/account_screen.dart';
 import '../add_place/add_place_screen.dart';
-import '../auth/login_screen.dart';
-import '../auth/providers/auth_notifier.dart';
 import '../home/home_screen.dart';
 import '../list_address/restaurant_list_screen.dart';
 import '../map/food_map_screen.dart';
