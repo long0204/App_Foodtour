@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import '../../config/constants/env.dart';
 import '../../services/secure_storage_service.dart';
+import '../network/network_info.dart';
+import '../network/retry_interceptor.dart';
 import 'interceptor.dart';
 
 class ApiClient {
@@ -10,10 +12,18 @@ class ApiClient {
   ApiClient({required this.secureStorage}) {
     _dio = Dio(BaseOptions(
       baseUrl: ENV.baseUrl,
-      // connectTimeout: const Duration(seconds: 15),
-      // receiveTimeout: const Duration(seconds: 15),
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      sendTimeout: const Duration(seconds: 30),
       contentType: 'application/json',
-    ))..interceptors.add(AppInterceptor(secureStorage: secureStorage));
+    ))
+      ..interceptors.add(AppInterceptor(secureStorage: secureStorage))
+      ..interceptors.add(RetryInterceptor(
+        dio: _dio,
+        networkInfo: networkInfo,
+        maxRetries: 3,
+        retryDelay: Duration(seconds: 2),
+      ));
   }
 
   Dio getDio() => _dio;
