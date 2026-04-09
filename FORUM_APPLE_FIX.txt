@@ -1,0 +1,35 @@
+🔴 **APPLE SIGN IN - BUG FIX**
+
+❌ **Vấn đề:** Đăng nhập Apple không hoạt động
+
+🔍 **Root Cause:** THIẾU cấu hình iOS
+
+✅ **Đã fix (50%):**
+- ✅ Info.plist - Added Apple Sign In config
+- ✅ Runner.entitlements - Created new file
+
+⚠️ **Đại ca cần làm (50%):**
+
+**1. Xcode (BẮT BUỘC):**
+- Mở `ios/Runner.xcworkspace`
+- Signing & Capabilities → Add "Sign in with Apple"
+
+**2. Apple Developer Portal:**
+- Enable "Sign in with Apple" cho App ID
+- Regenerate provisioning profiles
+
+**3. Clean & Rebuild:**
+```bash
+cd ios && rm -rf Pods Podfile.lock
+pod install && cd ..
+flutter clean && flutter pub get
+```
+
+⚠️ **Lưu ý:**
+- Apple Sign In CHỈ work trên iPhone/iPad thật
+- KHÔNG work trên Simulator
+- Cần Apple Developer Account ($99/year)
+
+📄 **Chi tiết:** APPLE_SIGNIN_FIX.md
+
+Em đã fix phần code, phần còn lại cần Xcode + Apple Developer Portal! 💪

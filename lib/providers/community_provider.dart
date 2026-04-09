@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/model/restaurant.dart';
-import '../core/api/api_client.dart';
+import '../core/providers/api_client_provider.dart';
 import '../../utils/logger.dart';
 
 class SuggestionNotifier extends StateNotifier<AsyncValue<List<Restaurant>>> {
-  SuggestionNotifier() : super(const AsyncValue.loading());
+  final Ref ref;
+  
+  SuggestionNotifier(this.ref) : super(const AsyncValue.loading());
   String currentMealType = "bạn";
   
   // Cache for suggestions
@@ -27,6 +29,7 @@ class SuggestionNotifier extends StateNotifier<AsyncValue<List<Restaurant>>> {
     
     state = const AsyncValue.loading();
     try {
+      final apiClient = ref.read(apiClientProvider);
       final data = await apiClient.get(
         '/restaurants/suggestions',
         queryParameters: {'lat': lat, 'lng': lng},
@@ -55,10 +58,12 @@ class SuggestionNotifier extends StateNotifier<AsyncValue<List<Restaurant>>> {
     super.dispose();
   }
 }
-final suggestionProvider = StateNotifierProvider.autoDispose<SuggestionNotifier, AsyncValue<List<Restaurant>>>((ref) => SuggestionNotifier());
+final suggestionProvider = StateNotifierProvider.autoDispose<SuggestionNotifier, AsyncValue<List<Restaurant>>>((ref) => SuggestionNotifier(ref));
 
 class CommunityRestaurantNotifier extends StateNotifier<AsyncValue<List<Restaurant>>> {
-  CommunityRestaurantNotifier() : super(const AsyncValue.loading());
+  final Ref ref;
+  
+  CommunityRestaurantNotifier(this.ref) : super(const AsyncValue.loading());
   
   // Cache
   List<Restaurant>? _cachedData;
@@ -78,6 +83,7 @@ class CommunityRestaurantNotifier extends StateNotifier<AsyncValue<List<Restaura
     
     state = const AsyncValue.loading();
     try {
+      final apiClient = ref.read(apiClientProvider);
       final data = await apiClient.get('/restaurants');
       final List items = data as List;
 
@@ -102,7 +108,7 @@ class CommunityRestaurantNotifier extends StateNotifier<AsyncValue<List<Restaura
 }
 // Use autoDispose for better memory management
 final communityProvider = StateNotifierProvider.autoDispose<CommunityRestaurantNotifier, AsyncValue<List<Restaurant>>>((ref) {
-  final notifier = CommunityRestaurantNotifier();
+  final notifier = CommunityRestaurantNotifier(ref);
   // Fetch on first access
   notifier.fetchAllRestaurants();
   return notifier;

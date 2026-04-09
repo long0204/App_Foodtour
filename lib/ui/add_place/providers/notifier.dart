@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/api/api_client.dart';
+import '../../../../core/providers/api_client_provider.dart';
 import '../../../../data/sources/remote/google_service.dart';
 import '../../../../providers/community_provider.dart';
 import '../../../../services/cloudinary_service.dart';
@@ -43,6 +43,7 @@ class AddPlaceNotifier extends _$AddPlaceNotifier {
       final coords = await getCoordinatesFromAddress(address);
 
       // 4. Bắn API lưu vào Database
+      final apiClient = ref.read(apiClientProvider);
       await apiClient.post(
         '/restaurants',
         data: {

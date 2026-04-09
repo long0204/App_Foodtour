@@ -1,338 +1,247 @@
-# 📱 FoodTour App
+# 🍜 FoodTour - Khám phá ẩm thực xung quanh bạn
 
-**Version:** 1.1.0+1  
-**Last Updated:** 07/04/2026  
-**Architecture:** Clean Architecture + Riverpod
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg)](https://flutter.dev/)
+[![Riverpod](https://img.shields.io/badge/Riverpod-2.5.1-green.svg)](https://riverpod.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-Enabled-orange.svg)](https://firebase.google.com/)
 
----
-
-## 🎯 Overview
-
-FoodTour is a Flutter application for discovering and exploring restaurants. The app uses Clean Architecture pattern with Riverpod for state management.
+Ứng dụng di động giúp bạn khám phá và đánh giá các quán ăn ngon xung quanh.
 
 ---
 
-## 🏗️ Architecture
+## ✨ Tính năng
 
-### Clean Architecture Layers
+- 🔐 **Đăng nhập đa nền tảng:** Email, Google, Apple Sign In
+- 📍 **Gợi ý thông minh:** Dựa trên vị trí và thời gian
+- 🗺️ **Bản đồ tương tác:** Xem quán ăn trên bản đồ
+- 🧭 **Dẫn đường:** Chỉ đường đến quán ăn
+- ⭐ **Đánh giá & Review:** Chia sẻ trải nghiệm
+- 📸 **Upload ảnh:** Thêm hình ảnh món ăn
+- 🎡 **Vòng quay may mắn:** Gợi ý ngẫu nhiên
+- 🌐 **Đa ngôn ngữ:** Tiếng Việt & English
+
+---
+
+## 🏗️ Kiến trúc
+
+### State Management
+- **Riverpod 2.5.1** - State management & DI
+- **Riverpod Generator** - Code generation
+
+### Backend
+- **Firebase:** Auth, Firestore, Storage, Crashlytics
+- **Supabase:** Database & API
+- **REST API:** Custom backend
+
+### UI/UX
+- **Flutter ScreenUtil** - Responsive design
+- **Animate Do** - Animations
+- **Flutter Map** - Interactive maps
+- **Lottie** - Animations
+
+---
+
+## 📁 Cấu trúc dự án
 
 ```
 lib/
-├── presentation/     # UI Layer (Screens, Widgets, Providers)
-├── domain/          # Business Logic (Entities, Use Cases, Repositories)
-├── data/            # Data Layer (Data Sources, Repository Implementations)
-└── core/            # Shared Code (DI, API, Utils)
+├── config/           # Constants, themes, l10n
+├── core/             # Core functionality
+│   ├── api/          # API client
+│   ├── cache/        # Cache manager
+│   ├── error/        # Error handling
+│   ├── network/      # Network utilities
+│   └── providers/    # Core providers
+├── data/             # Data layer
+│   ├── model/        # Data models
+│   └── sources/      # Data sources
+├── providers/        # Global providers
+├── services/         # Services (auth, storage, etc.)
+├── ui/               # UI screens
+│   ├── auth/         # Authentication
+│   ├── home/         # Home screen
+│   ├── map/          # Map screen
+│   └── account/      # Account screen
+├── utils/            # Utilities
+└── widgets/          # Reusable widgets
 ```
-
-### State Management
-
-**Riverpod** - 100% Riverpod state management
-- No GetX dependencies
-- Provider-based architecture
-- Reactive state updates
-- Auto-dispose for memory management
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Bắt đầu
 
-### Prerequisites
+### Yêu cầu
 
-- Flutter SDK: >=3.1.0 <4.0.0
-- Dart SDK: >=3.1.0
+- Flutter SDK 3.x
+- Dart 3.x
+- iOS 13+ / Android 5.0+
+- Xcode 14+ (cho iOS)
 - Android Studio / VS Code
-- Firebase account (for backend services)
 
-### Installation
+### Cài đặt
 
+1. **Clone repository:**
 ```bash
-# Clone repository
-git clone <repository-url>
-cd App_Foodtour
+git clone https://github.com/your-repo/foodtour.git
+cd foodtour
+```
 
-# Install dependencies
+2. **Cài đặt dependencies:**
+```bash
 flutter pub get
+```
 
-# Run code generation (if needed)
-flutter pub run build_runner build --delete-conflicting-outputs
+3. **Setup environment variables:**
+```bash
+cp .env.example .env
+# Edit .env với API keys của bạn
+```
 
-# Run app
+4. **Setup Firebase:**
+- Tạo project trên Firebase Console
+- Download `google-services.json` (Android) và `GoogleService-Info.plist` (iOS)
+- Đặt vào thư mục tương ứng
+
+5. **iOS Setup (cho Apple Sign In):**
+```bash
+cd ios
+pod install
+cd ..
+```
+- Mở `ios/Runner.xcworkspace` trong Xcode
+- Add "Sign in with Apple" capability
+- Enable trong Apple Developer Portal
+
+6. **Run app:**
+```bash
 flutter run
 ```
 
 ---
 
-## 📦 Dependencies
-
-### Core Dependencies
-
-**State Management:**
-- `flutter_riverpod: ^2.5.1` - State management
-- `riverpod_annotation: ^2.3.5` - Code generation
-
-**Dependency Injection:**
-- `get_it: 7.7.0` - Service locator
-
-**Networking:**
-- `dio: ^5.3.2` - HTTP client
-- `pretty_dio_logger: ^1.4.0` - Request logging
-
-**Firebase:**
-- `firebase_core: ^4.0.0`
-- `firebase_auth: ^6.1.2`
-- `cloud_firestore: ^6.0.0`
-- `firebase_crashlytics: ^5.0.0`
-
-**Local Storage:**
-- `hive: ^2.2.3` - NoSQL database
-- `flutter_secure_storage: ^9.0.0` - Secure storage
-
-**UI Components:**
-- `flutter_screenutil: 5.9.3` - Responsive UI
-- `cached_network_image: ^3.4.1` - Image caching
-- `lottie: ^3.3.0` - Animations
-
----
-
 ## 🔧 Configuration
 
-### Environment Setup
+### Environment Variables (.env)
 
-1. **Firebase Configuration:**
-   - Add `google-services.json` (Android)
-   - Add `GoogleService-Info.plist` (iOS)
-
-2. **API Configuration:**
-   - Update `lib/config/constants/env.dart`
-   - Set base URL and API keys
-
-3. **Secure Storage:**
-   - Configured in `lib/services/secure_storage_service.dart`
-   - Encrypted token storage
-
----
-
-## 📁 Project Structure
-
-```
-lib/
-├── config/
-│   ├── constants/      # App constants
-│   ├── gen/           # Generated assets
-│   └── themes/        # App themes
-├── core/
-│   ├── api/           # API client & interceptors
-│   ├── di/            # Dependency injection
-│   └── providers/     # Core providers
-├── data/
-│   ├── datasources/   # Local & remote data sources
-│   ├── models/        # Data models
-│   └── repositories/  # Repository implementations
-├── domain/
-│   ├── entities/      # Business entities
-│   ├── repositories/  # Repository interfaces
-│   └── usecases/      # Business use cases
-├── presentation/
-│   └── providers/     # Presentation providers
-├── services/          # App services
-├── ui/               # Screens & widgets
-├── utils/            # Utilities & helpers
-└── main.dart         # App entry point
+```env
+BASE_URL=https://your-api.com/api
+GOOGLE_SHEETS_API_KEY=your_key
+CLOUDINARY_CLOUD_NAME=your_cloud
 ```
 
----
+### Firebase Configuration
 
-## 🎨 Features
-
-### Implemented Features
-
-✅ **Authentication**
-- Email/Password login
-- Google Sign-In
-- Apple Sign-In
-- Secure token storage
-
-✅ **Restaurant Discovery**
-- Browse restaurants
-- Search & filter
-- View details
-- Save favorites
-
-✅ **Map Integration**
-- Google Maps
-- Location services
-- Directions
-
-✅ **User Profile**
-- Edit profile
-- View history
-- Settings
-
----
-
-## 🔒 Security
-
-### Implemented Security Features
-
-✅ **Token Storage**
-- Encrypted storage using `flutter_secure_storage`
-- Secure token management
-
-✅ **API Security**
-- Rate limiting (500ms interval)
-- Retry logic (3 retries)
-- Error handling
-
-✅ **Input Validation**
-- 15+ validators
-- Null safety checks
-
-✅ **Error Handling**
-- Global error handler
-- Crashlytics integration
-- Provider error handling
-
----
-
-## ⚡ Performance Optimizations
-
-### Implemented Optimizations
-
-✅ **Provider Caching**
-- 5-15 minute cache TTL
-- Reduces API calls by 70%
-- Auto-dispose for memory management
-
-✅ **Image Optimization**
-- Memory cache (2x resolution)
-- Disk cache limits (1000px)
-- Progressive loading
-
-✅ **Memory Management**
-- Auto-dispose providers
-- Proper controller disposal
-- No memory leaks detected
+1. **Android:** `android/app/google-services.json`
+2. **iOS:** `ios/Runner/GoogleService-Info.plist`
 
 ---
 
 ## 🧪 Testing
 
-### Test Coverage
-
-Currently: Basic testing setup
-
-**Planned:**
-- Unit tests for providers
-- Unit tests for use cases
-- Widget tests for screens
-- Integration tests
-
-**Run Tests:**
+### Run tests:
 ```bash
+# Unit tests
+flutter test test/unit/
+
+# Widget tests
+flutter test test/widget/
+
+# All tests
 flutter test
+
+# With coverage
+flutter test --coverage
 ```
+
+Xem thêm: [TESTING_GUIDE.md](TESTING_GUIDE.md)
 
 ---
 
-## 📊 Code Quality
+## 📦 Build
 
-### Current Metrics
-
-- **Issues:** 96 (down from 102)
-- **Errors:** 0 ✅
-- **Warnings:** 78
-- **Info:** 18 (deprecations)
-
-### Code Quality Tools
-
-```bash
-# Analyze code
-flutter analyze
-
-# Check outdated packages
-flutter pub outdated
-
-# Format code
-flutter format lib/
-```
-
----
-
-## 🚀 Deployment
-
-### Build for Production
-
-**Android:**
+### Android APK:
 ```bash
 flutter build apk --release
+```
+
+### Android App Bundle:
+```bash
 flutter build appbundle --release
 ```
 
-**iOS:**
+### iOS:
 ```bash
 flutter build ios --release
 ```
 
 ---
 
-## 📝 Sprint History
+## 🔄 Refactor History
 
-### Sprint 1 (Completed)
-- Security improvements
-- Null safety
-- Input validation
-- Error handling
-- Constants file
+### Phase 1: Critical Fixes (Completed)
+- ✅ Removed duplicate auth systems
+- ✅ Removed GetIt DI (pure Riverpod)
+- ✅ Secured environment variables (.env)
 
-### Sprint 2 (Completed)
-- Removed GetX completely
-- 100% Riverpod migration
-- Clean Architecture foundation
+### Phase 2: Code Cleanup (Completed)
+- ✅ Cleaned unused imports
+- ✅ API Client refactored to Riverpod provider
+- ✅ Migrated 6 providers
 
-### Sprint 3 (Completed)
-- Code quality improvements
-- Performance optimizations
-- Provider caching
-- Image optimization
-- Memory leak fixes
-- Dependency updates
+### Phase 3: Optimization (Completed)
+- ✅ Cache manager with LRU eviction
+- ✅ Custom exception classes
+- ✅ Retry policy for failed requests
+- ✅ Offline mode detection
+- ✅ Testing guide & structure
+
+Xem chi tiết: [REFACTOR_ACTION_PLAN.md](REFACTOR_ACTION_PLAN.md)
+
+---
+
+## 🐛 Known Issues
+
+### Apple Sign In
+- Chỉ hoạt động trên device thật (iOS 13+)
+- Cần Apple Developer Account
+- Xem fix: [APPLE_SIGNIN_FIX.md](APPLE_SIGNIN_FIX.md)
+
+---
+
+## 📝 Documentation
+
+- [REFACTOR_ACTION_PLAN.md](REFACTOR_ACTION_PLAN.md) - Refactor plan
+- [TESTING_GUIDE.md](TESTING_GUIDE.md) - Testing guide
+- [APPLE_SIGNIN_FIX.md](APPLE_SIGNIN_FIX.md) - Apple Sign In fix
 
 ---
 
 ## 🤝 Contributing
 
-### Development Workflow
-
-1. Create feature branch
-2. Make changes
-3. Run tests
-4. Run flutter analyze
-5. Create pull request
-
-### Code Style
-
-- Follow Dart style guide
-- Use meaningful variable names
-- Add comments for complex logic
-- Keep functions small and focused
-
----
-
-## 📞 Support
-
-For issues or questions:
-- Create GitHub issue
-- Contact development team
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-[Add license information]
+This project is licensed under the MIT License.
 
 ---
 
-**Last Updated:** 07/04/2026  
-**Maintained by:** FoodTour Development Team  
-**Architecture:** Clean Architecture + Riverpod  
-**Status:** ✅ Production Ready
+## 👥 Team
+
+- **Project Manager & QA:** Hương Ngáo 🔍🤪
+- **Developer:** Long (Đại ca)
+
+---
+
+## 📞 Support
+
+Có vấn đề? Tạo issue trên GitHub hoặc liên hệ team!
+
+---
+
+**Made with ❤️ by FoodTour Team**

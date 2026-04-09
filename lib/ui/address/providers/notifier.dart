@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/api/api_client.dart';
+import '../../../../core/providers/api_client_provider.dart';
 import '../../../../data/model/review.dart';
 import '../../../../services/cloudinary_service.dart';
 import '../../../../services/image_service.dart';
@@ -17,6 +17,7 @@ class RestaurantReviews extends _$RestaurantReviews {
   }
 
   Future<List<Review>> _fetchReviews() async {
+    final apiClient = ref.read(apiClientProvider);
     final response = await apiClient.get('/restaurants/$restaurantId/reviews');
     final List items = response as List;
 
@@ -55,6 +56,7 @@ class RestaurantReviews extends _$RestaurantReviews {
       }
 
       // 2. Gọi API thêm đánh giá
+      final apiClient = ref.read(apiClientProvider);
       await apiClient.post(
         '/reviews',
         data: {

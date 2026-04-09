@@ -1176,6 +1176,13 @@
       ]
     },
     {
+      "name": "flutter_dotenv",
+      "version": "5.2.1",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "pretty_dio_logger",
       "version": "1.4.0",
       "dependencies": [
@@ -3693,13 +3700,6 @@
       "dependencies": [
         "collection",
         "convert"
-      ]
-    },
-    {
-      "name": "flutter_dotenv",
-      "version": "5.2.1",
-      "dependencies": [
-        "flutter"
       ]
     }
   ],

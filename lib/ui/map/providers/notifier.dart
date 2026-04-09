@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/api/api_client.dart';
+import '../../../../core/providers/api_client_provider.dart';
 import '../../../../data/model/restaurant.dart';
 import '../../../../services/location_service.dart';
 import '../../../providers/community_provider.dart';
@@ -108,6 +108,7 @@ class FoodMapNotifier extends _$FoodMapNotifier {
 
   Future<void> fetchRestaurantsInBounds(LatLngBounds bounds) async {
     try {
+      final apiClient = ref.read(apiClientProvider);
       final data = await apiClient.get(
         '/restaurants/in-bounds',
         queryParameters: {
