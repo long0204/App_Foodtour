@@ -1,5 +1,6 @@
 // lib/services/secure_storage_service.dart
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive/hive.dart' as hive;
 import 'package:logger/logger.dart';
 
 /// Service để quản lý secure storage cho tokens và sensitive data
@@ -197,30 +198,25 @@ class SecureStorageService {
   /// Migrate data từ Hive sang SecureStorage (one-time migration)
   Future<void> migrateFromHive() async {
     try {
-      // Import Hive để đọc old data
-      // Note: Hive package must be imported at top of file
-      // import 'package:hive_flutter/hive_flutter.dart' as hive;
+
+      final box = await hive.Hive.openBox('userBox');
+
+      final oldToken = box.get('token');
       
-      // Mở old userBox
-      // final box = await hive.Hive.openBox('userBox');
+      if (oldToken != null && oldToken is String) {
+        // Save vào secure storage
+        await saveAuthToken(oldToken);
+        await saveUserId(oldToken);
+
+        // Xóa old token khỏi Hive
+        await box.delete('token');
+
+        _logger.i('✅ Successfully migrated token from Hive to SecureStorage');
+      } else {
+        _logger.i('ℹ️ No token found in Hive to migrate');
+      }
       
-      // Lấy old token
-      // final oldToken = box.get('token');
-      
-      // if (oldToken != null && oldToken is String) {
-      //   // Save vào secure storage
-      //   await saveAuthToken(oldToken);
-      //   await saveUserId(oldToken); // UID được dùng làm token
-      //   
-      //   // Xóa old token khỏi Hive
-      //   await box.delete('token');
-      //   
-      //   _logger.i('✅ Successfully migrated token from Hive to SecureStorage');
-      // } else {
-      //   _logger.i('ℹ️ No token found in Hive to migrate');
-      // }
-      
-      // await box.close();
+      await box.close();
       
       _logger.i('ℹ️ Hive migration disabled - import() not supported in Dart');
     } catch (e) {

@@ -1,4 +1,3 @@
-// lib/services/auth_service.dart
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +17,6 @@ class AuthService {
     return String.fromCharCodes(Iterable.generate(length, (_) => chars.codeUnitAt(Random().nextInt(chars.length))));
   }
 
-  /// Lưu token vào secure storage (encrypted)
   Future<void> _saveToken(String uid) async {
     try {
       await secureStorage.saveAuthToken(uid);
@@ -34,13 +32,11 @@ class AuthService {
 
   Future<void> _saveUserToFirestore(User user, {String? password, String? fullname}) async {
     try {
-      print("💾 Saving user to Firestore: ${user.uid}");
       
       final userDoc = _firestore.collection('users').doc(user.uid);
       final docSnapshot = await userDoc.get();
       
       if (!docSnapshot.exists) {
-        print("➕ Creating new user document");
         await userDoc.set({
           'userId': user.uid,
           'username': user.email ?? '',
@@ -68,7 +64,6 @@ class AuthService {
 
   Future<void> _syncUserToBackend(User user, {String? fullname, String? avatarUrl}) async {
     try {
-      print("🔄 Syncing user to backend: ${user.uid}");
       
       await apiClient.post(
         '/users/sync',

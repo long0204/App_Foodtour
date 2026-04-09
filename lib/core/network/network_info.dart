@@ -1,8 +1,6 @@
-// lib/core/network/network_info.dart
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-/// Service để check network connectivity
 class NetworkInfo {
   final Connectivity _connectivity;
   final InternetConnectionChecker _connectionChecker;
@@ -11,19 +9,16 @@ class NetworkInfo {
     Connectivity? connectivity,
     InternetConnectionChecker? connectionChecker,
   })  : _connectivity = connectivity ?? Connectivity(),
-        _connectionChecker = connectionChecker ?? InternetConnectionChecker();
+        _connectionChecker = connectionChecker ?? InternetConnectionChecker.instance;
 
-  /// Check if device has internet connection
   Future<bool> get isConnected async {
     try {
-      final connectivityResult = await _connectivity.checkConnectivity();
-      
-      // If no connectivity, return false immediately
-      if (connectivityResult == ConnectivityResult.none) {
+      final List<ConnectivityResult> connectivityResult = await _connectivity.checkConnectivity();
+
+      if (connectivityResult.contains(ConnectivityResult.none) || connectivityResult.isEmpty) {
         return false;
       }
-      
-      // Check actual internet connection (not just wifi/mobile connected)
+
       return await _connectionChecker.hasConnection;
     } catch (e) {
       print('❌ Error checking network: $e');
@@ -31,33 +26,31 @@ class NetworkInfo {
     }
   }
 
-  /// Get current connectivity type
   Future<ConnectivityResult> get connectivityType async {
     try {
-      return await _connectivity.checkConnectivity();
+      final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+      return results.isNotEmpty ? results.first : ConnectivityResult.none;
     } catch (e) {
       print('❌ Error getting connectivity type: $e');
       return ConnectivityResult.none;
     }
   }
 
-  /// Stream of connectivity changes
   Stream<ConnectivityResult> get onConnectivityChanged {
-    return _connectivity.onConnectivityChanged;
+    return _connectivity.onConnectivityChanged.map((results) =>
+    results.isNotEmpty ? results.first : ConnectivityResult.none
+    );
   }
 
-  /// Check if connected to WiFi
   Future<bool> get isConnectedToWiFi async {
-    final result = await connectivityType;
-    return result == ConnectivityResult.wifi;
+    final results = await _connectivity.checkConnectivity();
+    return results.contains(ConnectivityResult.wifi);
   }
 
-  /// Check if connected to Mobile data
   Future<bool> get isConnectedToMobile async {
-    final result = await connectivityType;
-    return result == ConnectivityResult.mobile;
+    final results = await _connectivity.checkConnectivity();
+    return results.contains(ConnectivityResult.mobile);
   }
 }
 
-// Global instance
 final networkInfo = NetworkInfo();

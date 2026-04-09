@@ -1,11 +1,9 @@
-// File: lib/data/model/review.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hive/hive.dart'; // Thêm import Hive
+import 'package:hive/hive.dart';
 
-part 'review.g.dart'; // Khai báo file generate
+part 'review.g.dart';
 
-@HiveType(typeId: 1) // Khai báo typeId cho Hive
+@HiveType(typeId: 1)
 class Review extends HiveObject {
   @HiveField(0)
   final String id;
@@ -17,7 +15,7 @@ class Review extends HiveObject {
   final String userId;
 
   @HiveField(3)
-  final String? reviewImageUrl;
+  final String? userAvatarUrl;
 
   @HiveField(4)
   final double rating;
@@ -28,14 +26,18 @@ class Review extends HiveObject {
   @HiveField(6)
   final DateTime createdAt;
 
+  @HiveField(7)
+  final List<String>? image_urls;
+
   Review({
     required this.id,
     required this.userName,
     required this.userId,
-    this.reviewImageUrl,
+    this.userAvatarUrl,
     required this.rating,
     required this.comment,
     required this.createdAt,
+    this.image_urls,
   });
 
   factory Review.fromJson(Map<String, dynamic> json) {
@@ -43,9 +45,10 @@ class Review extends HiveObject {
       id: json['id'] ?? '',
       userName: json['userName'] ?? 'Ẩn danh',
       userId: json['userId'] ?? 'Ẩn danh',
-      reviewImageUrl: json['reviewImageUrl'],
+      userAvatarUrl: json['reviewImageUrl'],
       rating: (json['rating'] ?? 0).toDouble(),
       comment: json['comment'] ?? '',
+      image_urls: json['image_urls'] != null ? List<String>.from(json['image_urls']) : [],
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
@@ -57,9 +60,10 @@ class Review extends HiveObject {
       'id': id,
       'userName': userName,
       'userId': userId,
-      'reviewImageUrl': reviewImageUrl,
+      'userAvatarUrl': userAvatarUrl,
       'rating': rating,
       'comment': comment,
+      'image_urls': image_urls,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }

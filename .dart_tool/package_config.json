@@ -3,9 +3,9 @@
   "packages": [
     {
       "name": "_fe_analyzer_shared",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-67.0.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-76.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.3"
     },
     {
       "name": "_flutterfire_internals",
@@ -14,10 +14,16 @@
       "languageVersion": "3.2"
     },
     {
-      "name": "analyzer",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/analyzer-6.4.1",
+      "name": "_macros",
+      "rootUri": "file:///Users/dinos/Development/flutter/bin/cache/dart-sdk/pkg/_macros",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.5"
+    },
+    {
+      "name": "analyzer",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/analyzer-6.11.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
     },
     {
       "name": "analyzer_plugin",
@@ -57,9 +63,9 @@
     },
     {
       "name": "app_links",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/app_links-6.3.3",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/app_links-6.4.1",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.5"
     },
     {
       "name": "app_links_linux",
@@ -93,7 +99,7 @@
     },
     {
       "name": "archive",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/archive-3.6.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/archive-4.0.9",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -111,9 +117,9 @@
     },
     {
       "name": "audio_session",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/audio_session-0.1.25",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/audio_session-0.2.3",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.6"
     },
     {
       "name": "boolean_selector",
@@ -123,9 +129,9 @@
     },
     {
       "name": "build",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build-2.4.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build-2.5.4",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.7"
     },
     {
       "name": "build_config",
@@ -135,27 +141,27 @@
     },
     {
       "name": "build_daemon",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_daemon-4.0.4",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_daemon-4.1.1",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "build_resolvers",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_resolvers-2.4.2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_resolvers-2.5.4",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.7"
     },
     {
       "name": "build_runner",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_runner-2.4.13",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_runner-2.5.4",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.7"
     },
     {
       "name": "build_runner_core",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_runner_core-7.3.2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/build_runner_core-9.1.2",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.7"
     },
     {
       "name": "built_collection",
@@ -165,7 +171,7 @@
     },
     {
       "name": "built_value",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/built_value-8.9.5",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/built_value-8.12.5",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -207,9 +213,9 @@
     },
     {
       "name": "checked_yaml",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/checked_yaml-2.0.3",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/checked_yaml-2.0.4",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.8"
     },
     {
       "name": "chewie",
@@ -255,9 +261,9 @@
     },
     {
       "name": "code_builder",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/code_builder-4.10.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/code_builder-4.11.1",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.7"
     },
     {
       "name": "collection",
@@ -278,6 +284,18 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "connectivity_plus",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "connectivity_plus_platform_interface",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/connectivity_plus_platform_interface-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "convert",
       "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/convert-3.1.2",
       "packageUri": "lib/",
@@ -285,13 +303,13 @@
     },
     {
       "name": "cross_file",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/cross_file-0.3.4+2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/cross_file-0.3.5+2",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.8"
     },
     {
       "name": "crypto",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/crypto-3.0.6",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/crypto-3.0.7",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -309,19 +327,25 @@
     },
     {
       "name": "custom_lint",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/custom_lint-0.6.4",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/custom_lint-0.7.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "custom_lint_builder",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/custom_lint_builder-0.6.4",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/custom_lint_builder-0.7.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "custom_lint_core",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/custom_lint_core-0.6.3",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/custom_lint_core-0.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "custom_lint_visitor",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/custom_lint_visitor-1.0.0+6.11.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -357,7 +381,7 @@
     },
     {
       "name": "dart_style",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dart_style-2.3.6",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dart_style-2.3.8",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -369,7 +393,7 @@
     },
     {
       "name": "dbus",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dbus-0.7.11",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dbus-0.7.12",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -399,13 +423,13 @@
     },
     {
       "name": "dio",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dio-5.8.0+1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dio-5.9.2",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "dio_web_adapter",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dio_web_adapter-2.1.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/dio_web_adapter-2.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -429,13 +453,13 @@
     },
     {
       "name": "equatable",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/equatable-2.0.7",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/equatable-2.0.8",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "expansion_tile_group",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/expansion_tile_group-2.2.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/expansion_tile_group-2.3.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -447,7 +471,7 @@
     },
     {
       "name": "ffi",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/ffi-2.1.4",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/ffi-2.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -459,27 +483,27 @@
     },
     {
       "name": "file_selector_linux",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_linux-0.9.3+2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_linux-0.9.4",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.8"
     },
     {
       "name": "file_selector_macos",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_macos-0.9.4+2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_macos-0.9.4+4",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.7"
     },
     {
       "name": "file_selector_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_platform_interface-2.6.2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_platform_interface-2.7.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.7"
     },
     {
       "name": "file_selector_windows",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_windows-0.9.3+4",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/file_selector_windows-0.9.3+5",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.8"
     },
     {
       "name": "firebase_analytics",
@@ -651,15 +675,15 @@
     },
     {
       "name": "flutter_gen_core",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_gen_core-5.9.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_gen_core-5.10.0",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "3.0"
     },
     {
       "name": "flutter_gen_runner",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_gen_runner-5.9.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_gen_runner-5.10.0",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "3.0"
     },
     {
       "name": "flutter_hooks",
@@ -765,13 +789,13 @@
     },
     {
       "name": "flutter_local_notifications_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-9.0.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-9.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "flutter_local_notifications_windows",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_local_notifications_windows-1.0.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_local_notifications_windows-1.0.3",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -801,9 +825,9 @@
     },
     {
       "name": "flutter_plugin_android_lifecycle",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.28",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.31",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "flutter_riverpod",
@@ -891,19 +915,19 @@
     },
     {
       "name": "flutter_widget_from_html",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_widget_from_html-0.17.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_widget_from_html-0.17.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "flutter_widget_from_html_core",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_widget_from_html_core-0.17.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/flutter_widget_from_html_core-0.17.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "fluttertoast",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/fluttertoast-8.2.12",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/fluttertoast-8.2.14",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -957,7 +981,7 @@
     },
     {
       "name": "fwfh_webview",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/fwfh_webview-0.15.6",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/fwfh_webview-0.15.7",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -1125,7 +1149,7 @@
     },
     {
       "name": "hotreloader",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/hotreloader-4.3.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/hotreloader-4.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -1155,9 +1179,9 @@
     },
     {
       "name": "image",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/image-4.3.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/image-4.8.0",
       "packageUri": "lib/",
-      "languageVersion": "2.15"
+      "languageVersion": "3.0"
     },
     {
       "name": "image_cropper",
@@ -1173,7 +1197,7 @@
     },
     {
       "name": "image_cropper_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/image_cropper_platform_interface-7.1.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/image_cropper_platform_interface-7.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -1250,6 +1274,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "internet_connection_checker",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/internet_connection_checker-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
       "name": "intl",
       "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/intl-0.20.2",
       "packageUri": "lib/",
@@ -1281,25 +1311,25 @@
     },
     {
       "name": "json_serializable",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/json_serializable-6.8.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/json_serializable-6.9.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.5"
     },
     {
       "name": "just_audio",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/just_audio-0.10.4",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/just_audio-0.10.5",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
     {
       "name": "just_audio_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/just_audio_platform_interface-4.5.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/just_audio_platform_interface-4.6.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "just_audio_web",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/just_audio_web-0.4.15",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/just_audio_web-0.4.16",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -1365,21 +1395,21 @@
     },
     {
       "name": "local_auth_android",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/local_auth_android-1.0.49",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/local_auth_android-1.0.52",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "local_auth_darwin",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/local_auth_darwin-1.6.0",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
     {
-      "name": "local_auth_darwin",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/local_auth_darwin-1.4.3",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
-    },
-    {
       "name": "local_auth_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/local_auth_platform_interface-1.0.10",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/local_auth_platform_interface-1.1.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.7"
     },
     {
       "name": "local_auth_windows",
@@ -1389,7 +1419,7 @@
     },
     {
       "name": "logger",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/logger-2.3.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/logger-2.7.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -1401,9 +1431,15 @@
     },
     {
       "name": "lottie",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/lottie-3.3.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/lottie-3.3.1",
       "packageUri": "lib/",
       "languageVersion": "3.6"
+    },
+    {
+      "name": "macros",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/macros-0.1.3-main.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "matcher",
@@ -1442,6 +1478,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "nm",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/nm-0.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "octo_image",
       "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/octo_image-2.1.0",
       "packageUri": "lib/",
@@ -1467,7 +1509,7 @@
     },
     {
       "name": "package_info_plus_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/package_info_plus_platform_interface-3.2.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/package_info_plus_platform_interface-3.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -1497,15 +1539,15 @@
     },
     {
       "name": "path_provider_android",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/path_provider_android-2.2.17",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/path_provider_android-2.2.19",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "path_provider_foundation",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.2",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.7"
     },
     {
       "name": "path_provider_linux",
@@ -1563,9 +1605,9 @@
     },
     {
       "name": "petitparser",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/petitparser-6.1.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/petitparser-7.0.2",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.8"
     },
     {
       "name": "pin_code_fields",
@@ -1593,9 +1635,15 @@
     },
     {
       "name": "pool",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/pool-1.5.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/pool-1.5.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "posix",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/posix-6.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "postgrest",
@@ -1671,7 +1719,7 @@
     },
     {
       "name": "riverpod_analyzer_utils",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/riverpod_analyzer_utils-0.5.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/riverpod_analyzer_utils-0.5.8",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -1683,19 +1731,19 @@
     },
     {
       "name": "riverpod_generator",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/riverpod_generator-2.4.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/riverpod_generator-2.6.3",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "riverpod_lint",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/riverpod_lint-2.3.10",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/riverpod_lint-2.6.3",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "rxdart",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/rxdart-0.27.7",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/rxdart-0.28.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -1731,9 +1779,9 @@
     },
     {
       "name": "shared_preferences_android",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.10",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.13",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "shared_preferences_foundation",
@@ -1773,9 +1821,9 @@
     },
     {
       "name": "shelf_web_socket",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/shelf_web_socket-2.0.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/shelf_web_socket-3.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.5"
     },
     {
       "name": "shimmer",
@@ -1857,9 +1905,9 @@
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/sqflite_common-2.5.5",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/sqflite_common-2.5.6",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "sqflite_darwin",
@@ -1923,9 +1971,9 @@
     },
     {
       "name": "synchronized",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/synchronized-3.3.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/synchronized-3.4.0",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "table_calendar",
@@ -1995,9 +2043,9 @@
     },
     {
       "name": "url_launcher_android",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.16",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.20",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "url_launcher_ios",
@@ -2007,15 +2055,15 @@
     },
     {
       "name": "url_launcher_linux",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.2",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.8"
     },
     {
       "name": "url_launcher_macos",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.3",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.7"
     },
     {
       "name": "url_launcher_platform_interface",
@@ -2031,9 +2079,9 @@
     },
     {
       "name": "url_launcher_windows",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.4",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.5",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.8"
     },
     {
       "name": "uuid",
@@ -2043,9 +2091,9 @@
     },
     {
       "name": "vector_graphics",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/vector_graphics-1.1.18",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/vector_graphics-1.1.19",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.6"
     },
     {
       "name": "vector_graphics_codec",
@@ -2055,9 +2103,9 @@
     },
     {
       "name": "vector_graphics_compiler",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.16",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.19",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.7"
     },
     {
       "name": "vector_math",
@@ -2079,27 +2127,27 @@
     },
     {
       "name": "video_player_android",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_android-2.8.3",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_android-2.8.15",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "video_player_avfoundation",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.8.4",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
     {
-      "name": "video_player_avfoundation",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.7.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
-    },
-    {
       "name": "video_player_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_platform_interface-6.3.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_platform_interface-6.6.0",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.7"
     },
     {
       "name": "video_player_web",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_web-2.3.5",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/video_player_web-2.4.0",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.6"
     },
     {
       "name": "vm_service",
@@ -2109,21 +2157,21 @@
     },
     {
       "name": "wakelock_plus",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/wakelock_plus-1.3.2",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/wakelock_plus-1.3.3",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "wakelock_plus_platform_interface",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/wakelock_plus_platform_interface-1.2.3",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/wakelock_plus_platform_interface-1.3.0",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.4"
     },
     {
       "name": "watcher",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/watcher-1.1.1",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/watcher-1.2.1",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "3.4"
     },
     {
       "name": "web",
@@ -2169,9 +2217,9 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/win32-5.12.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/win32-5.15.0",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "win32_registry",
@@ -2193,9 +2241,9 @@
     },
     {
       "name": "xml",
-      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/xml-6.5.0",
+      "rootUri": "file:///Users/dinos/.pub-cache/hosted/pub.dev/xml-6.6.1",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.8"
     },
     {
       "name": "yaml",

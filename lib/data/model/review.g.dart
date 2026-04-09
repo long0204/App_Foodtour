@@ -20,17 +20,18 @@ class ReviewAdapter extends TypeAdapter<Review> {
       id: fields[0] as String,
       userName: fields[1] as String,
       userId: fields[2] as String,
-      reviewImageUrl: fields[3] as String?,
+      userAvatarUrl: fields[3] as String?,
       rating: fields[4] as double,
       comment: fields[5] as String,
       createdAt: fields[6] as DateTime,
+      image_urls: (fields[7] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Review obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -38,13 +39,15 @@ class ReviewAdapter extends TypeAdapter<Review> {
       ..writeByte(2)
       ..write(obj.userId)
       ..writeByte(3)
-      ..write(obj.reviewImageUrl)
+      ..write(obj.userAvatarUrl)
       ..writeByte(4)
       ..write(obj.rating)
       ..writeByte(5)
       ..write(obj.comment)
       ..writeByte(6)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(7)
+      ..write(obj.image_urls);
   }
 
   @override

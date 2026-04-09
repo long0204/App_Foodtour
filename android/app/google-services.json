@@ -12,7 +12,20 @@
           "package_name": "com.dinos.foodtour"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "190281708002-m6u6tgv7d9acbjqj0rvhmgi98p9k9d8f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dinos.foodtour",
+            "certificate_hash": "de688e8c746f45d40f9dbf3e9b12f735088a8428"
+          }
+        },
+        {
+          "client_id": "190281708002-jgps7rq83p8pa5ted3ebgksppke28agc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDpFjmYQ_fcyAwlHTWUI13BN-RBix6O1a4"
@@ -20,7 +33,20 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190281708002-jgps7rq83p8pa5ted3ebgksppke28agc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "190281708002-qrot8p402lpabj5s58o3s3nlqkmui48c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dinos.foodtour",
+                "app_store_id": "6745496332"
+              }
+            }
+          ]
         }
       }
     }

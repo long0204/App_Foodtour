@@ -500,8 +500,8 @@ class $AssetsImagesHomeGen {
   AssetGenImage get cheDacSanMienNam10 =>
       const AssetGenImage('assets/images/home/che-dac-san-mien-nam-10.webp');
 
-  /// File path: assets/images/home/chè.webp
-  AssetGenImage get che => const AssetGenImage('assets/images/home/chè.webp');
+  /// File path: assets/images/home/chè.webp
+  AssetGenImage get ch => const AssetGenImage('assets/images/home/chè.webp');
 
   /// File path: assets/images/home/coffee.jpg
   AssetGenImage get coffee =>
@@ -553,7 +553,7 @@ class $AssetsImagesHomeGen {
         bestfood,
         card,
         cheDacSanMienNam10,
-        che,
+        ch,
         coffee,
         ecomerceBg,
         financeImg,

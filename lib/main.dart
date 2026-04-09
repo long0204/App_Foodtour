@@ -9,32 +9,26 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'config/gen/app_l10n.dart';
+import 'core/api/api_client.dart';
 import 'core/route.dart';
 import 'data/model/restaurant.dart';
 import 'data/model/review.dart';
 
 void main() async {
-  // Run app in error zone to catch all errors
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Initialize Firebase
     await Firebase.initializeApp();
-    
-    // Initialize Crashlytics
+
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    
-    // Initialize global error handler
+
     errorHandler.initialize();
-    
-    // Initialize Hive
+
     await Hive.initFlutter();
     await RemoteConfigService().init();
-    
-    // Migrate old tokens from Hive to SecureStorage
+
     await secureStorage.migrateFromHive();
-    
-    // ✅ Initialize API Client BEFORE running app
+
     print("🔧 Initializing API Client...");
     apiClient = ApiClient(secureStorage: secureStorage);
     print("✅ API Client initialized successfully");

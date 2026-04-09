@@ -1,18 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:Foodtour/ui/add_place/providers/notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+
 import '../../config/themes/text_style.dart';
-import '../../core/api/api_client.dart';
 import '../../core/route.dart';
-import '../../data/model/restaurant.dart';
-import '../../data/sources/remote/google_service.dart';
-import '../../providers/community_provider.dart';
-import '../../services/cloudinary_service.dart';
-import '../../services/image_service.dart';
 import 'widget/category_dropdown.dart';
 import 'widget/image_upload_widget.dart';
 
@@ -30,86 +24,54 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  final ImageService _imageService = ImageService();
   List<File> _selectedImages = [];
   String? _selectedCategory;
 
   final Color _bgColor = const Color(0xFFF5F1EA);
   final Color _cardColor = Colors.white;
-  final Color _accentColor = const Color(0xFFE8C39F);
   final Color _iconColor = const Color(0xFFD17C7C);
 
-  void _submitData() async {
+  Future<void> _submitData() async {
     if (_formKey.currentState!.validate()) {
-      if (_selectedImages.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Vui lòng chọn ít nhất một ảnh!")));
+      if (_selectedImages.length > 5) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Bạn chỉ được tải lên tối đa 5 ảnh!")));
         return;
       }
       if (_selectedCategory == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Vui lòng chọn loại hình quán!")));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Vui lòng chọn loại hình quán!")));
         return;
       }
 
-      showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
-
       try {
-        List<File> compressedFiles = [];
-        for (final file in _selectedImages) {
-          final compressed = await _imageService.compressImage(file);
-          compressedFiles.add(compressed ?? file);
-        }
+        await ref.read(addPlaceNotifierProvider.notifier).submitPlace(
+              name: _nameController.text.trim(),
+              address: _addressController.text.trim(),
+              price: _priceController.text.trim(),
+              description: _descriptionController.text.trim(),
+              type: _selectedCategory!,
+              images: _selectedImages,
+            );
 
-        final imageUrls = await Future.wait(compressedFiles.map((file) => cloudinaryService.uploadImage(file)));
-        final finalImageUrls = imageUrls.whereType<String>().toList();
+        if (!mounted) return;
 
-        if (finalImageUrls.isNotEmpty) {
-          final coords = await getCoordinatesFromAddress(_addressController.text);
-
-          // Gửi data lên Server qua Dio
-          await apiClient.post(
-            '/restaurants',
-            data: {
-              "name": _nameController.text.trim(),
-              "address": _addressController.text.trim(),
-              "type": _selectedCategory,
-              "price": _priceController.text.trim(),
-              "description": _descriptionController.text.trim(),
-              "image_urls": finalImageUrls,
-              "lat": coords?.latitude,
-              "lng": coords?.longitude,
-            },
-          );
-
-          if (!mounted) return;
-          Navigator.of(context).pop();
-
-          _nameController.clear();
-          _addressController.clear();
-          _priceController.clear();
-          _descriptionController.clear();
-          setState(() {
-            _selectedImages = [];
-            _selectedCategory = null;
-          });
-
-          if (coords != null) {
-            ref.read(suggestionProvider.notifier).fetchSuggestions(coords.latitude, coords.longitude);
-
-            ref.read(communityProvider.notifier).fetchAllRestaurants();
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Thêm quán thành công!")));
-          pushReplacement(rootRoute);
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Thêm quán thành công!")));
+        pushReplacement(rootRoute);
       } catch (e) {
-        if (mounted) Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Lỗi: ${e.toString()}")));
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(e.toString())));
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isSubmitting = ref.watch(addPlaceNotifierProvider).isLoading;
+
     return Scaffold(
       backgroundColor: _bgColor,
       body: Form(
@@ -122,80 +84,64 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
               pinned: true,
               elevation: 0,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text("Thêm Địa Điểm Mới",
-                    style:  k2d500.s18.white),
+                title: Text("Thêm Địa Điểm Mới", style: k2d500.s18.white),
                 centerTitle: false,
                 titlePadding: EdgeInsets.only(left: 20.w, bottom: 15.h),
               ),
             ),
-            // SliverAppBar(
-            //   backgroundColor: _bgColor,
-            //   expandedHeight: 120.h,
-            //   pinned: true,
-            //   elevation: 0,
-            //   flexibleSpace: FlexibleSpaceBar(
-            //     titlePadding: EdgeInsets.only(left: 20.w, bottom: 15.h),
-            //     title: Container(
-            //       padding: EdgeInsets.all(10.w),
-            //       decoration: BoxDecoration(
-            //         color: _cardColor,
-            //         borderRadius: BorderRadius.circular(15.r),
-            //         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-            //       ),
-            //       child: Row(
-            //         mainAxisSize: MainAxisSize.min,
-            //         children: [
-            //           Text("Thêm Địa Điểm Mới",
-            //               style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.sp)),
-            //           Gap(10.w),
-            //           Icon(Icons.add_home_outlined, color: _iconColor, size: 22.sp),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-
                   MultiImageUploadWidget(
-                    onImagesSelected: (images) => setState(() => _selectedImages = images),
+                    onImagesSelected: (images) =>
+                        setState(() => _selectedImages = images),
                   ),
 
                   Gap(15.h),
 
+                  // FORM THÔNG TIN
                   Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
                       color: _cardColor,
                       borderRadius: BorderRadius.circular(20.r),
-                      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))],
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 3))
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildInputLabel("Tên Quán Ăn", Icons.house_rounded, const Color(0xFF9CCC65)),
+                        _buildInputLabel("Tên Quán Ăn", Icons.house_rounded,
+                            const Color(0xFF9CCC65)),
                         _buildTextField(_nameController, "Nhập tên quán..."),
                         Gap(15.h),
-
-                        _buildInputLabel("Địa Chỉ Chính Xác", Icons.location_on, Colors.redAccent),
+                        _buildInputLabel("Địa Chỉ Chính Xác", Icons.location_on,
+                            Colors.redAccent),
                         _buildTextField(_addressController, "Nhập địa chỉ..."),
                         Gap(15.h),
-
-                        _buildInputLabel("Loại Hình Quán", Icons.restaurant_menu, Colors.blueAccent),
+                        _buildInputLabel("Loại Hình Quán",
+                            Icons.restaurant_menu, Colors.blueAccent),
                         CategoryDropdown(
-                          onCategorySelected: (cat) => setState(() => _selectedCategory = cat),
+                          onCategorySelected: (cat) =>
+                              setState(() => _selectedCategory = cat),
                         ),
                         Gap(15.h),
-
-                        _buildInputLabel("Khoảng Giá (₫)", Icons.payments_rounded, Colors.amber[700]!),
-                        _buildTextField(_priceController, "Ví dụ: 50.000 - 100.000...", keyboardType: TextInputType.number),
+                        _buildInputLabel("Khoảng Giá (₫)",
+                            Icons.payments_rounded, Colors.amber[700]!),
+                        _buildTextField(
+                            _priceController, "Ví dụ: 50.000 - 100.000...",
+                            keyboardType: TextInputType.number),
                         Gap(15.h),
-
-                        _buildInputLabel("Mô Tả Chi Tiết", Icons.rate_review_rounded, _iconColor),
-                        _buildTextField(_descriptionController, "Chia sẻ cảm nhận của bạn về quán...", isDescription: true),
+                        _buildInputLabel("Mô Tả Chi Tiết",
+                            Icons.rate_review_rounded, _iconColor),
+                        _buildTextField(_descriptionController,
+                            "Chia sẻ cảm nhận của bạn về quán...",
+                            isDescription: true),
                         Gap(10.h),
                       ],
                     ),
@@ -207,13 +153,25 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                     width: double.infinity,
                     height: 55.h,
                     child: ElevatedButton.icon(
-                      onPressed: _submitData,
-                      icon: const Icon(Icons.check_circle_outline, color: Colors.white),
-                      label: const Text("Hoàn Tất Thêm Quán", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      onPressed: isSubmitting ? null : _submitData,
+                      icon: isSubmitting
+                          ? const SizedBox.shrink()
+                          : const Icon(Icons.check_circle_outline,
+                              color: Colors.white),
+                      label: isSubmitting
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 2))
+                          : const Text("Hoàn Tất Thêm Quán",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.r)),
                         elevation: 4,
                       ),
                     ),
@@ -236,13 +194,15 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
         children: [
           Icon(icon, color: color, size: 22.sp),
           Gap(10.w),
-          Text(text, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp)),
+          Text(text,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp)),
         ],
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, {bool isDescription = false, TextInputType? keyboardType}) {
+  Widget _buildTextField(TextEditingController controller, String hint,
+      {bool isDescription = false, TextInputType? keyboardType}) {
     return TextFormField(
       controller: controller,
       maxLines: isDescription ? 6 : 1,
@@ -251,8 +211,11 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
         hintText: hint,
         filled: true,
         fillColor: _bgColor,
-        contentPadding: EdgeInsets.symmetric(vertical: isDescription ? 15.h : 10.h, horizontal: 16.w),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r), borderSide: BorderSide.none),
+        contentPadding: EdgeInsets.symmetric(
+            vertical: isDescription ? 15.h : 10.h, horizontal: 16.w),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide.none),
       ),
       validator: (value) => value!.isEmpty ? "Vui lòng nhập thông tin" : null,
     );

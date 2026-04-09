@@ -12,13 +12,12 @@ class AppInterceptor extends InterceptorsWrapper {
   final int _maxRetries = 3;
   
   AppInterceptor({required this.secureStorage});
-  
+
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Rate limiting check
     final key = '${options.method}_${options.path}';
     final lastTime = _lastRequestTime[key];
-    
+
     if (lastTime != null) {
       final diff = DateTime.now().difference(lastTime);
       if (diff < _minInterval) {
@@ -32,25 +31,19 @@ class AppInterceptor extends InterceptorsWrapper {
         );
       }
     }
-    
+
     _lastRequestTime[key] = DateTime.now();
-    
-    // Try to get token from secure storage first
-    String? token = await secureStorage.getAuthToken();
-    
-    // Fallback to Firebase if no token in secure storage
-    if (token == null) {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        token = await user.getIdToken();
-        // Save to secure storage for next time
-        if (token != null) {
-          await secureStorage.saveAuthToken(token);
-        }
-      }
+
+    String? token;
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      token = await user.getIdToken();
+    } else {
+      token = await secureStorage.getAuthToken();
     }
-    
-    if (token != null) {
+
+    if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
 
@@ -61,7 +54,7 @@ class AppInterceptor extends InterceptorsWrapper {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     debugPrint('✅ [API RES] ${response.statusCode} ${response.requestOptions.path}');
-    debugPrint('📦 [DATA]: ${response.data}'); // In toàn bộ cục JSON ra Log
+    debugPrint('📦 [DATA]: ${response.data}');
     return handler.next(response);
   }
 

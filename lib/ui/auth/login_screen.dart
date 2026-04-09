@@ -46,8 +46,7 @@ class LoginScreen extends ConsumerWidget {
               ),
             ),
           ),
-          
-          // ✅ NEW: Animated Content
+
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -55,7 +54,6 @@ class LoginScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // ✅ Logo with FadeIn animation
                     FadeInDown(
                       duration: Duration(milliseconds: 800),
                       child: Container(
@@ -75,8 +73,7 @@ class LoginScreen extends ConsumerWidget {
                       ),
                     ),
                     Gap(30.h),
-                    
-                    // ✅ Welcome text with FadeIn
+
                     FadeInDown(
                       duration: Duration(milliseconds: 800),
                       delay: Duration(milliseconds: 200),
@@ -89,7 +86,7 @@ class LoginScreen extends ConsumerWidget {
                           Gap(8.h),
                           Text(
                             "FoodTour",
-                            style: k2d600.s32.white,
+                            style: k2d600.s24.white,
                           ),
                           Gap(8.h),
                           Text(
@@ -100,8 +97,7 @@ class LoginScreen extends ConsumerWidget {
                       ),
                     ),
                     Gap(50.h),
-                    
-                    // ✅ Buttons with SlideUp animations
+
                     FadeInUp(
                       duration: Duration(milliseconds: 800),
                       delay: Duration(milliseconds: 400),
@@ -195,7 +191,7 @@ class LoginScreen extends ConsumerWidget {
         icon: Icon(icon, color: textColor, size: 24.sp),
         label: Text(
           label,
-          style: k2d600.s15.copyWith(color: textColor),
+          style: k2d600.s14.copyWith(color: textColor),
         ),
         onPressed: onTap,
       ),

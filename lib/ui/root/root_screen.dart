@@ -42,7 +42,7 @@ class _RootScreenState extends ConsumerState<RootScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Bản đồ'),
           BottomNavigationBarItem(icon: Icon(Icons.add_circle, size: 32), label: 'Chia sẻ'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Danh sách'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Tôi'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Cá nhân'),
         ],
       ),
     );
