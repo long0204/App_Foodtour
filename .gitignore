@@ -1,6 +1,7 @@
-/.dart_tool
+.dart_tool/
 /.idea
 /build
+.flutter-plugins
 .flutter-plugins-dependencies
 *.salive
 
