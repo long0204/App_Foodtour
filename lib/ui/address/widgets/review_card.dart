@@ -1,20 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../config/gen/assets.gen.dart';
 import '../../../../config/themes/text_style.dart';
 import '../../../../data/model/review.dart';
+import '../../../../data/model/restaurant.dart';
+import '../../../../services/share_service.dart';
 import '../../../../widgets/shared/cached_image.dart';
 
-class ReviewCard extends StatelessWidget {
+class ReviewCard extends ConsumerWidget {
   final Review review;
+  final Restaurant? restaurant;
 
-  const ReviewCard({super.key, required this.review});
+  const ReviewCard({super.key, required this.review, this.restaurant});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shareService = ref.watch(shareServiceProvider);
     final difference = DateTime.now().difference(review.createdAt);
     String timeAgo = difference.inDays > 0 ? "${difference.inDays} ngày trước" : (difference.inHours > 0 ? "${difference.inHours} giờ trước" : "Vừa xong");
 
@@ -27,49 +32,80 @@ class ReviewCard extends StatelessWidget {
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
         border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 22.r,
-            backgroundImage: (review.userAvatarUrl != null && review.userAvatarUrl!.isNotEmpty)
-                ? CachedNetworkImageProvider(review.userAvatarUrl!) as ImageProvider
-                : Assets.images.user.avtDefault.provider(),
-            backgroundColor: Colors.grey[100],
-          ),
-          Gap(12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 22.r,
+                backgroundImage: (review.userAvatarUrl != null && review.userAvatarUrl!.isNotEmpty)
+                    ? CachedNetworkImageProvider(review.userAvatarUrl!) as ImageProvider
+                    : Assets.images.user.avtDefault.provider(),
+                backgroundColor: Colors.grey[100],
+              ),
+              Gap(12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(review.userName, style: k2d600.s14),
-                    Text(timeAgo, style: k2d500.s12.grey600ts),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(review.userName, style: k2d600.s14),
+                        Text(timeAgo, style: k2d500.s12.grey600ts),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+                    Row(
+                      children: List.generate(5, (index) => Icon(index < review.rating ? Icons.star_rounded : Icons.star_outline_rounded, color: Colors.amber[500], size: 16.sp)),
+                    ),
+                    if (review.comment.isNotEmpty) ...[
+                      SizedBox(height: 8.h),
+                      Text(review.comment, style: k2d500.s14.copyWith(color: Colors.black87, height: 1.4)),
+                    ],
+                    if (review.image_urls != null && review.image_urls!.isNotEmpty) ...[
+                      Gap(12.h),
+                      Wrap(
+                        spacing: 8.w, runSpacing: 8.h,
+                        children: review.image_urls!.map((url) => ClipRRect(
+                          borderRadius: BorderRadius.circular(8.r),
+                          child: CachedImage(url, width: 70.w, height: 70.w, fit: BoxFit.cover),
+                        )).toList(),
+                      ),
+                    ]
                   ],
                 ),
-                SizedBox(height: 4.h),
-                Row(
-                  children: List.generate(5, (index) => Icon(index < review.rating ? Icons.star_rounded : Icons.star_outline_rounded, color: Colors.amber[500], size: 16.sp)),
-                ),
-                if (review.comment.isNotEmpty) ...[
-                  SizedBox(height: 8.h),
-                  Text(review.comment, style: k2d500.s14.copyWith(color: Colors.black87, height: 1.4)),
-                ],
-                if (review.image_urls != null && review.image_urls!.isNotEmpty) ...[
-                  Gap(12.h),
-                  Wrap(
-                    spacing: 8.w, runSpacing: 8.h,
-                    children: review.image_urls!.map((url) => ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: CachedImage(url, width: 70.w, height: 70.w, fit: BoxFit.cover),
-                    )).toList(),
-                  ),
-                ]
-              ],
-            ),
+              ),
+            ],
           ),
+          // Share button
+          if (restaurant != null) ...[
+            Gap(12.h),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: () async {
+                  await shareService.shareReview(
+                    restaurant!,
+                    review.comment,
+                    review.rating.toDouble(),
+                  );
+                },
+                icon: Icon(Icons.share, size: 16.sp, color: Colors.blue),
+                label: Text(
+                  'Chia sẻ',
+                  style: k2d500.s13.copyWith(color: Colors.blue),
+                ),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
