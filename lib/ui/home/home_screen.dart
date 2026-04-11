@@ -2,6 +2,7 @@ import 'package:Foodtour/ui/home/providers/notifier.dart';
 import 'package:Foodtour/ui/home/widget/home_app_bar.dart';
 import 'package:Foodtour/ui/home/widget/home_map_section.dart';
 import 'package:Foodtour/ui/home/widget/home_suggestion_grid.dart';
+import 'package:Foodtour/ui/home/widget/for_you_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,6 +73,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
+          // For You Section - Personalized Recommendations
+          const SliverToBoxAdapter(
+            child: ForYouSection(),
+          ),
+          SliverToBoxAdapter(child: Gap(20.h)),
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
