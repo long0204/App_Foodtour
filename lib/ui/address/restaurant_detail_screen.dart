@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:Foodtour/ui/address/providers/notifier.dart';
+import 'package:Foodtour/services/share_service.dart';
+import 'package:Foodtour/ui/widgets/share_options_bottom_sheet.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,6 +64,17 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
     );
   }
 
+  void _showShareOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => ShareOptionsBottomSheet(restaurant: widget.restaurant),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final reviewsAsync = ref.watch(restaurantReviewsProvider(widget.restaurant.id?? ''));
@@ -85,6 +98,14 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
         slivers: [
           SliverAppBar(
             leading: MyBackButton(),
+            actions: [
+              // Share button
+              IconButton(
+                icon: const Icon(Icons.share, color: Colors.white),
+                onPressed: () => _showShareOptions(),
+              ),
+              Gap(8.w),
+            ],
             expandedHeight: 300.h,
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
@@ -191,7 +212,10 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                           return FadeInUp(
                             duration: const Duration(milliseconds: 500),
                             delay: Duration(milliseconds: entry.key * 100),
-                            child: ReviewCard(review: entry.value),
+                            child: ReviewCard(
+                              review: entry.value,
+                              restaurant: widget.restaurant,
+                            ),
                           );
                         }).toList(),
                       ),

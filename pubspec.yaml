@@ -77,8 +77,9 @@ dependencies:
   gap: 3.0.1
   el_tooltip: 2.0.0
   zoom_tap_animation: 1.1.0
-  #  qr_flutter: ^4.1.0
+  qr_flutter: ^4.1.0
   pretty_qr_code: ^3.5.0
+  screenshot: ^2.1.0
   expansion_tile_group: ^2.1.0
   carousel_slider: ^5.1.2  # Updated from 5.0.0
   lottie: ^3.3.0
