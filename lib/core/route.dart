@@ -18,6 +18,8 @@ import '../ui/home/home_screen.dart';
 import '../ui/map/food_map_screen.dart';
 import '../ui/root/root_screen.dart';
 import '../ui/spinWheel/SpinWheelScreen.dart';
+import '../ui/gamification/leaderboard_screen.dart';
+import '../ui/gamification/badges_section.dart';
 
 class ScreenLogger extends NavigatorObserver {
   @override
@@ -123,6 +125,14 @@ class AppRouter {
           return HistoryScreen(uid: uid);
         },
       ),
+      GoRoute(
+        path: leaderboardRoute,
+        builder: (_, __) => const LeaderboardScreen(),
+      ),
+      GoRoute(
+        path: badgesRoute,
+        builder: (_, __) => const BadgesScreen(),
+      ),
       // GoRoute(
       //   path: communityListRoute,
       //   builder: (context, state) {
@@ -208,3 +218,5 @@ const communityListRoute = '/community-list';
 const emailAuthRoute = '/email-auth';
 const editProfileRoute = '/edit-profile';
 const historyRoute = '/history-screen';
+const leaderboardRoute = '/leaderboard';
+const badgesRoute = '/badges';

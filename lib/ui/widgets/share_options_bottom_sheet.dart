@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import '../../config/themes/text_style.dart';
 import '../../data/model/restaurant.dart';
 import '../../services/share_service.dart';
+import '../../providers/gamification_provider.dart';
 import 'share_card.dart';
 
 /// Bottom sheet để chọn cách share
@@ -52,6 +53,9 @@ class ShareOptionsBottomSheet extends ConsumerWidget {
             onTap: () async {
               Navigator.pop(context);
               await shareService.shareRestaurant(restaurant);
+              
+              // Award points
+              ref.read(gamificationNotifierProvider.notifier).awardPointsForShare();
             },
           ),
           Gap(12.h),
@@ -76,6 +80,9 @@ class ShareOptionsBottomSheet extends ConsumerWidget {
                   restaurant,
                   shareCard,
                 );
+                
+                // Award points
+                ref.read(gamificationNotifierProvider.notifier).awardPointsForShare();
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -99,6 +106,9 @@ class ShareOptionsBottomSheet extends ConsumerWidget {
             onTap: () async {
               Navigator.pop(context);
               await shareService.shareRestaurantWithDeepLink(restaurant);
+              
+              // Award points
+              ref.read(gamificationNotifierProvider.notifier).awardPointsForShare();
             },
           ),
           Gap(12.h),
@@ -123,6 +133,9 @@ class ShareOptionsBottomSheet extends ConsumerWidget {
                   restaurant,
                   shareCard,
                 );
+                
+                // Award points
+                ref.read(gamificationNotifierProvider.notifier).awardPointsForShare();
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

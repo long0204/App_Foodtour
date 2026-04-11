@@ -7,6 +7,8 @@ import '../../config/gen/assets.gen.dart';
 import '../../config/themes/text_style.dart';
 import '../../core/route.dart';
 import '../auth/providers/auth_notifier.dart';
+import '../gamification/points_level_card.dart';
+import '../gamification/badges_section.dart';
 
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
@@ -22,10 +24,22 @@ class AccountScreen extends ConsumerWidget {
             child: Column(
               children: [
                 _buildHeader(context, userData),
+                
+                // Points & Level Card
+                const PointsLevelCard(),
+                
                 Padding(
                   padding: EdgeInsets.all(20.w),
               child: Column(
                 children: [
+                  // Badges Section
+                  const BadgesSection(),
+                  Gap(20.h),
+                  
+                  // Leaderboard button
+                  _buildLeaderboardButton(context),
+                  Gap(20.h),
+                  
                   _buildMenuSection(
                     title: "Hoạt động của tôi",
                     items: [
@@ -177,6 +191,52 @@ class AccountScreen extends ConsumerWidget {
         icon: const Icon(Icons.logout_rounded),
         label: Text("Đăng xuất", style: k2d600.s16),
         onPressed: () => _showLogoutDialog(context, ref),
+      ),
+    );
+  }
+
+  Widget _buildLeaderboardButton(BuildContext context) {
+    return InkWell(
+      onTap: () => push('/leaderboard'),
+      borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+          ),
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.purple.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.leaderboard, color: Colors.white, size: 32.sp),
+            Gap(16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Bảng xếp hạng',
+                    style: k2d600.s16.copyWith(color: Colors.white),
+                  ),
+                  Gap(4.h),
+                  Text(
+                    'Xem vị trí của bạn',
+                    style: k2d400.s13.copyWith(color: Colors.white.withValues(alpha: 0.9)),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20.sp),
+          ],
+        ),
       ),
     );
   }

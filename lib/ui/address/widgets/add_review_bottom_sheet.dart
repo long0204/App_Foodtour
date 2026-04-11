@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../config/themes/text_style.dart';
 import '../providers/notifier.dart';
+import '../../../providers/gamification_provider.dart';
 
 class AddReviewBottomSheet extends ConsumerStatefulWidget {
   final String restaurantId;
@@ -53,9 +54,28 @@ class _AddReviewBottomSheetState extends ConsumerState<AddReviewBottomSheet> {
         images: _selectedImages,
       );
 
+      // Award points for review
+      final gamificationNotifier = ref.read(gamificationNotifierProvider.notifier);
+      await gamificationNotifier.awardPointsForReview();
+      
+      // Award points for photos if uploaded
+      if (_selectedImages.isNotEmpty) {
+        for (var i = 0; i < _selectedImages.length; i++) {
+          await gamificationNotifier.awardPointsForPhoto();
+        }
+      }
+
       if (!mounted) return;
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cảm ơn bạn đã đánh giá!")));
+      
+      // Show success with points earned
+      final totalPoints = 10 + (_selectedImages.length * 5);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Đã đánh giá! +$totalPoints điểm 🎉"),
+          backgroundColor: Colors.green,
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
