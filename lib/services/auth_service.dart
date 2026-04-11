@@ -11,6 +11,9 @@ import 'secure_storage_service.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final ApiClient? _apiClient; // Optional API client for backend sync
+
+  AuthService({ApiClient? apiClient}) : _apiClient = apiClient;
 
   String _generateRandomKey(int length) {
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*';
@@ -63,9 +66,14 @@ class AuthService {
   }
 
   Future<void> _syncUserToBackend(User user, {String? fullname, String? avatarUrl}) async {
+    // Skip if no API client provided
+    if (_apiClient == null) {
+      print("ℹ️ Backend sync skipped (no API client)");
+      return;
+    }
+    
     try {
-      
-      await apiClient.post(
+      await _apiClient!.post(
         '/users/sync',
         data: {
           "id": user.uid,

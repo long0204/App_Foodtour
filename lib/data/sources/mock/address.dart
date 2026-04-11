@@ -735,8 +735,7 @@ final itemList = [
     "Loại": "Bún",
     "Tên quán": "Bánh đa cua tóp mỡ",
     "Địa chỉ": "460 Trần Khát Chân",
-    "Giá": "Giờ bán 10h sáng- 3h chiều",
-    "Giá": ""
+    "Giá": "Giờ bán 10h sáng- 3h chiều"
   },
   {
     "STT": 106,
@@ -870,8 +869,7 @@ final itemList = [
     "Loại": "Vịt",
     "Tên quán": "Kaoya Hotpot ",
     "Địa chỉ": "C11 Lương định của",
-    "Giá": "bánh cuốn vịt ngon",
-    "Giá": "65k (ăn bánh cuốn vịt ngon)"
+    "Giá": "65k (bánh cuốn vịt ngon)"
   }
 ];
 

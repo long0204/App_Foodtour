@@ -28,10 +28,14 @@ class LocationService {
 
     if (permission == LocationPermission.deniedForever) return null;
 
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-      timeLimit: const Duration(seconds: 5),
-    ).catchError((e) => null);
+    try {
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 5),
+      );
+    } catch (e) {
+      return null;
+    }
   }
 }
 

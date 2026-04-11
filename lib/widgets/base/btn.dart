@@ -60,7 +60,7 @@ class PrimaryButton extends StatelessWidget {
             gradient: isActive
                 ? LinearGradient(
                     colors: [
-                      primaryFF.withOpacity(1),
+                      primaryFF.withValues(alpha: 1),
                       primaryB5,
                     ],
                     begin: Alignment.bottomLeft,
@@ -70,7 +70,7 @@ class PrimaryButton extends StatelessWidget {
             boxShadow: isActive
                 ? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.12),
+                      color: Colors.black.withValues(alpha: 0.12),
                       offset: const Offset(0, 4),
                       blurRadius: 12,
                       spreadRadius: 6,
@@ -78,7 +78,7 @@ class PrimaryButton extends StatelessWidget {
                   ]
                 : [],
             borderRadius: BorderRadius.circular(40),
-            color: isActive ? null : primaryB5.withOpacity(0.4)),
+            color: isActive ? null : primaryB5.withValues(alpha: 0.4)),
         child: Center(
           child: isLoading
               ? LoadingAnimationWidget.prograssiveDots(color: white, size: 40)

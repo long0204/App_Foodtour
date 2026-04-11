@@ -10,7 +10,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'config/gen/app_l10n.dart';
-import 'core/api/api_client.dart';
 import 'core/route.dart';
 import 'data/model/restaurant.dart';
 import 'data/model/review.dart';
@@ -34,9 +33,8 @@ void main() async {
 
     await secureStorage.migrateFromHive();
 
-    print("🔧 Initializing API Client...");
-    apiClient = ApiClient(secureStorage: secureStorage);
-    print("✅ API Client initialized successfully");
+    // API Client will be initialized via Riverpod provider
+    print("✅ Secure storage initialized");
     
     Hive.registerAdapter(ReviewAdapter());
     Hive.registerAdapter(RestaurantAdapter());

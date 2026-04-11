@@ -44,7 +44,7 @@ class CommonDialog extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
-                  color: (iconColor ?? Colors.red).withOpacity(0.1),
+                  color: (iconColor ?? Colors.red).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: icon!,

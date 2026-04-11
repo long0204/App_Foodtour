@@ -37,15 +37,10 @@ class AppRouter {
   static final GlobalKey<NavigatorState> _rootNavigatorKey =
   GlobalKey<NavigatorState>();
 
-  static bool _isLoggedIn = false;
-
-  static setIsLoggedIn(bool v) => _isLoggedIn = v;
-
   static Future<void> initRouterLoginStatus() async {
     final box = await Hive.openBox('userBox');
-    final token = box.get('token');
-    final loggedIn = token != null && token.toString().isNotEmpty;
-    _isLoggedIn = loggedIn;
+    // Check token for initialization
+    await box.get('token');
   }
   static bool get isUserLoggedIn => FirebaseAuth.instance.currentUser != null;
 
@@ -145,10 +140,6 @@ class AppRouter {
       ),
     ],
   );
-
-  static CupertinoPage<dynamic> _cupertinoPage(Widget view) {
-    return CupertinoPage(child: view);
-  }
 }
 
 void go(String location) => AppRouter.context?.go(location);

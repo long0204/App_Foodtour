@@ -20,7 +20,7 @@ ThemeData get lightTheme {
     textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
             foregroundColor: Colors.teal,
-            disabledForegroundColor: Colors.red.withOpacity(0.38),
+            disabledForegroundColor: Colors.red.withValues(alpha: 0.38),
             side: const BorderSide(),
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25))))),

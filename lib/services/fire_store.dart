@@ -6,8 +6,6 @@ import 'firebase_core.dart';
 class MyFireStore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionName = "update_app";
-  final String _softDocId = "soft";
-  final String _forceDocId = "force";
   bool initialized = false;
 
   Future<List<String>> getIds(String docId) async {

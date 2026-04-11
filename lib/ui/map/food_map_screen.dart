@@ -78,7 +78,7 @@ class _FoodMapScreenState extends ConsumerState<FoodMapScreen> {
                   if (state.routePoints.isNotEmpty)
                     Polyline(
                         points: state.routePoints,
-                        color: Colors.blueAccent.withOpacity(0.8),
+                        color: Colors.blueAccent.withValues(alpha: 0.8),
                         strokeWidth: 6.0),
                 ],
               ),

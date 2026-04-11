@@ -3,8 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../services/auth_service.dart';
 import '../../../providers/tab_provider.dart';
+import '../../../core/providers/api_client_provider.dart';
 
-final authServiceProvider = Provider((ref) => AuthService());
+final authServiceProvider = Provider((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return AuthService(apiClient: apiClient);
+});
 
 final authStateProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();

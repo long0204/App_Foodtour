@@ -40,7 +40,7 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
         ),
       ),
 
-      value: selectedValue,
+      initialValue: selectedValue,
       items: categories.map((c) => DropdownMenuItem(
           value: c,
           child: Text(c, style: TextStyle(fontSize: 14.sp, color: Colors.black87))

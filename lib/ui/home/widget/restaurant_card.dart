@@ -41,7 +41,7 @@ class RestaurantCardVertical extends StatelessWidget {
             borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
             child: CachedImage(
               restaurant.imageUrls.isNotEmpty
-                  ? restaurant.imageUrls![0]
+                  ? restaurant.imageUrls[0]
                   : '',
               height: 130.h,
               width: double.infinity,

@@ -109,7 +109,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   CachedImage(RemoteConfigService().imageAppbarHome,width: 50.w,height: 50.h, fit: BoxFit.cover),
                   BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                    child: Container(decoration: BoxDecoration(color: Colors.black.withOpacity(0.3))),
+                    child: Container(decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3))),
                   ),
                   Positioned(
                     bottom: 30.h,

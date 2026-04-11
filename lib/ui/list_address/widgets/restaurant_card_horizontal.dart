@@ -51,7 +51,7 @@ class RestaurantCardHorizontal extends StatelessWidget {
                     BorderRadius.horizontal(left: Radius.circular(15.r)),
                 child: CachedImage(
                   restaurant.imageUrls.isNotEmpty
-                      ? restaurant.imageUrls![0]
+                      ? restaurant.imageUrls[0]
                       : '',
                   width: 110.h,
                   height: 110.h,

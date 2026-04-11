@@ -10,7 +10,6 @@ class TokenService {
 
   final String _boxName = 'secureBox';
   final String _tokenKey = 'token';
-  final List<int> _password = [132];
 
   final Uint8List encryptionKey = Uint8List.fromList([
     1,
@@ -46,8 +45,8 @@ class TokenService {
     31,
     32
   ]);
+  
   Future<void> init() async {
-    final key = Hive.generateSecureKey();
     await Hive.openBox(
       _boxName,
       encryptionCipher: HiveAesCipher(encryptionKey),

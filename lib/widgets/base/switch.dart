@@ -30,7 +30,7 @@ class _MySwitchState extends State<MySwitch> {
     return 1 == 1
         ? CupertinoSwitch(
             applyTheme: true,
-            activeColor: greenSwitch,
+            activeTrackColor: greenSwitch,
             value: vl,
             onChanged: (bool value) {
               setState(() {

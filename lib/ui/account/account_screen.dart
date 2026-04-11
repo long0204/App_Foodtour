@@ -75,7 +75,7 @@ class AccountScreen extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(30.r)),
         boxShadow: [
           BoxShadow(
-              color: Colors.redAccent.withOpacity(0.3),
+              color: Colors.redAccent.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 5))
         ],
@@ -153,7 +153,7 @@ class AccountScreen extends ConsumerWidget {
     return ListTile(
       leading: Container(
         padding: EdgeInsets.all(8.w),
-        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10.r)),
+        decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10.r)),
         child: Icon(icon, color: color, size: 20.sp),
       ),
       title: Text(title, style: k2d500.s14),

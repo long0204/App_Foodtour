@@ -25,6 +25,13 @@ class SpinWheelNotifier extends Notifier<SpinWheelState> {
   SpinWheelState build() {
     selectedController = StreamController<int>.broadcast();
     confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    
+    // Clean up when notifier is disposed
+    ref.onDispose(() {
+      selectedController.close();
+      confettiController.dispose();
+    });
+    
     return SpinWheelState(
       isSpinning: false,
       showResult: false,
@@ -50,30 +57,5 @@ class SpinWheelNotifier extends Notifier<SpinWheelState> {
     confettiController.play();
     state = state.copyWith(isSpinning: false, showResult: true);
     await showCustomSuccessDialog(context, result);
-    //_showPopup(context, result);
-  }
-
-  void _showPopup(BuildContext context, String result) {
-
-
-    // showDialog(
-    //   context: context,
-    //   builder: (context) => AlertDialog(
-    //     backgroundColor: Colors.green,
-    //     content: Text(result, style: const TextStyle(fontSize: 30, color: Colors.yellow)),
-    //     actions: [
-    //       ElevatedButton(
-    //         onPressed: () => Navigator.of(context).pop(),
-    //         child: const Text('OK'),
-    //       ),
-    //     ],
-    //   ),
-    // );
-  }
-
-  @override
-  void onDispose() {
-    selectedController.close();
-    confettiController.dispose();
   }
 }

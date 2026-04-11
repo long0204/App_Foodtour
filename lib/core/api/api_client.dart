@@ -39,7 +39,7 @@ class ApiClient {
         throw Exception('Response data is null');
       }
       return response.data;
-    } on DioException catch (e) {
+    } on DioException {
       rethrow;
     } catch (e) {
       throw Exception('API GET error: $e');
@@ -53,12 +53,10 @@ class ApiClient {
         throw Exception('Response data is null');
       }
       return response.data;
-    } on DioException catch (e) {
+    } on DioException {
       rethrow;
     } catch (e) {
       throw Exception('API POST error: $e');
     }
   }
 }
-
-late final ApiClient apiClient;

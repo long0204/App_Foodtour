@@ -103,7 +103,7 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                   ClipRect(
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                      child: Container(color: Colors.black.withOpacity(0.3), alignment: Alignment.center),
+                      child: Container(color: Colors.black.withValues(alpha: 0.3), alignment: Alignment.center),
                     ),
                   ),
                   PageView.builder(
@@ -123,7 +123,7 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
                       bottom: 16.h, left: 0, right: 0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(widget.restaurant.imageUrls!.length, (index) {
+                        children: List.generate(widget.restaurant.imageUrls.length, (index) {
                           return AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             margin: EdgeInsets.symmetric(horizontal: 4.w),
@@ -211,7 +211,7 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
         ),
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(

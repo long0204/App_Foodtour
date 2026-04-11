@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import '../../../config/themes/text_style.dart';
-import '../../../core/api/api_client.dart';
+import '../../../core/providers/api_client_provider.dart';
 import '../../../core/route.dart';
 import '../../../data/model/restaurant.dart';
 import '../../../providers/community_provider.dart';
 import '../../../widgets/shared/back_btn.dart';
 import '../../../widgets/shared/cached_image.dart';
 
-class HistoryScreen extends StatefulWidget {
+class HistoryScreen extends ConsumerStatefulWidget {
   final String uid;
   const HistoryScreen({super.key, required this.uid});
 
   @override
-  State<HistoryScreen> createState() => _HistoryScreenState();
+  ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
+class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   List<dynamic> _historyList = [];
   bool _isLoading = true;
 
@@ -30,6 +31,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   Future<void> _fetchHistory() async {
     try {
+      final apiClient = ref.read(apiClientProvider);
       final data = await apiClient.get('/users/${widget.uid}/history');
       if (mounted) {
         setState(() {

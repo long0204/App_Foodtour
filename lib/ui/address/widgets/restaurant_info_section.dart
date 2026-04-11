@@ -100,7 +100,7 @@ class RestaurantInfoSection extends StatelessWidget {
                       onTap: () => _showMapOptions(context),
                       child: Container(
                         padding: EdgeInsets.all(10.w),
-                        decoration: BoxDecoration(color: Colors.blue.withOpacity(0.1), borderRadius: BorderRadius.circular(12.r)),
+                        decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12.r)),
                         child: Icon(Icons.map_rounded, color: Colors.blue, size: 22.sp),
                       ),
                     ),
@@ -112,7 +112,7 @@ class RestaurantInfoSection extends StatelessWidget {
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                      decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(20.r)),
+                      decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20.r)),
                       child: Row(
                         children: [
                           Icon(Icons.star_rounded, color: Colors.orange, size: 20.sp),

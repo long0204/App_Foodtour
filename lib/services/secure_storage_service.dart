@@ -198,7 +198,6 @@ class SecureStorageService {
   /// Migrate data từ Hive sang SecureStorage (one-time migration)
   Future<void> migrateFromHive() async {
     try {
-
       final box = await hive.Hive.openBox('userBox');
 
       final oldToken = box.get('token');
@@ -217,8 +216,6 @@ class SecureStorageService {
       }
       
       await box.close();
-      
-      _logger.i('ℹ️ Hive migration disabled - import() not supported in Dart');
     } catch (e) {
       _logger.e('❌ Error migrating from Hive: $e');
       // Không throw error, migration failure không nên block app

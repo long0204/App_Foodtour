@@ -12,9 +12,6 @@ class BiometricService {
   final LocalAuthentication _auth = LocalAuthentication();
   final _logger = Logger();
 
-  // Storage key
-  static const String _biometricEnabledKey = 'biometric_enabled';
-
   /// Check xem device có hỗ trợ biometric không
   Future<bool> canCheckBiometrics() async {
     try {
